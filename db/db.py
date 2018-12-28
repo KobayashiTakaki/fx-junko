@@ -1,7 +1,7 @@
 import sqlite3
 
 
-def conn:
+def conn():
     dbname = 'db.sqlite3'
     conn = sqlite3.connect(dbname)
     return conn
