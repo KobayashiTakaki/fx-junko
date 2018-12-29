@@ -9,11 +9,6 @@ hostname = config['DEMO']['HOSTNAME']
 port = int(config['DEMO']['PORT'])
 token = config['DEMO']['TOKEN']
 
-def now_in_unixtime():
-    tz = datetime.timezone.utc
-    now = datetime.datetime.now(tz)
-    return int(now.timestamp())
-
 api = v20.Context(
         hostname,
         port,
@@ -23,14 +18,14 @@ api = v20.Context(
 instrument = 'USD_JPY'
 params = {
     'granularity': 'M5',
-    'toTime': now_in_unixtime(),
-    'count': 60
+    'count': 60,
+    'completed_only': True
 }
 
-def get_candles(params=params):
+def get_candles(instrument=instrument,params=params):
     candles = api.instrument.candles(instrument, **params).get("candles", 200)
-    # if params['completed_only']:
-    #     candles = [candle for candle in candles if candle.complete]
+    if params['completed_only']:
+        candles = [candle for candle in candles if candle.complete]
 
     return list(map(lambda candle: format_candle(candle), candles))
 

@@ -22,8 +22,7 @@ def main():
         #ポジションがない場合
         print('i dont have a open position')
 
-        #if crossed_recently():
-
+        #is_macd_crossedの戻り値がTrueのとき
         if is_macd_crossed[0]:
             if is_macd_crossed[1] == 1:
                 #上向きクロスだったら買いでエントリー

@@ -6,6 +6,11 @@ import api.api as api
 
 conn = db.conn()
 
+def now_in_unixtime():
+    tz = datetime.timezone.utc
+    now = datetime.datetime.now(tz)
+    return int(now.timestamp())
+
 def is_macd_crossed(candle):
     df = pd.read_sql_query('select datetime,close from prices;', conn)
     df_current = pd.DataFrame(candle).loc[:,['datetime', 'close']]
@@ -28,10 +33,29 @@ def is_entry_interval_enough():
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0;', conn)
 
     #print(df)
-    last_cross_interval = df.iloc[-1]['datetime']
+    #前回クロスと前々回クロスの間の時間
+    last_cross_interval = (
+        datetime.datetime.strptime(df.iloc[-1]['datetime'], '%Y-%m-%d %H:%M:%S')
+        - datetime.datetime.strptime(df.iloc[-2]['datetime'], '%Y-%m-%d %H:%M:%S')
+    )
+    print('last_cross_interval ' + str(last_cross_interval))
 
-    return false
+    #前回クロスと今の間の時間
+    interval_from_last_cross = (
+        datetime.datetime.now()
+        - datetime.datetime.strptime(df.iloc[-1]['datetime'], '%Y-%m-%d %H:%M:%S')
+    )
+    print('interval_from_last_cross ' + str(interval_from_last_cross))
 
+    enough_time = datetime.timedelta(minutes=55)
+
+    #前回クロスと前々回クロスの間が十分離れていない
+    #かつ前回クロスと今が十分離れていない場合、False
+    if (last_cross_interval < enough_time
+        and interval_from_last_cross < enough_time):
+        return False
+    else:
+        return True
 
 def is_macd_against():
 
@@ -54,7 +78,15 @@ def update_price_data():
         'macd_direction',
         'crossed'
     ]
-    candles = api.get_candles()
+
+    params = {
+        'granularity': 'M5',
+        'toTime': now_in_unixtime(),
+        'count': 60,
+        'completed_only': True
+    }
+
+    candles = api.get_candles(params=params)
     df = pd.DataFrame(candles)
     df = calc_macd(df)
     df.reindex(columns=price_header).to_sql('prices', conn, if_exists="replace")
