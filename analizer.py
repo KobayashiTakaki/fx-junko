@@ -32,7 +32,6 @@ def is_macd_crossed(candle):
 def is_entry_interval_enough():
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0;', conn)
 
-    #print(df)
     #前回クロスと前々回クロスの間の時間
     last_cross_interval = (
         datetime.datetime.strptime(df.iloc[-1]['datetime'], '%Y-%m-%d %H:%M:%S')
@@ -59,11 +58,7 @@ def is_entry_interval_enough():
 
 def is_macd_against():
 
-    return false
-
-
-# def last_macd():
-#
+    return False
 
 def update_price_data():
     price_header = [
@@ -100,6 +95,7 @@ def calc_macd(df):
     df['macd'] = macd['macd']
     df['macd_signal'] = macd['signal']
     df['macd2'] = macd['macd'] - macd['signal']
+    #macd_direction: macdがシグナルより上なら1, シグナル以下なら-1
     df['macd_direction'] = df['macd2'].apply(lambda v: 1 if v > 0 else -1)
 
     #macdのcrossを判定
