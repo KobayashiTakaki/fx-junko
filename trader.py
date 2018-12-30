@@ -13,17 +13,17 @@ params = {
 oanda_api = oanda_api.OandaApi()
 twitter_api = twitter_api.TwitterApi()
 
-open_trade = None
+open_position = None
 
 def main():
-    if open_trade:
+    if open_position:
         print('i have a open position')
 
-        if open_trade['side'] == 'long':
+        if open_position['side'] == 'buy':
             if analizer.is_macd_keep_going('down'):
                 close_position()
 
-        if open_trade['side'] == 'short':
+        if open_position['side'] == 'sell':
             if analizer.is_macd_keep_going('up'):
                 close_position()
 
@@ -41,11 +41,11 @@ def main():
         if is_macd_crossed[0] and analizer.is_entry_interval_enough():
             if is_macd_crossed[1] == 1:
                 #上向きクロスだったら買いでエントリー
-                print('entry by long')
+                print('entry by buy')
                 entry(10000)
             else:
                 #下向きクロスだったら売りでエントリー
-                print('entry by short')
+                print('entry by sell')
                 entry(-10000)
         else:
             print('not crossed')
@@ -60,9 +60,9 @@ def entry(amount):
     oanda_api.market_order(amount)
 
     if amount > 0:
-        open_trade = {'side': 'long'}
+        open_position = {'side': 'buy'}
     else:
-        open_trade = {'side': 'short'}
+        open_position = {'side': 'sell'}
 
     info = []
     twitter_api.tweet('entry', 'neutral', info)
@@ -76,7 +76,31 @@ def close_position():
 
     print('close position')
     oanda_api.close_all_positions()
-    open_trade = None
+    open_position = None
+
+    last_position = oanda_api.get_last_closed_position()
+
+    #instrument = instrument.replace('_', '/')
+    #start_side = 'buy'
+    #start_price = '110.123'
+    #end_side = 'sell'
+    #end_price = '110.345'
+    #pips = last_position.pl
+    # action = ''
+    # feeling = ''
+    # info = [
+    #     "[Position Close]",
+    #     start_side + " " + instrument + "@" + start_price,
+    #     end_side + " " + instrument + "@" + end_price,
+    #     pips + " pips"
+    # ]
+    # if pips > 0:
+    #     action = 'take_profit'
+    #     feeling = 'positive'
+    # else:
+    #     action = 'losscut'
+    #     feeling = 'negative'
+    # twitter_api.tweet(action, feeling, info)
 
 
 if __name__=='__main__':
