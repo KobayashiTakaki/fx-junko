@@ -136,9 +136,14 @@ def calc_macd(df):
 
 if __name__=='__main__':
     while(1):
-        update_price_data()
-        tz = datetime.timezone.utc
-        now = datetime.datetime.now(tz)
-        print(now)
-        print('updated')
-        sleep(120)
+        try:
+            update_price_data()
+            tz = datetime.timezone.utc
+            now = datetime.datetime.now(tz)
+            print(now)
+            print('updated')
+        except Exception as e:
+            print(e)
+            continue
+        finally:
+            sleep(120)

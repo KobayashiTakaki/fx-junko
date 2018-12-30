@@ -59,14 +59,26 @@ def entry(amount):
     print(amount)
     oanda_api.market_order(amount)
 
+    open_position = oanda_api.get_open_positions()[0]
+    action = 'entry'
+    feeling = 'neutral'
+    start_side = ''
+    start_price = ''
+
     if amount > 0:
         open_position = {'side': 'buy'}
+        start_side = 'buy'
     else:
         open_position = {'side': 'sell'}
+        start_side = 'sell'
 
-    info = []
-    twitter_api.tweet('entry', 'neutral', info)
+    info = [
+        "[Entry]",
+        start_side + " " + instrument + "@" + start_price
+    ]
+    twitter_api.tweet(action, feeling, info)
 
+    #エントリーしたら5分我慢
     sleep(300)
 
 def close_position():
@@ -107,5 +119,8 @@ if __name__=='__main__':
     while(1):
         try:
             main()
+        except Exception as e:
+            print(e)
+            continue
         finally:
             sleep(3)

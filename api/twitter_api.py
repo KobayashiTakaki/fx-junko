@@ -16,12 +16,10 @@ class TwitterApi():
     def tweet(self, action, feeling, info):
         message = tweet_messages.get_message(action)
         kaomoji = tweet_messages.get_kaomoji(feeling)
+        tags = "#USDJPY #FX"
         content = (
             message + kaomoji + "\n"
-            + "[Entry]\n"
-            + "sell USD/JPY@111.234\n"
-            + "\n"
-            + message + kaomoji + "\n"
-            + "\n".join(info)
+            + "\n".join(info) + "\n"
+            + tags
         )
         print(content)
