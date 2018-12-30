@@ -22,9 +22,6 @@ class TwitterApi():
             + "sell USD/JPY@111.234\n"
             + "\n"
             + message + kaomoji + "\n"
-            + "[Position Close]\n"
-            + "sell USD/JPY@111.234\n"
-            + "buy USD/JPY@110.234\n"
-            + "+100.0 pips"
+            + "\n".join(info)
         )
         print(content)
