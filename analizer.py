@@ -2,12 +2,12 @@ import datetime
 from time import sleep
 import pandas as pd
 import db.db  as db
-import api.api as api
+import api.oanda_api as oanda_api
 
 db = db.Db()
 conn = db.conn
 db_time_fromat = db.time_format
-api = api.Api()
+oanda_api = oanda_api.OandaApi()
 
 
 def now_in_unixtime():
@@ -103,7 +103,7 @@ def update_price_data():
         'completed_only': True
     }
 
-    candles = api.get_candles(params=params)
+    candles = oanda_api.get_candles(params=params)
     df = pd.DataFrame(candles)
     df = calc_macd(df)
     df.reindex(columns=price_header).to_sql('prices', conn, if_exists="replace")

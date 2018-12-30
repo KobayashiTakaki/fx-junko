@@ -1,6 +1,6 @@
 import datetime
 from time import sleep
-import api.api as api
+import api.oanda_api as oanda_api
 import analizer
 
 instrument = 'USD_JPY'
@@ -9,7 +9,7 @@ params = {
     'count': 1
 }
 
-api = api.Api()
+oanda_api = oanda_api.OandaApi()
 open_trade = None
 
 def main():
@@ -24,7 +24,7 @@ def main():
             if analizer.is_macd_keep_going('up'):
                 close_position()
 
-        candle = api.get_candles(instrument, params, False)
+        candle = oanda_api.get_candles(instrument, params, False)
         if analizer.is_macd_crossed(candle)[0]:
             close_position()
 
@@ -32,7 +32,7 @@ def main():
         #ポジションがない場合
         print('i dont have a open position')
 
-        candle = api.get_candles(instrument, params, False)
+        candle = oanda_api.get_candles(instrument, params, False)
         is_macd_crossed = analizer.is_macd_crossed(candle)
 
         if is_macd_crossed[0] and analizer.is_entry_interval_enough():
@@ -54,7 +54,7 @@ def entry(amount):
 
     print('entry')
     print(amount)
-    api.market_order(amount)
+    oanda_api.market_order(amount)
 
     if amount > 0:
         open_trade = {'side': 'long'}
@@ -68,7 +68,7 @@ def close_position():
     print(now)
 
     print('close position')
-    api.close_all_positions()
+    oanda_api.close_all_positions()
     open_trade = None
 
 

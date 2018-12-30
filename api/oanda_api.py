@@ -2,7 +2,7 @@ import configparser
 import datetime
 import v20
 
-class Api():
+class OandaApi():
     instrument = 'USD_JPY'
     candles_params = {
         'granularity': 'M5',
@@ -11,7 +11,7 @@ class Api():
 
     def __init__(self):
         config = configparser.ConfigParser()
-        config.read('conf.ini')
+        config.read('api/oanda_conf.ini')
 
         hostname = config['DEMO']['HOSTNAME']
         port = int(config['DEMO']['PORT'])
