@@ -9,7 +9,6 @@ conn = db.conn
 db_time_fromat = db.time_format
 oanda_api = oanda_api.OandaApi()
 
-
 def now_in_unixtime():
     tz = datetime.timezone.utc
     now = datetime.datetime.now(tz)

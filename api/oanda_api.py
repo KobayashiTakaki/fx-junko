@@ -67,7 +67,7 @@ class OandaApi():
     def get_last_closed_position(self):
         response = self.context.position.list(self.account_id)
         positions = response.get('positions', 200)
-        positions = [position for position in positions if position.pl !== '']
+        #positions = [position for position in positions if position.pl !== '']
         return positions[0]
 
     def close_all_positions(self):

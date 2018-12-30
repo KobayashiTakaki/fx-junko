@@ -1,6 +1,7 @@
 import datetime
 from time import sleep
 import api.oanda_api as oanda_api
+import api.twitter_api as twitter_api
 import analizer
 
 instrument = 'USD_JPY'
@@ -10,6 +11,8 @@ params = {
 }
 
 oanda_api = oanda_api.OandaApi()
+twitter_api = twitter_api.TwitterApi()
+
 open_trade = None
 
 def main():
@@ -60,6 +63,10 @@ def entry(amount):
         open_trade = {'side': 'long'}
     else:
         open_trade = {'side': 'short'}
+
+    info = []
+    twitter_api.tweet('entry', 'neutral', info)
+
     sleep(300)
 
 def close_position():
