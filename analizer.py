@@ -1,10 +1,14 @@
 import datetime
 from time import sleep
 import pandas as pd
-import db.db as db
+import db.db  as db
 import api.api as api
 
-conn = db.conn()
+db = db.Db()
+conn = db.conn
+db_time_fromat = db.time_format
+api = api.Api()
+
 
 def now_in_unixtime():
     tz = datetime.timezone.utc
@@ -34,15 +38,15 @@ def is_entry_interval_enough():
 
     #前回クロスと前々回クロスの間の時間
     last_cross_interval = (
-        datetime.datetime.strptime(df.iloc[-1]['datetime'], '%Y-%m-%d %H:%M:%S')
-        - datetime.datetime.strptime(df.iloc[-2]['datetime'], '%Y-%m-%d %H:%M:%S')
+        datetime.datetime.strftime(df.iloc[-1]['datetime'], db_time_fromat)
+        - datetime.datetime.strftime(df.iloc[-2]['datetime'], db_time_fromat)
     )
     print('last_cross_interval ' + str(last_cross_interval))
 
     #前回クロスと今の間の時間
     interval_from_last_cross = (
         datetime.datetime.now()
-        - datetime.datetime.strptime(df.iloc[-1]['datetime'], '%Y-%m-%d %H:%M:%S')
+        - datetime.datetime.strftime(df.iloc[-1]['datetime'], db_time_fromat)
     )
     print('interval_from_last_cross ' + str(interval_from_last_cross))
 
@@ -56,7 +60,25 @@ def is_entry_interval_enough():
     else:
         return True
 
-def is_macd_against():
+def is_macd_keep_going(direction):
+    count = 3
+
+    #最新のレコードをcount件取得
+    df = pd.read_sql_query(
+        'select datetime, close from prices order by datetime desc '
+        + 'limit ' + str(count) + ';'
+        , conn
+    )
+
+    # print(df)
+    if direction == 'down':
+        #closeが最大なのが一番古いデータ->下がり続けている
+        if df['close'].idxmax() == df.index.max():
+            return True
+    if direction == 'up':
+        #closeが最小なのが一番古いデータ->上がり続けている
+        if df['close'].idxmin() == df.index.max():
+            return True
 
     return False
 

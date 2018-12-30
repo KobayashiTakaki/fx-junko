@@ -1,11 +1,8 @@
 import sqlite3
 
-
-def conn():
+class Db():
     dbname = 'db/db.sqlite3'
-    conn = sqlite3.connect(dbname)
-    return conn
+    time_format = '%Y-%m-%d %H:%M:%S'
 
-
-def store_candles(conn, df):
-    corsor = conn.cursor()
+    def __init__(self):
+        self.conn = sqlite3.connect(self.dbname)
