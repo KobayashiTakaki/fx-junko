@@ -54,6 +54,8 @@ def entry(amount):
 
     print('entry')
     print(amount)
+    api.market_order(amount)
+
     if amount > 0:
         open_trade = {'side': 'long'}
     else:
@@ -66,7 +68,7 @@ def close_position():
     print(now)
 
     print('close position')
-    api.close_position()
+    api.close_all_positions()
     open_trade = None
 
 

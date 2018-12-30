@@ -60,6 +60,16 @@ class Api():
         response = self.context.order.market(self.account_id, **params)
         return response
 
+    def get_open_positions(self):
+        response = self.context.position.list_open(self.account_id)
+        return response.get('positions', 200)
+
+    def get_last_closed_position(self):
+        response = self.context.position.list(self.account_id)
+        positions = response.get('positions', 200)
+        positions = [position for position in positions if position.pl !== '']
+        return positions[0]
+
     def close_all_positions(self):
         params = {
             'shortUnits': 'ALL',
