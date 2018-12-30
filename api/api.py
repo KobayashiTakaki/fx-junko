@@ -17,7 +17,6 @@ class Api():
         port = int(config['DEMO']['PORT'])
         token = config['DEMO']['TOKEN']
 
-
         self.context = v20.Context(
                     hostname,
                     port,
@@ -25,7 +24,6 @@ class Api():
                 )
 
         self.account_id = self.context.account.list().get('accounts', 200)[0].id
-
 
     @staticmethod
     def format_candle(candle):
@@ -60,7 +58,14 @@ class Api():
         }
 
         response = self.context.order.market(self.account_id, **params)
-        print(response)
+        return response
 
-    def close_position(self):
-        open_trades = self.context.trade
+    def close_all_positions(self):
+        params = {
+            'shortUnits': 'ALL',
+            'longUnits': 'ALL'
+        }
+        response = self.context.position.close(
+            self.account_id, instrument=self.instrument, **params
+        )
+        return response
