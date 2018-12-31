@@ -11,7 +11,6 @@ class Trader():
             'granularity': 'S5',
             'count': 1
         }
-
         self.open_trade = None
 
     def main(self):
