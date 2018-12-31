@@ -1,3 +1,4 @@
 v20
 requests_oauthlib
 pandas
+sqlite3
