@@ -19,7 +19,7 @@ def main():
     if open_trade is not None:
         print('i have a open position')
 
-        if open_trade.initialUnits > 0:
+        if int(open_trade['initialUnits']) > 0:
             if analizer.is_macd_keep_going('down'):
                 exit()
 
@@ -38,15 +38,18 @@ def main():
         candle = oanda_api.get_candles(instrument, params, False)
         is_macd_crossed = analizer.is_macd_crossed(candle)
 
-        if is_macd_crossed[0] and analizer.is_entry_interval_enough():
-            if is_macd_crossed[1] == 1:
-                #上向きクロスだったら買いでエントリー
-                print('entry by buy')
-                entry(100)
+        if is_macd_crossed[0]:
+            if analizer.is_entry_interval_enough():
+                if is_macd_crossed[1] == 1:
+                    #上向きクロスだったら買いでエントリー
+                    print('entry by buy')
+                    entry(100)
+                else:
+                    #下向きクロスだったら売りでエントリー
+                    print('entry by sell')
+                    entry(-100)
             else:
-                #下向きクロスだったら売りでエントリー
-                print('entry by sell')
-                entry(-100)
+                print('not enough')
         else:
             print('not crossed')
 
@@ -66,13 +69,8 @@ def entry(amount):
 
     action = 'entry'
     feeling = 'neutral'
-    start_side = ''
-    start_price = open_trade.price
-
-    if open_trade.initialUnits > 0:
-        start_side = 'buy'
-    else:
-        start_side = 'sell'
+    start_side = 'buy' if int(open_trade['initialUnits']) > 0 else 'sell'
+    start_price = format(open_trade['price'], '.3f')
 
     info = [
         "[Entry]",
@@ -89,30 +87,31 @@ def exit():
     print(now)
 
     side = ''
-    if open_trade.initialUnits > 0:
+    if int(open_trade['initialUnits']) > 0:
         side = 'long'
     else:
         side = 'short'
     print('close position')
 
-    oanda_api.close_trade(open_trade.id)
+    oanda_api.close_trade(open_trade['tradeId'])
     open_trade = None
 
     last_trade = oanda_api.get_trades('CLOSED', 1)[0]
 
     instrument = instrument.replace('_', '/')
-    start_side = ''
-    start_price = last_trade.price
-    end_side = ''
-    end_price = last_trade.averageClosePrice
-    pips = last_trade.realizedPL
-    action = ''
-    feeling = ''
+    start_side = 'buy' if int(open_trade['initialUnits']) > 0 else 'sell'
+    start_price = format(last_trade['price'], '.3f')
+    end_side = 'buy' if start_side == 'sell' else 'buy'
+    end_price = format(last_trade['averageClosePrice'], '.3f')
+    pips = float(last_trade['realizedPL'])
+
+    action = 'take_profit' if pips > 0 else 'losscut'
+    feeling = 'positive' if pips > 0 else 'negative'
     info = [
         "[Trade Close]",
         start_side + " " + instrument + "@" + start_price,
         end_side + " " + instrument + "@" + end_price,
-        pips + " pips"
+        format(pips, '.1f') + " pips"
     ]
     if pips > 0:
         action = 'take_profit'

@@ -33,7 +33,8 @@ def is_macd_crossed(candle):
         return True, -1
 
 def is_entry_interval_enough():
-    df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0;', conn)
+    df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
+    tz = datetime.timezone.utc
 
     #前回クロスと前々回クロスの間の時間
     last_cross_interval = (
@@ -44,7 +45,7 @@ def is_entry_interval_enough():
 
     #前回クロスと今の間の時間
     interval_from_last_cross = (
-        datetime.datetime.now()
+        datetime.datetime.now(tz)
         - datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
     )
     print('interval_from_last_cross ' + str(interval_from_last_cross))
@@ -149,13 +150,13 @@ def update_trade_data():
     ]
     trades = oanda_api.get_trades('ALL', 10)
     df = pd.DataFrame(trades)
-    df.reindex(columns=trade_header).
-
+    df.reindex(columns=trades_header).to_sql('trades', conn, if_exists="replace")
 
 if __name__=='__main__':
     while(1):
         try:
             update_price_data()
+            update_trade_data()
             tz = datetime.timezone.utc
             now = datetime.datetime.now(tz)
             print(now)

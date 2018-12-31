@@ -29,8 +29,8 @@ class OandaApi():
     def format_candle(candle):
         return {
             'datetime': str(datetime.datetime.strptime(
-                candle.time.split('.')[0],
-                '%Y-%m-%dT%H:%M:%S')),
+                candle.time.split('.')[0] + '+00:00',
+                '%Y-%m-%dT%H:%M:%S%z')),
             'open': candle.mid.o,
             'high': candle.mid.h,
             'low':candle.mid.l,
