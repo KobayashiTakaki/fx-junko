@@ -37,15 +37,15 @@ def is_entry_interval_enough():
 
     #前回クロスと前々回クロスの間の時間
     last_cross_interval = (
-        datetime.datetime.strftime(df.iloc[-1]['datetime'], db_time_fromat)
-        - datetime.datetime.strftime(df.iloc[-2]['datetime'], db_time_fromat)
+        datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
+        - datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
     )
     print('last_cross_interval ' + str(last_cross_interval))
 
     #前回クロスと今の間の時間
     interval_from_last_cross = (
         datetime.datetime.now()
-        - datetime.datetime.strftime(df.iloc[-1]['datetime'], db_time_fromat)
+        - datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
     )
     print('interval_from_last_cross ' + str(interval_from_last_cross))
 
@@ -133,6 +133,24 @@ def calc_macd(df):
             df.at[i, 'crossed'] = str(0)
 
     return df
+
+def update_trade_data():
+    trades_header = [
+        'tradeId',
+        'instrument',
+        'price',
+        'openTime',
+        'state',
+        'initialUnits',
+        'realizedPL',
+        'unrealizedPL',
+        'averageClosePrice',
+        'closeTime'
+    ]
+    trades = oanda_api.get_trades('ALL', 10)
+    df = pd.DataFrame(trades)
+    df.reindex(columns=trade_header).
+
 
 if __name__=='__main__':
     while(1):

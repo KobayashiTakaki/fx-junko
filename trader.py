@@ -13,23 +13,23 @@ params = {
 oanda_api = oanda_api.OandaApi()
 twitter_api = twitter_api.TwitterApi()
 
-open_position = None
+open_trade = None
 
 def main():
-    if open_position:
+    if open_trade is not None:
         print('i have a open position')
 
-        if open_position['side'] == 'buy':
+        if open_trade.initialUnits > 0:
             if analizer.is_macd_keep_going('down'):
-                close_position()
+                exit()
 
-        if open_position['side'] == 'sell':
+        else:
             if analizer.is_macd_keep_going('up'):
-                close_position()
+                exit()
 
         candle = oanda_api.get_candles(instrument, params, False)
         if analizer.is_macd_crossed(candle)[0]:
-            close_position()
+            exit()
 
     else:
         #ポジションがない場合
@@ -42,11 +42,11 @@ def main():
             if is_macd_crossed[1] == 1:
                 #上向きクロスだったら買いでエントリー
                 print('entry by buy')
-                entry(10000)
+                entry(100)
             else:
                 #下向きクロスだったら売りでエントリー
                 print('entry by sell')
-                entry(-10000)
+                entry(-100)
         else:
             print('not crossed')
 
@@ -55,21 +55,23 @@ def entry(amount):
     now = datetime.datetime.now(tz)
     print(now)
 
-    print('entry')
-    print(amount)
-    oanda_api.market_order(amount)
+    response = oanda_api.market_order(amount)
+    if response.status == 201:
+        print(amount)
+        print('entry')
+    else:
+        raise Exception('entry failed')
 
-    open_position = oanda_api.get_open_positions()[0]
+    open_trade = oanda_api.get_trades('OPEN', 1)[0]
+
     action = 'entry'
     feeling = 'neutral'
     start_side = ''
-    start_price = ''
+    start_price = open_trade.price
 
-    if amount > 0:
-        open_position = {'side': 'buy'}
+    if open_trade.initialUnits > 0:
         start_side = 'buy'
     else:
-        open_position = {'side': 'sell'}
         start_side = 'sell'
 
     info = [
@@ -81,38 +83,44 @@ def entry(amount):
     #エントリーしたら5分我慢
     sleep(300)
 
-def close_position():
+def exit():
     tz = datetime.timezone.utc
     now = datetime.datetime.now(tz)
     print(now)
 
+    side = ''
+    if open_trade.initialUnits > 0:
+        side = 'long'
+    else:
+        side = 'short'
     print('close position')
-    oanda_api.close_all_positions()
-    open_position = None
 
-    last_position = oanda_api.get_last_closed_position()
+    oanda_api.close_trade(open_trade.id)
+    open_trade = None
 
-    #instrument = instrument.replace('_', '/')
-    #start_side = 'buy'
-    #start_price = '110.123'
-    #end_side = 'sell'
-    #end_price = '110.345'
-    #pips = last_position.pl
-    # action = ''
-    # feeling = ''
-    # info = [
-    #     "[Position Close]",
-    #     start_side + " " + instrument + "@" + start_price,
-    #     end_side + " " + instrument + "@" + end_price,
-    #     pips + " pips"
-    # ]
-    # if pips > 0:
-    #     action = 'take_profit'
-    #     feeling = 'positive'
-    # else:
-    #     action = 'losscut'
-    #     feeling = 'negative'
-    # twitter_api.tweet(action, feeling, info)
+    last_trade = oanda_api.get_trades('CLOSED', 1)[0]
+
+    instrument = instrument.replace('_', '/')
+    start_side = ''
+    start_price = last_trade.price
+    end_side = ''
+    end_price = last_trade.averageClosePrice
+    pips = last_trade.realizedPL
+    action = ''
+    feeling = ''
+    info = [
+        "[Trade Close]",
+        start_side + " " + instrument + "@" + start_price,
+        end_side + " " + instrument + "@" + end_price,
+        pips + " pips"
+    ]
+    if pips > 0:
+        action = 'take_profit'
+        feeling = 'positive'
+    else:
+        action = 'losscut'
+        feeling = 'negative'
+    twitter_api.tweet(action, feeling, info)
 
 
 if __name__=='__main__':
