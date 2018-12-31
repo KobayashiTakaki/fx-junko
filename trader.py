@@ -130,4 +130,4 @@ if __name__=='__main__':
             print(e)
             continue
         finally:
-            sleep(3)
+            sleep(60)
