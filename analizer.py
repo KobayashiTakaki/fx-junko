@@ -20,23 +20,31 @@ def loop():
     print(now)
     print('updated')
 
-def is_macd_crossed(candle):
-    df = pd.read_sql_query('select datetime,close from prices;', conn)
-    df_current = pd.DataFrame(candle).loc[:,['datetime', 'close']]
-    df = df.append(df_current, ignore_index = True)
+def is_macd_crossed(use_current=False):
+    df = pd.read_sql_query('select datetime,close from prices limit 2;', conn)
+
+    if use_current:
+        candle = oanda_api.get_candles(self.instrument, self.params, False)
+        df_current = pd.DataFrame(candle).loc[:,['datetime', 'close']]
+        df = df.append(df_current, ignore_index = True)
+
     df = calc_macd(df)
 
     price_last = df.iloc[-2]
-    price_current = df.iloc[-1]
+    price_newer = df.iloc[-1]
 
-    if price_last['macd_direction'] == price_current['macd_direction']:
+    if price_last['macd_direction'] == price_newer['macd_direction']:
         return False, 0
-    elif price_last['macd_direction'] < price_current['macd_direction']:
+    elif price_last['macd_direction'] < price_newer['macd_direction']:
         #シグナルを上向きにクロス
         return True, 1
     else:
         #シグナルを下向きにクロス
         return True, -1
+
+
+
+
 
 def is_entry_interval_enough():
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)

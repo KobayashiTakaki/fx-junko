@@ -21,23 +21,18 @@ class Trader():
             if int(self.open_trade['initialUnits']) > 0:
                 if analizer.is_macd_keep_going('down'):
                     self.exit()
-
             else:
                 if analizer.is_macd_keep_going('up'):
                     self.exit()
 
-            candle = oanda_api.get_candles(self.instrument, self.params, False)
-            print(candle)
-            if analizer.is_macd_crossed(candle)[0]:
+            if analizer.is_macd_crossed()[0]:
                 self.exit()
 
         else:
             #ポジションがない場合
             print('i dont have a open position')
 
-            candle = oanda_api.get_candles(self.instrument, self.params, False)
-            is_macd_crossed = analizer.is_macd_crossed(candle)
-
+            is_macd_crossed = analizer.is_macd_crossed()
             if is_macd_crossed[0]:
                 if analizer.is_entry_interval_enough():
                     if is_macd_crossed[1] == 1:

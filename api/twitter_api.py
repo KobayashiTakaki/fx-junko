@@ -10,6 +10,7 @@ AT = config['DEFAULT']['ACCESS_TOKEN']
 ATS = config['DEFAULT']['ACCESS_TOKEN_SECRET']
 
 session = OAuth1Session(CK, CS, AT, ATS)
+user_show_url = 'https://api.twitter.com/1.1/users/show.json'
 
 def tweet(action, feeling, info):
     message = tweet_messages.get_message(action)

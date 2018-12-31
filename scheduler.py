@@ -12,7 +12,7 @@ def trader_loop():
 def analizer_loop():
     analizer.loop()
 
-schedule.every(10).seconds.do(trader_loop)
+schedule.every(60).seconds.do(trader_loop)
 schedule.every(120).seconds.do(analizer_loop)
 
 while True:
