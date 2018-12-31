@@ -1,24 +1,21 @@
 import sqlite3
 import datetime
 
-class Db():
-    dbname = 'db/db.sqlite3'
-    time_format = '%Y-%m-%d %H:%M:%S%z'
+dbname = 'db/db.sqlite3'
+time_format = '%Y-%m-%d %H:%M:%S%z'
+conn = sqlite3.connect(dbname)
 
-    def __init__(self):
-        self.conn = sqlite3.connect(self.dbname)
-
-    def write_log(self, type, content):
-        self.conn.execute(
-            'create table if not exists logs ('
-            + 'datetime text not null primary key,'
-            + 'type text,'
-            + 'content text'
-            + ');'
-        )
-        sql = 'insert into logs (datetime, type, content)'\
-            + ' values (?, ?, ?);'
-        now = datetime.datetime.now().strftime(self.time_format)
-        values = (now, type, content)
-        self.conn.execute(sql, values)
-        self.conn.commit()
+def write_log(self, type, content):
+    conn.execute(
+        'create table if not exists logs ('
+        + 'datetime text not null primary key,'
+        + 'type text,'
+        + 'content text'
+        + ');'
+    )
+    sql = 'insert into logs (datetime, type, content)'\
+        + ' values (?, ?, ?);'
+    now = datetime.datetime.now().strftime(time_format)
+    values = (now, type, content)
+    conn.execute(sql, values)
+    conn.commit()

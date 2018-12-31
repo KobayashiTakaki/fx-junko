@@ -4,15 +4,21 @@ import pandas as pd
 import db.db  as db
 import api.oanda_api as oanda_api
 
-db = db.Db()
 conn = db.conn
 db_time_fromat = db.time_format
-oanda_api = oanda_api.OandaApi()
 
 def now_in_unixtime():
     tz = datetime.timezone.utc
     now = datetime.datetime.now(tz)
     return int(now.timestamp())
+
+def loop():
+    update_price_data()
+    update_trade_data()
+    tz = datetime.timezone.utc
+    now = datetime.datetime.now(tz)
+    print(now)
+    print('updated')
 
 def is_macd_crossed(candle):
     df = pd.read_sql_query('select datetime,close from prices;', conn)
@@ -170,14 +176,9 @@ def refresh_open_trade():
     return df.iloc[-1]
 
 if __name__=='__main__':
-    while(1):
+    while True:
         try:
-            update_price_data()
-            update_trade_data()
-            tz = datetime.timezone.utc
-            now = datetime.datetime.now(tz)
-            print(now)
-            print('updated')
+            loop()
         except Exception as e:
             print(e)
             continue

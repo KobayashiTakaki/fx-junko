@@ -11,15 +11,13 @@ class Trader():
             'granularity': 'S5',
             'count': 1
         }
-        self.oanda_api = oanda_api.OandaApi()
-        self.twitter_api = twitter_api.TwitterApi()
+
         self.open_trade = None
 
     def main(self):
         while True:
             try:
                 self.loop()
-                #print('test')
             except Exception as e:
                 print(e)
                 continue
@@ -39,7 +37,7 @@ class Trader():
                 if analizer.is_macd_keep_going('up'):
                     self.exit()
 
-            candle = self.oanda_api.get_candles(self.instrument, self.params, False)
+            candle = oanda_api.get_candles(self.instrument, self.params, False)
             print(candle)
             if analizer.is_macd_crossed(candle)[0]:
                 self.exit()
@@ -48,7 +46,7 @@ class Trader():
             #ポジションがない場合
             print('i dont have a open position')
 
-            candle = self.oanda_api.get_candles(self.instrument, self.params, False)
+            candle = oanda_api.get_candles(self.instrument, self.params, False)
             is_macd_crossed = analizer.is_macd_crossed(candle)
 
             if is_macd_crossed[0]:
@@ -71,7 +69,7 @@ class Trader():
         now = datetime.datetime.now(tz)
         print(now)
 
-        response = self.oanda_api.market_order(amount)
+        response = oanda_api.market_order(amount)
         if response.status == 201:
             print(amount)
             print('entry')
@@ -91,7 +89,7 @@ class Trader():
             "[Entry]",
             start_side + " " + self.instrument + "@" + start_price
         ]
-        self.twitter_api.tweet(action, feeling, info)
+        twitter_api.tweet(action, feeling, info)
 
         #エントリーしたら5分我慢
         sleep(300)
@@ -103,10 +101,10 @@ class Trader():
 
         print('close position')
 
-        self.oanda_api.close_trade(self.open_trade['tradeId'])
+        oanda_api.close_trade(self.open_trade['tradeId'])
         self.open_trade = analizer.refresh_open_trade()
 
-        last_trade = self.oanda_api.get_trades('CLOSED', 1)[0]
+        last_trade = oanda_api.get_trades('CLOSED', 1)[0]
 
         instrument = self.instrument.replace('_', '/')
         start_side = 'buy' if int(last_trade['initialUnits']) > 0 else 'sell'
@@ -129,7 +127,7 @@ class Trader():
         else:
             action = 'losscut'
             feeling = 'negative'
-        self.twitter_api.tweet(action, feeling, info)
+        twitter_api.tweet(action, feeling, info)
 
         #イグジットしたら5分我慢
         sleep(300)
