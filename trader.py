@@ -13,16 +13,6 @@ class Trader():
         }
         self.open_trade = None
 
-    def main(self):
-        while True:
-            try:
-                self.loop()
-            except Exception as e:
-                print(e)
-                continue
-            finally:
-                sleep(10)
-
     def loop(self):
         self.open_trade = analizer.refresh_open_trade()
         if self.open_trade is not None:
@@ -133,4 +123,4 @@ class Trader():
 
 if __name__=='__main__':
     trader = Trader()
-    trader.main()
+    trader.loop()

@@ -176,11 +176,9 @@ def refresh_open_trade():
     return df.iloc[-1]
 
 if __name__=='__main__':
-    while True:
-        try:
-            loop()
-        except Exception as e:
-            print(e)
-            continue
-        finally:
-            sleep(120)
+    try:
+        loop()
+    except Exception as e:
+        print(e)
+    finally:
+        sleep(120)
