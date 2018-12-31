@@ -169,8 +169,6 @@ def refresh_open_trade():
 
     return df.iloc[-1]
 
-
-
 if __name__=='__main__':
     while(1):
         try:

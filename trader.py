@@ -5,12 +5,6 @@ import api.twitter_api as twitter_api
 import analizer
 
 class Trader():
-    instrument = 'USD_JPY'
-    params = {
-        'granularity': 'S5',
-        'count': 1
-    }
-
     def __init__(self):
         self.instrument = 'USD_JPY'
         self.params = {
