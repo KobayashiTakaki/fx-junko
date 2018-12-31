@@ -72,12 +72,14 @@ def is_macd_keep_going(direction):
 
     # print(df)
     if direction == 'down':
-        #closeが最大なのが一番古いデータ->下がり続けている
-        if df['close'].idxmax() == df.index.max():
+        #closeの降順ソートと日時の昇順ソートが一致->下がり続けている
+        if list(df.sort_values('close', ascending=False).index) \
+            == list(df.sort_values('datetime').index):
             return True
     if direction == 'up':
-        #closeが最小なのが一番古いデータ->上がり続けている
-        if df['close'].idxmin() == df.index.max():
+        #closeの昇順ソートと日時の昇順ソートが一致->上がり続けている
+        if list(df.sort_values('close').index) \
+            == list(df.sort_values('datetime').index):
             return True
 
     return False
@@ -151,6 +153,23 @@ def update_trade_data():
     trades = oanda_api.get_trades('ALL', 10)
     df = pd.DataFrame(trades)
     df.reindex(columns=trades_header).to_sql('trades', conn, if_exists="replace")
+
+def refresh_open_trade():
+    update_trade_data()
+    df = pd.read_sql_query(
+        "select * from trades where state = 'OPEN' order by openTime;"
+        , conn)
+
+    if len(df) > 1:
+        for i in range(0, len(df)-1):
+            oanda_api.close_trade(df.at[i, 'tradeId'])
+
+    if len(df) == 0:
+        return None
+
+    return df.iloc[-1]
+
+
 
 if __name__=='__main__':
     while(1):
