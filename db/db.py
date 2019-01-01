@@ -25,6 +25,6 @@ def delete_old_log():
     keep_from = (datetime.datetime.now() - keep_span).strftime(time_format)
     conn.execute(
         'delete from logs where datetime < '
-        + '\'' + keep_from '\' ;'
+        + '\'' + keep_from + '\' ;'
     )
     conn.commit()
