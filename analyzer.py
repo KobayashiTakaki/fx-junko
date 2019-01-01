@@ -41,10 +41,6 @@ def is_macd_crossed(use_current=False):
         #シグナルを下向きにクロス
         return True, -1
 
-
-
-
-
 def is_entry_interval_enough():
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
     tz = datetime.timezone.utc
