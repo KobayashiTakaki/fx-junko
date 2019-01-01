@@ -10,9 +10,10 @@ AT = config['DEFAULT']['ACCESS_TOKEN']
 ATS = config['DEFAULT']['ACCESS_TOKEN_SECRET']
 
 session = OAuth1Session(CK, CS, AT, ATS)
-user_show_url = 'https://api.twitter.com/1.1/users/show.json'
+
 
 def tweet(action, feeling, info):
+    url = 'https://api.twitter.com/1.1/statuses/update.json'
     message = tweet_messages.get_message(action)
     kaomoji = tweet_messages.get_kaomoji(feeling)
     tags = "#USDJPY #FX"
@@ -21,4 +22,10 @@ def tweet(action, feeling, info):
         + "\n".join(info) + "\n"
         + tags
     )
-    print(content)
+    params = {
+        'status': content
+    }
+    response = session.post(url, params=params)
+
+    if response.status_code !== 200:
+        raise Exception('tweet failed')
