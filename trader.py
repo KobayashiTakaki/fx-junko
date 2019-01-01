@@ -105,9 +105,6 @@ class Trader():
             feeling = 'negative'
         twitter_api.tweet(action, feeling, info)
 
-        #イグジットしたら5分我慢
-        sleep(300)
-
 if __name__=='__main__':
     trader = Trader()
     trader.loop()
