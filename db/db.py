@@ -19,3 +19,12 @@ def write_log(type, content):
     values = (now, type, content)
     conn.execute(sql, values)
     conn.commit()
+
+def delete_old_log():
+    keep_span = datetime.timedelta(weeks=1)
+    keep_from = (datetime.datetime.now() - keep_span).strftime(time_format)
+    conn.execute(
+        'delete from logs where datetime < '
+        + '\'' + keep_from '\' ;'
+    )
+    conn.commit()

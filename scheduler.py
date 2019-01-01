@@ -13,8 +13,12 @@ def trader_loop():
 def analyzer_loop():
     analyzer.loop()
 
+def delete_old_log():
+    db.delete_old_log()
+
 schedule.every(60).seconds.do(trader_loop)
 schedule.every(120).seconds.do(analyzer_loop)
+schedule.every(1).weeks.do(delete_old_log)
 
 while True:
     try:
