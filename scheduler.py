@@ -1,7 +1,7 @@
 import schedule
 import time
 import trader
-import analizer
+import analyzer
 
 trader = trader.Trader()
 
@@ -9,11 +9,11 @@ def trader_loop():
     trader.loop()
 
 
-def analizer_loop():
-    analizer.loop()
+def analyzer_loop():
+    analyzer.loop()
 
 schedule.every(60).seconds.do(trader_loop)
-schedule.every(120).seconds.do(analizer_loop)
+schedule.every(120).seconds.do(analyzer_loop)
 
 while True:
     try:

@@ -17,8 +17,7 @@ def loop():
     update_trade_data()
     tz = datetime.timezone.utc
     now = datetime.datetime.now(tz)
-    print(now)
-    print('updated')
+    db.write_log('analyzer', 'updated data')
 
 def is_macd_crossed(use_current=False):
     df = pd.read_sql_query('select datetime,close from prices limit 2;', conn)
@@ -55,7 +54,7 @@ def is_entry_interval_enough():
         datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
         - datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
     )
-    print('last_cross_interval ' + str(last_cross_interval))
+    db.write_log('anali', 'last_cross_interval ' + str(last_cross_interval))
 
     #前回クロスと今の間の時間
     interval_from_last_cross = (

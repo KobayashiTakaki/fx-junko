@@ -2,7 +2,7 @@ import datetime
 from time import sleep
 import api.oanda_api as oanda_api
 import api.twitter_api as twitter_api
-import analizer
+import analyzer
 
 class Trader():
     def __init__(self):
@@ -14,27 +14,27 @@ class Trader():
         self.open_trade = None
 
     def loop(self):
-        self.open_trade = analizer.refresh_open_trade()
+        self.open_trade = analyzer.refresh_open_trade()
         if self.open_trade is not None:
             print('i have an open trade')
 
             if int(self.open_trade['initialUnits']) > 0:
-                if analizer.is_macd_keep_going('down'):
+                if analyzer.is_macd_keep_going('down'):
                     self.exit()
             else:
-                if analizer.is_macd_keep_going('up'):
+                if analyzer.is_macd_keep_going('up'):
                     self.exit()
 
-            if analizer.is_macd_crossed()[0]:
+            if analyzer.is_macd_crossed()[0]:
                 self.exit()
 
         else:
             #ポジションがない場合
             print('i dont have a open position')
 
-            is_macd_crossed = analizer.is_macd_crossed()
+            is_macd_crossed = analyzer.is_macd_crossed()
             if is_macd_crossed[0]:
-                if analizer.is_entry_interval_enough():
+                if analyzer.is_entry_interval_enough():
                     if is_macd_crossed[1] == 1:
                         #上向きクロスだったら買いでエントリー
                         print('entry by buy')
@@ -60,8 +60,8 @@ class Trader():
         else:
             raise Exception('entry failed')
 
-        analizer.update_trade_data()
-        self.open_trade = analizer.refresh_open_trade()
+        analyzer.update_trade_data()
+        self.open_trade = analyzer.refresh_open_trade()
 
         print(self.open_trade)
         action = 'entry'
@@ -86,7 +86,7 @@ class Trader():
         print('close position')
 
         oanda_api.close_trade(self.open_trade['tradeId'])
-        self.open_trade = analizer.refresh_open_trade()
+        self.open_trade = analyzer.refresh_open_trade()
 
         last_trade = oanda_api.get_trades('CLOSED', 1)[0]
 
