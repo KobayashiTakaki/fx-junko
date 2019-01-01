@@ -5,10 +5,10 @@ dbname = 'db/db.sqlite3'
 time_format = '%Y-%m-%d %H:%M:%S%z'
 conn = sqlite3.connect(dbname)
 
-def write_log(self, type, content):
+def write_log(type, content):
     conn.execute(
         'create table if not exists logs ('
-        + 'datetime text not null primary key,'
+        + 'datetime text,'
         + 'type text,'
         + 'content text'
         + ');'

@@ -3,6 +3,7 @@ from time import sleep
 import api.oanda_api as oanda_api
 import api.twitter_api as twitter_api
 import analyzer
+import db.db as db
 
 class Trader():
     def __init__(self):
@@ -16,7 +17,7 @@ class Trader():
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
         if self.open_trade is not None:
-            print('i have an open trade')
+            db.write_log('trader', 'i have an open trade')
 
             if int(self.open_trade['initialUnits']) > 0:
                 if analyzer.is_macd_keep_going('down'):
@@ -30,40 +31,35 @@ class Trader():
 
         else:
             #ポジションがない場合
-            print('i dont have a open position')
+            db.write_log('trader', 'i dont have a open position')
 
             is_macd_crossed = analyzer.is_macd_crossed()
             if is_macd_crossed[0]:
                 if analyzer.is_entry_interval_enough():
                     if is_macd_crossed[1] == 1:
                         #上向きクロスだったら買いでエントリー
-                        print('entry by buy')
+                        db.write_log('trader', 'entry by buy')
                         self.entry(100)
                     else:
                         #下向きクロスだったら売りでエントリー
-                        print('entry by sell')
+                        db.write_log('trader', 'entry by sell')
                         self.entry(-100)
                 else:
-                    print('not enough')
+                    db.write_log('trader', 'not enough')
             else:
-                print('not crossed')
+                db.write_log('trader', 'not crossed')
 
     def entry(self, amount):
-        tz = datetime.timezone.utc
-        now = datetime.datetime.now(tz)
-        print(now)
-
         response = oanda_api.market_order(amount)
         if response.status == 201:
-            print(amount)
-            print('entry')
+            db.write_log('trader', 'entry. amount: ' + str(amount))
         else:
             raise Exception('entry failed')
 
         analyzer.update_trade_data()
         self.open_trade = analyzer.refresh_open_trade()
 
-        print(self.open_trade)
+        db.write_log('trader', 'open_trade' + str(self.open_trade))
         action = 'entry'
         feeling = 'neutral'
         start_side = 'buy' if int(self.open_trade['initialUnits']) > 0 else 'sell'
@@ -79,11 +75,7 @@ class Trader():
         sleep(300)
 
     def exit(self):
-        tz = datetime.timezone.utc
-        now = datetime.datetime.now(tz)
-        print(now)
-
-        print('close position')
+        db.write_log('trader', 'close position')
 
         oanda_api.close_trade(self.open_trade['tradeId'])
         self.open_trade = analyzer.refresh_open_trade()

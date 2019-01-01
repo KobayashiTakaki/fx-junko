@@ -27,5 +27,5 @@ def tweet(action, feeling, info):
     }
     response = session.post(url, params=params)
 
-    if response.status_code !== 200:
+    if response.status_code != 200:
         raise Exception('tweet failed')

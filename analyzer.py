@@ -54,14 +54,14 @@ def is_entry_interval_enough():
         datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
         - datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
     )
-    db.write_log('anali', 'last_cross_interval ' + str(last_cross_interval))
+    db.write_log('analyzer', 'last_cross_interval ' + str(last_cross_interval))
 
     #前回クロスと今の間の時間
     interval_from_last_cross = (
         datetime.datetime.now(tz)
         - datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
     )
-    print('interval_from_last_cross ' + str(interval_from_last_cross))
+    db.write_log('analyzer', 'interval_from_last_cross ' + str(interval_from_last_cross))
 
     enough_time = datetime.timedelta(minutes=55)
 
@@ -83,7 +83,6 @@ def is_macd_keep_going(direction):
         , conn
     )
 
-    # print(df)
     if direction == 'down':
         #closeの降順ソートと日時の昇順ソートが一致->下がり続けている
         if list(df.sort_values('close', ascending=False).index) \
@@ -186,6 +185,6 @@ if __name__=='__main__':
     try:
         loop()
     except Exception as e:
-        print(e)
+        db.write_log('exception', str(e))
     finally:
         sleep(120)

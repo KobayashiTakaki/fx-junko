@@ -2,6 +2,7 @@ import schedule
 import time
 import trader
 import analyzer
+import db.db as db
 
 trader = trader.Trader()
 
@@ -20,5 +21,5 @@ while True:
         schedule.run_pending()
         time.sleep(1)
     except Exception as e:
-        print(e)
+        db.write_log('exception', str(e))
         continue
