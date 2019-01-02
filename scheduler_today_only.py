@@ -25,7 +25,7 @@ def deactivate():
     schedule.clear()
     is_active = False
 
-schedule.every().day.at(start_time).do(deactivate)
+schedule.every().day.at(start_time).do(activate)
 schedule.every().day.at('23:00').do(deactivate)
 
 while is_active:
