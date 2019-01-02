@@ -10,10 +10,8 @@ CS = config['DEFAULT']['CONSUMER_SECRET']
 AT = config['DEFAULT']['ACCESS_TOKEN']
 ATS = config['DEFAULT']['ACCESS_TOKEN_SECRET']
 
-session = OAuth1Session(CK, CS, AT, ATS)
-
-
 def tweet(action, feeling, info):
+    session = OAuth1Session(CK, CS, AT, ATS)
     url = 'https://api.twitter.com/1.1/statuses/update.json'
     message = tweet_messages.get_message(action)
     kaomoji = tweet_messages.get_kaomoji(feeling)
