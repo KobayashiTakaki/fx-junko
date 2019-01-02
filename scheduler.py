@@ -3,6 +3,7 @@ import time
 import trader
 import analyzer
 import db.db as db
+import api.oanda_api as oanda_api
 
 trader = trader.Trader()
 
@@ -14,8 +15,9 @@ def analyzer_loop():
 
 def activate():
     schedule.clear(tag='fx')
-    schedule.every(60).seconds.do(trader_loop).tag('fx')
-    schedule.every(60).seconds.do(analyzer_loop).tag('fx')
+    if oanda_api.is_market_open():
+        schedule.every(60).seconds.do(trader_loop).tag('fx')
+        schedule.every(60).seconds.do(analyzer_loop).tag('fx')
 
 def deactivate():
     trader.exit()

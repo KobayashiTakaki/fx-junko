@@ -98,3 +98,22 @@ def close_all_position(side):
         account_id, instrument=instrument, **params
     )
     return response
+
+def is_market_open():
+    instrument = 'USD_JPY'
+    candles_params = {
+        'granularity': 'S5',
+        'count': 1
+    }
+    candle = get_candles(instrument, candles_params, False)[0]
+
+    now = datetime.datetime.now(datetime.timezone.utc)
+    candle_time = datetime.datetime.strptime(
+        candle['datetime'],
+        '%Y-%m-%d %H:%M:%S%z'
+    )
+
+    if now - candle_time > datetime.timedelta(minutes=30):
+        return False
+    else:
+        return True
