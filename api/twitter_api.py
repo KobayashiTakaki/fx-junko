@@ -1,6 +1,7 @@
 import configparser
 from requests_oauthlib import OAuth1Session
 import api.tweet_messages as tweet_messages
+import db.db as db
 
 config = configparser.ConfigParser()
 config.read('api/twitter_conf.ini')
@@ -30,7 +31,7 @@ def tweet(action, feeling, info):
     done = False
     retry = 1
     max_retry = 3
-    while !(done) and (retry <= max_retry):
+    while (not done) and (retry <= max_retry):
         try:
             response = session.post(url, params=params)
             if response.status_code != 200:
@@ -42,4 +43,4 @@ def tweet(action, feeling, info):
             db.write_log('exception', str(e))
             continue
         finally:
-            retry++
+            retry +=1
