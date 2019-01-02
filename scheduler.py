@@ -24,14 +24,14 @@ def deactivate():
 def delete_old_log():
     db.delete_old_log()
 
-schedule.every().monday.at('08:00').do(activate)
-schedule.every().tuesday.at('08:00').do(activate)
-schedule.every().wednesday.at('08:00').do(activate)
-schedule.every().thursday.at('08:00').do(activate)
-schedule.every().friday.at('08:00').do(activate)
-schedule.every().saturday.at('05:00').do(deactivate)
+schedule.every().sunday.at('23:00').do(activate)
+schedule.every().monday.at('23:00').do(activate)
+schedule.every().tuesday.at('23:00').do(activate)
+schedule.every().wednesday.at('23:00').do(activate)
+schedule.every().thursday.at('23:00').do(activate)
+schedule.every().friday.at('20:00').do(deactivate)
 
-schedule.every(1).weeks.do(delete_old_log)
+schedule.every().weeks.do(delete_old_log)
 
 while True:
     try:
