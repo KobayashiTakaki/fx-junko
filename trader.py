@@ -43,12 +43,12 @@ class Trader():
                         if analyzer.market_trend() != -1:
                             #上向きクロスだったら買いでエントリー
                             db.write_log('trader', 'entry by buy')
-                            self.entry(entry_amount)
+                            self.entry(self.entry_amount)
                     else:
                         if analyzer.market_trend() != 1:
                             #下向きクロスだったら売りでエントリー
                             db.write_log('trader', 'entry by sell')
-                            self.entry(-entry_amount)
+                            self.entry(-self.entry_amount)
                 else:
                     db.write_log('trader', 'not enough')
             else:
@@ -58,13 +58,13 @@ class Trader():
                 if analyzer.is_cross_close_enough():
                     db.write_log('trader', 'macd is up trend')
                     db.write_log('trader', 'entry by buy')
-                    self.entry(entry_amount)
+                    self.entry(self.entry_amount)
 
             if analyzer.is_macd_trending('down', -0.008):
                 if analyzer.is_cross_close_enough():
                     db.write_log('trader', 'macd is down trend')
                     db.write_log('trader', 'entry by sell')
-                    self.entry(-entry_amount)
+                    self.entry(-self.entry_amount)
 
 
     def entry(self, amount):
