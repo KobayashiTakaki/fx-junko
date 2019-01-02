@@ -80,17 +80,15 @@ class Trader():
         db.write_log('trader', 'open_trade' + str(self.open_trade))
         action = 'entry'
         feeling = 'neutral'
+        instrument = self.instrument.replace('_', '/')
         start_side = 'buy' if int(self.open_trade['initialUnits']) > 0 else 'sell'
         start_price = format(self.open_trade['price'], '.3f')
 
         info = [
             "[Entry]",
-            start_side + " " + self.instrument + "@" + start_price
+            start_side + " " + instrument + "@" + start_price
         ]
         twitter_api.tweet(action, feeling, info)
-
-        #エントリーしたら5分我慢
-        sleep(300)
 
     def exit(self):
         db.write_log('trader', 'close position')
