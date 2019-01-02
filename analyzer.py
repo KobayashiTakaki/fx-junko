@@ -21,7 +21,7 @@ def loop():
     db.write_log('analyzer', 'updated data')
 
 def is_macd_crossed(use_current=False):
-    df = pd.read_sql_query('select datetime,close from prices limit 2;', conn)
+    df = pd.read_sql_query('select datetime, close from prices order by datetime;', conn)
 
     if use_current:
         candle = oanda_api.get_candles(self.instrument, self.params, False)
