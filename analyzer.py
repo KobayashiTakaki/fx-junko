@@ -44,7 +44,6 @@ def is_macd_crossed(use_current=False):
 
 def is_cross_interval_enough():
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
-    tz = datetime.timezone.utc
 
     #pricesテーブルにcrossedのレコードが3件以上無いならTrue
     if len(df) < 3:
@@ -73,6 +72,21 @@ def is_cross_interval_enough():
         return False
     else:
         return True
+
+def is_cross_close_enough():
+    df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
+    #前回クロスと現在時間の差
+    interval_from_last_cross = (
+        datetime.datetime.now(datetime.timezone.utc) -
+        datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
+    )
+    db.write_log('analyzer: ', 'interval_from_last_cross: ' + str(interval_from_last_cross))
+
+    max_time = datetime.timedelta(minutes=20)
+    if interval_from_last_cross < max_time:
+        return True
+
+    return False
 
 def is_macd_trending(direction, least_slope=0):
     count = 3
