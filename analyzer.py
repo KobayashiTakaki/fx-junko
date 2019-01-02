@@ -203,14 +203,32 @@ def is_exit_interval_enough():
 
     return False
 
-def market_trend():
-    df = pd.read_sql_query("select macd from prices;", conn)
-    macd_positive = df.query('macd > 0')
-    if len(macd_positive)/len(df) > 0.7:
-        return 1
-    if len(macd_positive)/len(df) < 0.3:
-        return -1
+def update_long_price_data():
+    price_header = [
+        'datetime',
+        'open',
+        'high',
+        'low',
+        'close'
+    ]
+    params = {
+        'granularity': 'H1',
+        'count': 24,
+        'completed_only': True
+    }
 
+    candles = oanda_api.get_candles(params=params)
+    df = pd.DataFrame(candles)
+    df.reindex(columns=price_header).to_sql('long_prices', conn, if_exists="replace")
+
+def market_trend():
+    df = pd.read_sql_query("select close from long_prices order by datetime;", conn)
+    #closeの値の近似直線の傾きを算出
+    y = list(df['close'])
+    x = np.linspace(1, len(y), len(y))
+    slope = np.polyfit(x, y, 1)[0]
+    db.write_log('analyzer', 'long_price_slope: ' + slope)
+    #どのくらいの傾きにするのが適当か調べるため今のところは0を返す
     return 0
 
 if __name__=='__main__':
