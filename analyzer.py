@@ -46,26 +46,30 @@ def is_entry_interval_enough():
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
     tz = datetime.timezone.utc
 
-    #前回クロスと前々回クロスの間の時間
-    last_cross_interval = (
+    #pricesテーブルにcrossedのレコードが3件以上無いならTrue
+    if len(df) < 3:
+        return True
+
+    #-1回クロスと-2回クロスの間の時間
+    cross_interval_1 = (
         datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
         - datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
     )
-    db.write_log('analyzer', 'last_cross_interval ' + str(last_cross_interval))
+    db.write_log('analyzer', 'cross_interval_1: ' + str(cross_interval_1))
 
-    #前回クロスと今の間の時間
-    interval_from_last_cross = (
-        datetime.datetime.now(tz)
-        - datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
+    #-2回クロスと-3回クロスの間の時間
+    cross_interval_2 = (
+        datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
+        - datetime.datetime.strptime(df.iloc[-3]['datetime'], db_time_fromat)
     )
-    db.write_log('analyzer', 'interval_from_last_cross ' + str(interval_from_last_cross))
+    db.write_log('analyzer', 'cross_interval_2: ' + str(cross_interval_2))
 
     enough_time = datetime.timedelta(minutes=55)
 
-    #前回クロスと前々回クロスの間が十分離れていない
-    #かつ前回クロスと今が十分離れていない場合、False
-    if (last_cross_interval < enough_time
-        and interval_from_last_cross < enough_time):
+    #-1回クロスと-2回クロスの間が十分離れていない
+    #かつ-2回クロスと-3回クロスの間が十分離れていない場合、False
+    if (cross_interval_1 < enough_time
+        and cross_interval_2 < enough_time):
         return False
     else:
         return True
