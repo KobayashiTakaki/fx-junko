@@ -70,7 +70,7 @@ def is_entry_interval_enough():
     else:
         return True
 
-def is_macd_keep_going(direction, least_slope=0):
+def is_macd_trending(direction, least_slope=0):
     count = 3
 
     #最新のレコードをcount件取得
