@@ -26,9 +26,20 @@ def tweet(action, feeling, info):
         'status': content
     }
     db.write_log('twitter_api', 'content: ' + content)
-    try:
-        response = session.post(url, params=params)
-        if response.status_code != 200:
-            raise Exception('tweet failed')
-    except Exception as e:
-        db.write_log('exception', str(e))
+
+    done = False
+    retry = 1
+    max_retry = 3
+    while !(done) and (retry <= max_retry):
+        try:
+            response = session.post(url, params=params)
+            if response.status_code != 200:
+                raise Exception('tweet failed')
+            else:
+                db.write_log('twitter_api', 'tweet scceeded')
+                done = True
+        except Exception as e:
+            db.write_log('exception', str(e))
+            continue
+        finally:
+            retry++
