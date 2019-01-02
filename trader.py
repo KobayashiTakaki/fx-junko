@@ -91,7 +91,7 @@ class Trader():
         instrument = self.instrument.replace('_', '/')
         start_side = 'buy' if int(last_trade['initialUnits']) > 0 else 'sell'
         start_price = format(last_trade['price'], '.3f')
-        end_side = 'buy' if start_side == 'sell' else 'buy'
+        end_side = 'buy' if start_side == 'sell' else 'sell'
         end_price = format(last_trade['averageClosePrice'], '.3f')
         pips = float(last_trade['realizedPL'])
 
