@@ -18,8 +18,8 @@ def analyzer_loop():
 
 def activate():
     schedule.clear(tag='fx')
-    schedule.every(60).seconds.do(trader_loop).tag('fx')
     schedule.every(60).seconds.do(analyzer_loop).tag('fx')
+    schedule.every(60).seconds.do(trader_loop).tag('fx')
 
 def deactivate():
     schedule.clear()

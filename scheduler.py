@@ -16,8 +16,8 @@ def analyzer_loop():
 def activate():
     schedule.clear(tag='fx')
     if oanda_api.is_market_open():
-        schedule.every(60).seconds.do(trader_loop).tag('fx')
         schedule.every(60).seconds.do(analyzer_loop).tag('fx')
+        schedule.every(60).seconds.do(trader_loop).tag('fx')
 
 def deactivate():
     trader.exit()
