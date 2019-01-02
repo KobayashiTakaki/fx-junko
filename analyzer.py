@@ -1,6 +1,7 @@
 import datetime
 from time import sleep
 import pandas as pd
+import numpy as np
 import db.db  as db
 import api.oanda_api as oanda_api
 
@@ -69,25 +70,30 @@ def is_entry_interval_enough():
     else:
         return True
 
-def is_macd_keep_going(direction):
+def is_macd_keep_going(direction, least_slope=0):
     count = 3
 
     #最新のレコードをcount件取得
     df = pd.read_sql_query(
-        'select datetime, close from prices order by datetime desc '
+        'select datetime, macd from prices order by datetime desc '
         + 'limit ' + str(count) + ';'
         , conn
     )
+    #降順で取得したのを昇順に変更
+    df = df.sort_values('datetime')
 
+    #macdの値の近似直線の傾きを算出
+    y = list(df['macd'])
+    x = np.linspace(1, len(y), len(y))
+    slope = np.polyfit(x, y, 1)[0]
+
+    db.write_log('analyzer', 'macd slope: ' + str(slope))
     if direction == 'down':
-        #closeの降順ソートと日時の昇順ソートが一致->下がり続けている
-        if list(df.sort_values('close', ascending=False).index) \
-            == list(df.sort_values('datetime').index):
+        if slope <= least_slope:
             return True
+
     if direction == 'up':
-        #closeの昇順ソートと日時の昇順ソートが一致->上がり続けている
-        if list(df.sort_values('close').index) \
-            == list(df.sort_values('datetime').index):
+        if slope >= least_slope:
             return True
 
     return False
