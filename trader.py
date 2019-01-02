@@ -21,10 +21,10 @@ class Trader():
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
                 if int(self.open_trade['initialUnits']) > 0:
-                    if analyzer.is_macd_trending('down'):
+                    if analyzer.is_macd_trending('down', -0.005):
                         self.exit()
                 else:
-                    if analyzer.is_macd_trending('up'):
+                    if analyzer.is_macd_trending('up', 0.005):
                         self.exit()
 
                 if analyzer.is_macd_crossed()[0]:
