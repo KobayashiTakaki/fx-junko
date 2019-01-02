@@ -12,6 +12,7 @@ class Trader():
             'granularity': 'S5',
             'count': 1
         }
+        self.entry_amount = 100
         self.open_trade = None
 
     def loop(self):
@@ -42,18 +43,27 @@ class Trader():
                         if analyzer.market_trend() != -1:
                             #上向きクロスだったら買いでエントリー
                             db.write_log('trader', 'entry by buy')
-                            self.entry(100)
+                            self.entry(entry_amount)
                     else:
                         if analyzer.market_trend() != 1:
                             #下向きクロスだったら売りでエントリー
                             db.write_log('trader', 'entry by sell')
-                            self.entry(-100)
+                            self.entry(-entry_amount)
                 else:
                     db.write_log('trader', 'not enough')
             else:
                 db.write_log('trader', 'not crossed')
 
-        analyzer.is_macd_trending('up')
+            if analyzer.is_macd_trending('up', 0.008):
+                db.write_log('trader', 'macd is up trend')
+                db.write_log('trader', 'entry by buy')
+                self.entry(entry_amount)
+
+            if analyzer.is_macd_trending('down', -0.008):
+                db.write_log('trader', 'macd is down trend')
+                db.write_log('trader', 'entry by sell')
+                self.entry(-entry_amount)
+
 
     def entry(self, amount):
         response = oanda_api.market_order(amount)
