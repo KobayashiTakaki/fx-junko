@@ -18,16 +18,18 @@ class Trader():
         self.open_trade = analyzer.refresh_open_trade()
         if self.open_trade is not None:
             db.write_log('trader', 'i have an open trade')
+            if analyzer.is_exit_interval_enough():
+                if int(self.open_trade['initialUnits']) > 0:
+                    if analyzer.is_macd_trending('down'):
+                        self.exit()
+                else:
+                    if analyzer.is_macd_trending('up'):
+                        self.exit()
 
-            if int(self.open_trade['initialUnits']) > 0:
-                if analyzer.is_macd_trending('down'):
+                if analyzer.is_macd_crossed()[0]:
                     self.exit()
             else:
-                if analyzer.is_macd_trending('up'):
-                    self.exit()
-
-            if analyzer.is_macd_crossed()[0]:
-                self.exit()
+                db.write_log('trader', 'not enough time to exit')
 
         else:
             #ポジションがない場合
