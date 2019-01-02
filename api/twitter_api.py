@@ -29,8 +29,8 @@ def tweet(action, feeling, info):
     db.write_log('twitter_api', 'content: ' + content)
 
     done = False
-    retry = 1
-    max_retry = 3
+    retry = 0
+    max_retry = 2
     while (not done) and (retry <= max_retry):
         try:
             response = session.post(url, params=params)
