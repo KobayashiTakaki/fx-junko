@@ -183,6 +183,22 @@ def refresh_open_trade():
 
     return df.iloc[-1]
 
+def is_exit_interval_enough():
+    open_trade = pd.read_sql_query(
+        "select * from trades where state = 'OPEN' order by openTime;"
+        , conn)
+    if len(open_trade > 0):
+        open_time = datetime.datetime.strptime(
+            open_trade.iloc[0]['openTime'],
+            db_time_fromat
+        )
+        print(open_time)
+        now = datetime.datetime.now(datetime.timezone.utc)
+        if now - open_time > datetime.timedelta(minutes=5):
+            return True
+
+    return False
+
 def market_trend():
     df = pd.read_sql_query("select macd from prices;", conn)
     macd_positive = df.query('macd > 0')
