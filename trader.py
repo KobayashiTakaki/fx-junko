@@ -38,7 +38,7 @@ class Trader():
 
             is_macd_crossed = analyzer.is_macd_crossed()
             if is_macd_crossed[0]:
-                if analyzer.is_entry_interval_enough():
+                if analyzer.is_cross_interval_enough():
                     if is_macd_crossed[1] == 1:
                         if analyzer.market_trend() != -1:
                             #上向きクロスだったら買いでエントリー
