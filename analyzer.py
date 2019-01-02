@@ -183,6 +183,16 @@ def refresh_open_trade():
 
     return df.iloc[-1]
 
+def market_trend():
+    df = pd.read_sql_query("select macd from prices;", conn)
+    macd_positive = df.query('macd > 0')
+    if len(macd_positive)/len(df) > 0.7:
+        return 1
+    if len(macd_positive)/len(df) < 0.3:
+        return -1
+
+    return 0
+
 if __name__=='__main__':
     try:
         loop()
