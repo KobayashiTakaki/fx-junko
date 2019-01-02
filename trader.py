@@ -49,6 +49,8 @@ class Trader():
             else:
                 db.write_log('trader', 'not crossed')
 
+        analyzer.is_macd_trending('up')
+
     def entry(self, amount):
         response = oanda_api.market_order(amount)
         if response.status == 201:
