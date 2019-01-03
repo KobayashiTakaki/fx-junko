@@ -49,6 +49,7 @@ def format_trade(trade):
         else str(datetime.datetime.strptime(
             trade.closeTime.split('.')[0] + '+00:00',
             '%Y-%m-%dT%H:%M:%S%z'))
+    stopLossOrderState = trade.stopLossOrder.state
 
     return {
         'tradeId': tradeId,
@@ -60,7 +61,8 @@ def format_trade(trade):
         'realizedPL': realizedPL,
         'unrealizedPL': unrealizedPL,
         'averageClosePrice': averageClosePrice,
-        'closeTime': closeTime
+        'closeTime': closeTime,
+        'stopLossOrderState': stopLossOrderState
     }
 
 def get_candles(instrument=instrument, params=candles_params, completed_only=True):
