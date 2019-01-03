@@ -78,7 +78,11 @@ def post_pending_tweets():
         trade = pd.read_sql_query(
             'select * from trades where tradeId = {};'.format(row['trade_id'])
             , conn
-        ).iloc[0]
+        )
+        if len(trade) > 0:
+            trade = trade.iloc[0]
+        else:
+            continue
 
         if row['trade_state'] == 'OPEN':
             action = 'entry'
