@@ -22,8 +22,9 @@ def activate():
     schedule.every(60).seconds.do(trader_loop).tag('fx')
 
 def deactivate():
-    schedule.clear()
     is_active = False
+    schedule.clear()
+
 
 schedule.every().day.at(start_time).do(activate)
 schedule.every().day.at('23:00').do(deactivate)
