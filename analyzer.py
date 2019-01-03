@@ -86,6 +86,41 @@ def is_cross_close_enough():
 
     return False
 
+def is_close_last_stop_loss(side):
+    last_stop = pd.read_sql_query(
+        'select * from trades '
+        + 'where stopLossOrderState = \'FILLED\' '
+        + 'order by closeTime desc limit 1;'
+        ,conn
+    )
+    if len(last_stop) > 0:
+        last_stop = last_stop.iloc[0]
+    else:
+        db.write_log('analyzer', 'no stop loss recently')
+        #stop lossが執行されたレコードが無ければFalse
+        return False
+
+    #前回のstop lossから経過した時間
+    interval_from_last_stop = (
+        datetime.datetime.now(datetime.timezone.utc) -
+        datetime.datetime.strptime(last_stop['closeTime'], db_time_fromat)
+    )
+    enough_time = datetime.timedelta(minutes=60)
+
+    #十分時間が経過していたらFalse
+    if interval_from_last_stop > enough_time:
+        db.write_log('analyzer', 'passed enough time from last stop loss')
+        return False
+
+    last_stop_side = 'buy' if last_stop['initialUnits'] > 0 else 'sell'
+
+    #最近のstop lossと同じsideだったらTrue
+    if last_stop_side == side:
+        db.write_log('analyzer', 'same side as recent stop loss')
+        return True
+
+    return False
+
 def is_macd_trending(direction, least_slope=0):
     count = 3
 
