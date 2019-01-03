@@ -75,7 +75,7 @@ class Trader():
             raise Exception('entry failed')
 
         self.open_trade = analyzer.refresh_open_trade()
-        db.write_log('trader', 'open_trade' + str(self.open_trade))
+        db.write_log('trader', 'open_trade: ' + str(self.open_trade))
 
     def exit(self):
         db.write_log('trader', 'close position')
