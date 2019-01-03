@@ -3,6 +3,7 @@ import datetime
 import time
 import trader
 import analyzer
+import tweeter
 import db.db as db
 
 trader = trader.Trader()
@@ -16,11 +17,15 @@ def trader_loop():
 def analyzer_loop():
     analyzer.loop()
 
+def tweeter_loop():
+    tweeter.post_pending_tweets()
+
 def activate():
     analyzer.update_long_price_data()
     schedule.clear(tag='fx')
     schedule.every(60).seconds.do(analyzer_loop).tag('fx')
     schedule.every(60).seconds.do(trader_loop).tag('fx')
+    schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
     is_active = False
