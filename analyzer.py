@@ -16,8 +16,6 @@ def now_in_unixtime():
 def loop():
     update_price_data()
     update_trade_data()
-    tz = datetime.timezone.utc
-    now = datetime.datetime.now(tz)
     db.write_log('analyzer', 'updated data')
 
 def is_macd_crossed(use_current=False):
