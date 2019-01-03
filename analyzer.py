@@ -180,7 +180,8 @@ def update_trade_data():
         'realizedPL',
         'unrealizedPL',
         'averageClosePrice',
-        'closeTime'
+        'closeTime',
+        'stopLossOrderState'
     ]
     trades = oanda_api.get_trades('ALL', 10)
     df = pd.DataFrame(trades)
