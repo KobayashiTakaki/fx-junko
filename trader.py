@@ -75,50 +75,13 @@ class Trader():
             raise Exception('entry failed')
 
         self.open_trade = analyzer.refresh_open_trade()
-
         db.write_log('trader', 'open_trade' + str(self.open_trade))
-        action = 'entry'
-        feeling = 'neutral'
-        instrument = self.instrument.replace('_', '/')
-        start_side = 'buy' if int(self.open_trade['initialUnits']) > 0 else 'sell'
-        start_price = format(self.open_trade['price'], '.3f')
-
-        info = [
-            "[Entry]",
-            start_side + " " + instrument + "@" + start_price
-        ]
-        twitter_api.tweet(action, feeling, info)
 
     def exit(self):
         db.write_log('trader', 'close position')
 
         oanda_api.close_trade(self.open_trade['tradeId'])
         self.open_trade = analyzer.refresh_open_trade()
-
-        last_trade = oanda_api.get_trades('CLOSED', 1)[0]
-
-        instrument = self.instrument.replace('_', '/')
-        start_side = 'buy' if int(last_trade['initialUnits']) > 0 else 'sell'
-        start_price = format(last_trade['price'], '.3f')
-        end_side = 'buy' if start_side == 'sell' else 'sell'
-        end_price = format(last_trade['averageClosePrice'], '.3f')
-        pips = float(last_trade['realizedPL'])
-
-        action = 'take_profit' if pips > 0 else 'losscut'
-        feeling = 'positive' if pips > 0 else 'negative'
-        info = [
-            "[Trade Close]",
-            start_side + " " + instrument + "@" + start_price,
-            end_side + " " + instrument + "@" + end_price,
-            format(pips, '.1f') + " pips"
-        ]
-        if pips > 0:
-            action = 'take_profit'
-            feeling = 'positive'
-        else:
-            action = 'losscut'
-            feeling = 'negative'
-        twitter_api.tweet(action, feeling, info)
 
 if __name__=='__main__':
     trader = Trader()
