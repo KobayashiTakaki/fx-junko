@@ -17,6 +17,7 @@ def analyzer_loop():
     analyzer.loop()
 
 def activate():
+    analyzer.update_long_price_data()
     schedule.clear(tag='fx')
     schedule.every(60).seconds.do(analyzer_loop).tag('fx')
     schedule.every(60).seconds.do(trader_loop).tag('fx')
