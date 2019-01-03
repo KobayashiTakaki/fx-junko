@@ -39,14 +39,16 @@ class Trader():
             is_macd_crossed = analyzer.is_macd_crossed()
             if is_macd_crossed[0]:
                 if analyzer.is_cross_interval_enough():
+                    #上向きクロスだったら買いでエントリー
                     if is_macd_crossed[1] == 1:
-                        if analyzer.market_trend() != -1:
-                            #上向きクロスだったら買いでエントリー
+                        if analyzer.market_trend() != -1 \
+                        and not analyzer.is_close_last_stop_loss('buy'):
                             db.write_log('trader', 'entry by buy')
                             self.entry(self.entry_amount)
+                    #下向きクロスだったら売りでエントリー
                     else:
-                        if analyzer.market_trend() != 1:
-                            #下向きクロスだったら売りでエントリー
+                        if analyzer.market_trend() != 1 \
+                        and not analyzer.is_close_last_stop_loss('sell'):
                             db.write_log('trader', 'entry by sell')
                             self.entry(-self.entry_amount)
                 else:
