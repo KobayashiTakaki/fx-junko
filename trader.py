@@ -7,11 +7,6 @@ import db.db as db
 
 class Trader():
     def __init__(self):
-        self.instrument = 'USD_JPY'
-        self.params = {
-            'granularity': 'S5',
-            'count': 1
-        }
         self.entry_amount = 100
         self.open_trade = None
 
