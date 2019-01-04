@@ -27,33 +27,58 @@ def update_trade_states():
     ).reindex(columns=table_columns)
 
     #テーブルにあるtrade_idのリスト
-    ids = list(state_records['trade_id'])
+    #ids = list(state_records['trade_id'])
 
-    #tradesテーブルにあるデータを取得
     trades = pd.read_sql_query(
-        'select tradeId, openTime, state from trades;'
+        'select tradeId, state from trades;'
+        ,conn
+    )
+
+    #tradesテーブルにあるデータから、すでにstatesに存在するものを取得
+    exist_trades = pd.read_sql_query(
+        'select tradeId, state from trades '
+        + 'where exists ('
+        + 'select * from ' + table_name + ' as states '
+        + 'where trades.tradeId = states.trade_id '
+        + ');'
         , conn
     )
 
-    for i, trade in trades.iterrows():
-        if trade['tradeId'] in ids:
-            #テーブルにtradeIdがあったら、そのレコードを更新
-            #既存レコードの行番号を取得
-            idx = state_records.query('trade_id == {}'.format(trade['tradeId'])).index
-            #行番号を指定してtrade_stateの値を変更
-            state_records.at[idx, 'trade_state'] = trade['state']
-        else:
-            #テーブルにtradeIdが無かったら、新しいレコードを追加
-            new_record = pd.Series()
-            new_record['trade_id'] = trade['tradeId']
-            new_record['open_time'] = trade['openTime']
-            new_record['trade_state'] = trade['state']
-            new_record['tweeted_state'] = ''
-            state_records = state_records.append(new_record, ignore_index=True)
+    new_trades = pd.read_sql_query(
+        'select tradeId, openTime, state from trades '
+        + 'where not exists ('
+        + 'select * from ' + table_name + ' as states '
+        + 'where trades.tradeId = states.trade_id '
+        + ');'
+        , conn
+    )
+
+    merge_exist = pd.merge(state_records, exist_trades,
+        left_on='trade_id', right_on='tradeId')
+
+    #既にstatesテーブルにあるtrade_stateの値を
+    #tradeテーブルから取得したstateで上書き
+    for i, row in merge_exist.iterrows():
+        row['trade_state'] = row['state']
+
+    #結合したtradeの列を削除して代入
+    state_records = merge_exist.drop(['tradeId', 'state'], axis=1)
+
+    #statesテーブルにないtradeの行を追加する
+    for i, row in new_trades.iterrows():
+        new_record = pd.Series()
+        new_record['trade_id'] = row['tradeId']
+        new_record['open_time'] = row['openTime']
+        new_record['trade_state'] = row['state']
+        new_record['tweeted_state'] = ''
+        #行をappend
+        state_records = state_records.append(new_record, ignore_index=True)
 
     #ソートして、DBに書き込み
     state_records.sort_values('trade_id').reset_index(drop=True)\
     .to_sql(table_name, conn, if_exists='replace')
+
+    db.write_log('tweeter', 'trade state updated')
 
 def post_pending_tweets():
     update_trade_states()
