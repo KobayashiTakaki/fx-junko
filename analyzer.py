@@ -8,6 +8,8 @@ import api.oanda_api as oanda_api
 conn = db.conn
 db_time_fromat = db.time_format
 
+# TODO: 5分足と15分足を切り替えられるようにする
+
 def now_in_unixtime():
     tz = datetime.timezone.utc
     now = datetime.datetime.now(tz)
