@@ -63,7 +63,6 @@ class Trader():
                     db.write_log('trader', 'entry by sell')
                     self.entry(-self.entry_amount)
 
-
     def entry(self, amount):
         response = oanda_api.market_order(amount)
         if response.status == 201:
