@@ -73,21 +73,6 @@ def is_cross_interval_enough():
     else:
         return True
 
-def is_cross_close_enough():
-    df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
-    #前回クロスと現在時間の差
-    interval_from_last_cross = (
-        datetime.datetime.now(datetime.timezone.utc) -
-        datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
-    )
-    db.write_log('analyzer: ', 'interval_from_last_cross: ' + str(interval_from_last_cross))
-
-    max_time = datetime.timedelta(minutes=20)
-    if interval_from_last_cross < max_time:
-        return True
-
-    return False
-
 def is_close_last_stop_loss(side):
     last_stop = pd.read_sql_query(
         'select * from trades '

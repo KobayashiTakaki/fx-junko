@@ -52,16 +52,14 @@ class Trader():
                 db.write_log('trader', 'not crossed')
 
             if analyzer.is_macd_trending('up', 0.008):
-                if analyzer.is_cross_close_enough():
-                    db.write_log('trader', 'macd is up trend')
-                    db.write_log('trader', 'entry by buy')
-                    self.entry(self.entry_amount)
+                db.write_log('trader', 'macd is up trend')
+                db.write_log('trader', 'entry by buy')
+                self.entry(self.entry_amount)
 
             if analyzer.is_macd_trending('down', -0.008):
-                if analyzer.is_cross_close_enough():
-                    db.write_log('trader', 'macd is down trend')
-                    db.write_log('trader', 'entry by sell')
-                    self.entry(-self.entry_amount)
+                db.write_log('trader', 'macd is down trend')
+                db.write_log('trader', 'entry by sell')
+                self.entry(-self.entry_amount)
 
     def entry(self, amount):
         response = oanda_api.market_order(amount)
