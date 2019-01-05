@@ -142,8 +142,8 @@ def post_pending_tweets():
             action = 'take_profit' if pips > 0 else 'losscut'
             feeling = 'positive' if pips > 0 else 'negative'
             info = "[Trade Close]\n"\
-                + start_side + " " + instrument + "@" + start_price + '\n'
-                + end_side + " " + instrument + "@" + end_price + '\n'
+                + start_side + " " + instrument + "@" + start_price + '\n'\
+                + end_side + " " + instrument + "@" + end_price + '\n'\
                 + format(pips, '.1f') + " pips"
             if pips > 0:
                 action = 'take_profit'
