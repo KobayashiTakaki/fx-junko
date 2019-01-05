@@ -240,6 +240,7 @@ def refresh_open_trade():
         "select * from trades where state = 'OPEN' order by openTime;"
         , conn)
 
+    #複数tradeがあったら最新のtradeだけ残して全部クローズする
     if len(df) > 1:
         for i in range(0, len(df)-1):
             oanda_api.close_trade(df.at[i, 'tradeId'])
