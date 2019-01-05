@@ -177,6 +177,7 @@ def clear_pending_tweets():
     state_records.to_sql(table_name, conn, if_exists='replace')
 
 def delete_old_records():
+    table_name = 'trade_tweet_states'
     keep_span = datetime.timedelta(weeks=1)
     keep_from = (datetime.datetime.now() - keep_span).strftime(time_format)
     conn.execute(
