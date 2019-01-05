@@ -189,7 +189,7 @@ def calc_macd(df):
 
     return df
 
-def update_trade_data():
+def update_trade_data(count=10):
     trades_header = [
         'tradeId',
         'instrument',
@@ -203,7 +203,7 @@ def update_trade_data():
         'closeTime',
         'stopLossOrderState'
     ]
-    trades = oanda_api.get_trades('ALL', 10)
+    trades = oanda_api.get_trades('ALL', count)
     df = pd.DataFrame(trades)
     df.reindex(columns=trades_header).to_sql('trades', conn, if_exists="replace")
 
