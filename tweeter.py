@@ -1,9 +1,12 @@
 import db.db as db
 import api.twitter_api as twitter_api
-import api.tweet_messages
+import api.tweet_messages as tweet_messages
 import pandas as pd
+import datetime
+import random
 
 conn = db.conn
+time_format = db.time_format
 
 def update_trade_states():
     table_name = 'trade_tweet_states'
@@ -198,3 +201,40 @@ def delete_old_records():
         + '\'' + keep_from + '\' ;'
     )
     conn.commit()
+
+def post_pl_tweet():
+    span = datetime.timedelta(weeks=1)
+    date_from = (datetime.datetime.now() - span).strftime(time_format)
+    trades = pd.read_sql_query(
+        'select * from trades '
+        + 'where openTime > \'' + date_from + '\' '
+        + 'and state = \'CLOSED\';'
+        , conn
+    )
+
+    pips_total = 0
+    money_total = 0
+
+    for i, row in trades.iterrows():
+        pips = float(row['realizedPL'])
+        amount = abs(float(row['initialUnits']))
+        money = pips * amount / 100
+        pips_total += pips
+        money_total += money
+
+    feeling = 'positive' if pips_total > 0 else 'negative'
+    kaomoji = tweet_messages.get_kaomoji(feeling)
+    info = "【今週の損益発表コーナー】\n"\
+        + "今週の損益は・・・\n"\
+        + str(round(money_total, 1)) + "円("\
+        + str(format(pips_total, '.1f')) + "pips)\n"\
+        + "でした"\
+        + "〜"*random.choice(list(range(1,3)))\
+        + "！"*random.choice(list(range(1,3)))\
+        + kaomoji
+    tags = "#USDJPY #FX"
+
+    content = info + "\n"\
+        + tags
+
+    twitter_api.tweet(content)
