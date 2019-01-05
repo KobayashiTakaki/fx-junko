@@ -203,10 +203,34 @@ def update_trade_data(count=10):
         'closeTime',
         'stopLossOrderState'
     ]
-    trades = oanda_api.get_trades('ALL', count)
-    df = pd.DataFrame(trades)
+    #oanda_apiからtradeを取得
+    #DataFrameのindexとしてtradeIdを設定
+    res_trades = oanda_api.get_trades('ALL', count)
+    fetched_trades = pd.DataFrame(res_trades).set_index('tradeId')
+
+    #tradesテーブルにあるレコードを取得
+    #DataFrameのindexとしてtradeIdを設定
+    trades_records = pd.read_sql_query(
+        'select * from trades;'
+        , conn
+    ).set_index('tradeId')
+
+    for i, row in fetched_trades.iterrows():
+        #tradesテーブルに存在するtradeの場合
+        if i in trades_records.index.values:
+            #削除して、fetched_tradesのレコードを追加する
+            trades_records = trades_records.drop(i, axis=0)
+            trades_records = trades_records.append(row)
+        #tradesテーブルに存在しないtradeの場合
+        else:
+            #fetched_tradesのレコードを追加する
+            trades_records = trades_records.append(row)
+
+    #indexに指定していた列をデータに戻す
+    trades_records = trades_records.reset_index()
+
     #列並べ替え、tradeIdでソートしてDBに書き込み
-    df.reindex(columns=trades_header)\
+    trades_records.reindex(columns=trades_header)\
     .sort_values('tradeId').reset_index(drop=True)\
     .to_sql('trades', conn, if_exists="replace")
 
