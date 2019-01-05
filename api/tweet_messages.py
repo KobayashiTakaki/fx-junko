@@ -1,4 +1,5 @@
 import random
+import emoji
 
 messages = {
     'entry': [
@@ -104,8 +105,65 @@ kaomojis = {
     ]
 }
 
+emojis = {
+    'positive': [
+        ':exclamation:',
+        ':sparkles:',
+        ':blush:',
+        ':relaxed:',
+        ':sunglasses:',
+        ':smirk:',
+        ':boom:',
+        ':muscle:',
+        ':sunny:',
+        ':v:',
+        ':clap:',
+        ':star:',
+        ':yum:',
+        ':grin:',
+        ':satisfied:',
+        ':star2:'
+    ],
+    'negative': [
+        ':sweat_smile:',
+        ':cry:',
+        ':astonished:',
+        ':tired_face:',
+        ':fire:',
+        ':sweat_drops:',
+        ':mask:',
+        ':confounded:',
+        ':disappointed:',
+        ':sweat:',
+        ':pensive:',
+        ':scream:',
+        ':angry:'
+    ],
+    'neutral': [
+        ':zzz:',
+        ':runner:',
+        ':dancers:',
+        ':raising_hand:',
+        ':bow:',
+        ':hand:',
+        ':dash:',
+        ':dizzy:',
+        ':sleeping:',
+        ':grimacing:',
+        ':sleepy:',
+        ':facepunch:',
+        ':smirk_cat:',
+        ':rabbit:',
+        ':hamster:',
+        ':mouse:'
+    ]
+}
 def get_kaomoji(feeling):
     return random.choice(kaomojis[feeling])
 
 def get_message(action):
     return random.choice(messages[action])
+
+def get_emoji(feeling):
+    emoji_str = random.choice(emojis[feeling])
+    return emoji.emojize(emoji_str, use_aliases=True)
