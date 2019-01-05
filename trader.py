@@ -7,7 +7,7 @@ import db.db as db
 
 class Trader():
     def __init__(self):
-        self.entry_amount = 100
+        self.entry_amount = 10000
         self.open_trade = None
 
     def loop(self):
