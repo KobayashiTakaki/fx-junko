@@ -1,5 +1,6 @@
 import db.db as db
 import api.twitter_api as twitter_api
+import api.tweet_messages
 import pandas as pd
 
 conn = db.conn
@@ -120,7 +121,15 @@ def post_pending_tweets():
                 start_side + " " + instrument + "@" + start_price
             ]
             #tweet
-            twitter_api.tweet(action, feeling, info)
+            message = tweet_messages.get_message(action)
+            kaomoji = tweet_messages.get_kaomoji(feeling)
+            tags = "#USDJPY #FX"
+            content = (
+                message + kaomoji + "\n"
+                + "\n".join(info) + "\n"
+                + tags
+            )
+            twitter_api.tweet(content)
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'OPEN'
 
@@ -147,7 +156,15 @@ def post_pending_tweets():
                 action = 'losscut'
                 feeling = 'negative'
             #tweet
-            twitter_api.tweet(action, feeling, info)
+            message = tweet_messages.get_message(action)
+            kaomoji = tweet_messages.get_kaomoji(feeling)
+            tags = "#USDJPY #FX"
+            content = (
+                message + kaomoji + "\n"
+                + "\n".join(info) + "\n"
+                + tags
+            )
+            twitter_api.tweet(content)
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'CLOSED'
 
