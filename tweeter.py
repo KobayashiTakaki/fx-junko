@@ -116,17 +116,15 @@ def post_pending_tweets():
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            info = [
-                "[Entry]",
-                start_side + " " + instrument + "@" + start_price
-            ]
+            info = "[Entry]\n"\
+                + start_side + " " + instrument + "@" + start_price
             #tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
             tags = "#USDJPY #FX"
             content = (
                 message + kaomoji + "\n"
-                + "\n".join(info) + "\n"
+                + info + "\n"
                 + tags
             )
             twitter_api.tweet(content)
@@ -143,12 +141,10 @@ def post_pending_tweets():
 
             action = 'take_profit' if pips > 0 else 'losscut'
             feeling = 'positive' if pips > 0 else 'negative'
-            info = [
-                "[Trade Close]",
-                start_side + " " + instrument + "@" + start_price,
-                end_side + " " + instrument + "@" + end_price,
-                format(pips, '.1f') + " pips"
-            ]
+            info = "[Trade Close]\n"\
+                + start_side + " " + instrument + "@" + start_price + '\n'
+                + end_side + " " + instrument + "@" + end_price + '\n'
+                + format(pips, '.1f') + " pips"
             if pips > 0:
                 action = 'take_profit'
                 feeling = 'positive'
@@ -161,7 +157,7 @@ def post_pending_tweets():
             tags = "#USDJPY #FX"
             content = (
                 message + kaomoji + "\n"
-                + "\n".join(info) + "\n"
+                + info + "\n"
                 + tags
             )
             twitter_api.tweet(content)
