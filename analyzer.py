@@ -205,7 +205,10 @@ def update_trade_data(count=10):
     ]
     trades = oanda_api.get_trades('ALL', count)
     df = pd.DataFrame(trades)
-    df.reindex(columns=trades_header).to_sql('trades', conn, if_exists="replace")
+    #列並べ替え、tradeIdでソートしてDBに書き込み
+    df.reindex(columns=trades_header)\
+    .sort_values('tradeId').reset_index(drop=True)\
+    .to_sql('trades', conn, if_exists="replace")
 
 def refresh_open_trade():
     update_trade_data()
