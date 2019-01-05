@@ -34,6 +34,9 @@ def delete_old_log():
 def update_long_price_data():
     analyzer.update_long_price_data()
 
+def pl_tweet():
+    tweeter.post_pl_tweet()
+
 schedule.every().sunday.at('23:00').do(activate)
 schedule.every().monday.at('23:00').do(activate)
 schedule.every().tuesday.at('23:00').do(activate)
@@ -43,6 +46,7 @@ schedule.every().friday.at('20:00').do(deactivate)
 
 schedule.every().weeks.do(delete_old_log)
 schedule.every().day.at('22:00').do(update_long_price_data)
+schedule.every().saturday.at('00:00').do(pl_tweet)
 
 while True:
     try:
