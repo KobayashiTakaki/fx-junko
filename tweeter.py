@@ -4,6 +4,7 @@ import api.tweet_messages as tweet_messages
 import pandas as pd
 import datetime
 import random
+import emoji
 
 conn = db.conn
 time_format = db.time_format
@@ -119,7 +120,7 @@ def post_pending_tweets():
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            info = "[Entry]\n"\
+            info = "【エントリー" + emoji.emojize(':sparkles:', use_aliases=True) + "】\n"\
                 + start_side + " " + instrument + "@" + start_price
             #tweet
             message = tweet_messages.get_message(action)
@@ -144,7 +145,7 @@ def post_pending_tweets():
 
             action = 'take_profit' if pips > 0 else 'losscut'
             feeling = 'positive' if pips > 0 else 'negative'
-            info = "[Trade Close]\n"\
+            info = "【トレード終了" + emoji.emojize(':exclamation:', use_aliases=True) + "】\n"\
                 + start_side + " " + instrument + "@" + start_price + '\n'\
                 + end_side + " " + instrument + "@" + end_price + '\n'\
                 + format(pips, '.1f') + " pips"
