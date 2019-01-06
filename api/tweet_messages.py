@@ -122,7 +122,8 @@ emojis = {
         ':yum:',
         ':grin:',
         ':satisfied:',
-        ':star2:'
+        ':star2:',
+        ':raised_hands:'
     ],
     'negative': [
         ':sweat_smile:',
@@ -155,7 +156,9 @@ emojis = {
         ':smirk_cat:',
         ':rabbit:',
         ':hamster:',
-        ':mouse:'
+        ':mouse:',
+        ':dog:',
+        ':zap:'
     ]
 }
 def get_kaomoji(feeling):
