@@ -105,6 +105,7 @@ def post_pending_tweets():
     print(unsent_records)
 
     for i, row in unsent_records.iterrows():
+        #trade_idが一致するレコードをtradesテーブルから取得
         trade = pd.read_sql_query(
             'select * from trades where tradeId = {};'.format(row['trade_id'])
             , conn
@@ -112,8 +113,10 @@ def post_pending_tweets():
         if len(trade) > 0:
             trade = trade.iloc[0]
         else:
+            #trade_idが一致するレコードが無ければcontinue
             continue
 
+        #エントリー時のツイートを投稿
         if row['trade_state'] == 'OPEN':
             action = 'entry'
             feeling = 'neutral'
@@ -136,6 +139,7 @@ def post_pending_tweets():
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'OPEN'
 
+        #イグジット時のツイートを投稿
         if row['trade_state'] == 'CLOSED':
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
