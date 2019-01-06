@@ -123,7 +123,12 @@ emojis = {
         ':satisfied:',
         ':star2:',
         ':raised_hands:',
-        ':sparkling_heart:'
+        ':sparkling_heart:',
+        ':triumph:',
+        ':heart_eyes:',
+        ':kissing:',
+        ':kissing_heart:',
+        ':kissing_closed_eyes:'
     ],
     'negative': [
         ':sweat_smile:',
@@ -140,7 +145,10 @@ emojis = {
         ':scream:',
         ':angry:',
         ':umbrella:',
-        ':broken_heart:'
+        ':broken_heart:',
+        ':frowning:',
+        ':persevere:',
+        ':dizzy_face:'
     ],
     'neutral': [
         ':zzz:',
