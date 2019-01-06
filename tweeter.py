@@ -124,11 +124,11 @@ def post_trade_tweets(test=False):
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            units = int(abs(trade['initialUnits']))
+            Kunits = format(abs(trade['initialUnits'])/1000, '.1f')
             emoji_head = tweet_messages.get_emoji('neutral')
             info = "【エントリー" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
-                + "×" + units + "units"
+                + "×" + Kunits + "units"
             #tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
@@ -150,20 +150,21 @@ def post_trade_tweets(test=False):
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            units = int(abs(trade['initialUnits']))
+            Kunits = format(abs(trade['initialUnits'])/1000, '.1f')
             end_side = 'buy' if start_side == 'sell' else 'sell'
             end_price = format(float(trade['averageClosePrice']), '.3f')
             pips = float(trade['realizedPL'])
+            money = format(abs(trade['initialUnits']) * pips /100, '.1f')
 
             action = 'take_profit' if pips > 0 else 'losscut'
             feeling = 'positive' if pips > 0 else 'negative'
             emoji_head = tweet_messages.get_emoji('neutral')
             info = "【トレード終了" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
-                + "×" + units + "units\n"\
+                + "×" + Kunits + "Kunits\n"\
                 + end_side + " " + instrument + "@" + end_price\
-                + "×" + units + "units\n"\
-                + format(pips, '.1f') + " pips"
+                + "×" + Kunits + "Kunits\n"\
+                + money + "円(" +format(pips, '.1f') + " pips)"
             if pips > 0:
                 action = 'take_profit'
                 feeling = 'positive'
