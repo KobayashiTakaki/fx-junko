@@ -110,6 +110,8 @@ def post_trade_tweets():
             , conn
         )
         if len(trade) > 0:
+            #tradeのSeriesを代入
+            #trade_idが一致するレコードは1行だけのはずなのでdfの1番目を取る
             trade = trade.iloc[0]
         else:
             #trade_idが一致するレコードが無ければcontinue
