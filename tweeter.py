@@ -155,6 +155,7 @@ def post_trade_tweets(test=False):
             end_price = format(float(trade['averageClosePrice']), '.3f')
             pips = float(trade['realizedPL'])
             money = format(abs(trade['initialUnits']) * pips /100, '.1f')
+            plus = "+" if trade['realizedPL'] > 0 else ""
 
             action = 'take_profit' if pips > 0 else 'losscut'
             feeling = 'positive' if pips > 0 else 'negative'
@@ -164,7 +165,7 @@ def post_trade_tweets(test=False):
                 + "×" + Kunits + "Kunits\n"\
                 + end_side + " " + instrument + "@" + end_price\
                 + "×" + Kunits + "Kunits\n"\
-                + money + "円(" +format(pips, '.1f') + " pips)"
+                + plus + money + "円(" + plus +format(pips, '.1f') + " pips)"
             if pips > 0:
                 action = 'take_profit'
                 feeling = 'positive'
@@ -242,6 +243,7 @@ def post_pl_tweet():
         pips_total += pips
         money_total += money
 
+    plus = "+" if pips_total > 0 else ""
     feeling = 'positive' if pips_total > 0 else 'negative'
     kaomoji = tweet_messages.get_kaomoji(feeling)
     emojis = ""
@@ -250,8 +252,8 @@ def post_pl_tweet():
 
     info = "【今週の損益発表コーナー】\n"\
         + "今週の損益は・・・\n"\
-        + str(round(money_total, 1)) + "円("\
-        + str(format(pips_total, '.1f')) + "pips)\n"\
+        + plus + str(round(money_total, 1)) + "円("\
+        + plus + str(format(pips_total, '.1f')) + "pips)\n"\
         + "でした"\
         + "〜"*random.randrange(1,3)\
         + "！"*random.randrange(1,3)\
