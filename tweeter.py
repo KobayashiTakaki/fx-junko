@@ -154,9 +154,9 @@ def post_trade_tweets(test=False):
             emoji_head = tweet_messages.get_emoji('neutral')
             info = "【トレード終了" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
-                + "×" + Kunits + "Kunits\n"\
+                + "×" + Kunits + "KUnits\n"\
                 + end_side + " " + instrument + "@" + end_price\
-                + "×" + Kunits + "Kunits\n"\
+                + "×" + Kunits + "KUnits\n"\
                 + plus + money + "円(" + plus +format(pips, '.1f') + " pips)"
             if pips > 0:
                 action = 'take_profit'
