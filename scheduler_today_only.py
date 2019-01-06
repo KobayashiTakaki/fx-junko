@@ -9,6 +9,8 @@ import db.db as db
 trader = trader.Trader()
 start_time = (datetime.datetime.now(datetime.timezone.utc)
     + datetime.timedelta(minutes=1)).strftime('%H:%M')
+start_date = (datetime.datetime.now(datetime.timezone.utc)
+    + datetime.timedelta(minutes=1)).strftime('%Y-%m-%d')
 
 def trader_loop():
     trader.loop()
@@ -20,11 +22,14 @@ def tweeter_loop():
     tweeter.post_trade_tweets()
 
 def activate():
-    analyzer.update_long_price_data()
-    schedule.clear(tag='fx')
-    schedule.every(60).seconds.do(analyzer_loop).tag('fx')
-    schedule.every(60).seconds.do(trader_loop).tag('fx')
-    schedule.every(60).seconds.do(tweeter_loop).tag('fx')
+    today = (datetime.datetime.now(datetime.timezone.utc)
+        + datetime.timedelta(minutes=1)).strftime('%Y-%m-%d')
+    if start_date == today:
+        analyzer.update_long_price_data()
+        schedule.clear(tag='fx')
+        schedule.every(60).seconds.do(analyzer_loop).tag('fx')
+        schedule.every(60).seconds.do(trader_loop).tag('fx')
+        schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
     schedule.clear()
