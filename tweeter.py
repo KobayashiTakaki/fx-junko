@@ -120,7 +120,7 @@ def post_trade_tweets(test=False):
             emoji_head = tweet_messages.get_emoji('neutral')
             info = "【エントリー" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
-                + "×" + Kunits + "units"
+                + "×" + Kunits + "KUnits"
             #tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
