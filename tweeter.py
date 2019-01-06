@@ -120,7 +120,8 @@ def post_pending_tweets():
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            info = "【エントリー" + emoji.emojize(':sparkles:', use_aliases=True) + "】\n"\
+            emoji_head = tweet_messages.get_emoji('neutral')
+            info = "【エントリー" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price
             #tweet
             message = tweet_messages.get_message(action)
@@ -145,7 +146,8 @@ def post_pending_tweets():
 
             action = 'take_profit' if pips > 0 else 'losscut'
             feeling = 'positive' if pips > 0 else 'negative'
-            info = "【トレード終了" + emoji.emojize(':exclamation:', use_aliases=True) + "】\n"\
+            emoji_head = tweet_messages.get_emoji('neutral')
+            info = "【トレード終了" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price + '\n'\
                 + end_side + " " + instrument + "@" + end_price + '\n'\
                 + format(pips, '.1f') + " pips"
@@ -225,13 +227,18 @@ def post_pl_tweet():
 
     feeling = 'positive' if pips_total > 0 else 'negative'
     kaomoji = tweet_messages.get_kaomoji(feeling)
+    emojis = ""
+    for i in range(random.randrange(1,3)):
+        emojis += tweet_messages.get_emoji(feeling)
+
     info = "【今週の損益発表コーナー】\n"\
         + "今週の損益は・・・\n"\
         + str(round(money_total, 1)) + "円("\
         + str(format(pips_total, '.1f')) + "pips)\n"\
         + "でした"\
-        + "〜"*random.choice(list(range(1,3)))\
-        + "！"*random.choice(list(range(1,3)))\
+        + "〜"*random.randrange(1,3)\
+        + "！"*random.randrange(1,3)\
+        + emojis + "\n"\
         + kaomoji
     tags = "#USDJPY #FX"
 
