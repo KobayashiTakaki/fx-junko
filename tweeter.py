@@ -31,14 +31,6 @@ def update_trade_states():
         , conn
     ).reindex(columns=table_columns)
 
-    #テーブルにあるtrade_idのリスト
-    #ids = list(state_records['trade_id'])
-
-    trades = pd.read_sql_query(
-        'select tradeId, state from trades;'
-        ,conn
-    )
-
     #tradesテーブルにあるデータから、すでにstatesに存在するものを取得
     exist_trades = pd.read_sql_query(
         'select tradeId, state from trades '
