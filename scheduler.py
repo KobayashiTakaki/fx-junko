@@ -15,7 +15,7 @@ def analyzer_loop():
     analyzer.loop()
 
 def tweeter_loop():
-    tweeter.post_pending_tweets()
+    tweeter.post_trade_tweets()
 
 def activate():
     schedule.clear(tag='fx')

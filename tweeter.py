@@ -85,7 +85,7 @@ def update_trade_states():
 
     db.write_log('tweeter', 'trade state updated')
 
-def post_pending_tweets():
+def post_trade_tweets():
     update_trade_states()
 
     table_name = 'trade_tweet_states'
