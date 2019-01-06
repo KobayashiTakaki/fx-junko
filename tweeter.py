@@ -116,11 +116,11 @@ def post_trade_tweets(test=False):
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            Kunits = format(abs(trade['initialUnits'])/1000, '.1f')
+            kunits = format(abs(trade['initialUnits'])/1000, '.1f')
             emoji_head = tweet_messages.get_emoji('neutral')
             info = "【エントリー" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
-                + "×" + Kunits + "KUnits"
+                + " ×" + kunits + "kUnits"
             #tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
@@ -142,7 +142,7 @@ def post_trade_tweets(test=False):
             instrument = trade['instrument'].replace('_', '/')
             start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
             start_price = format(float(trade['price']), '.3f')
-            Kunits = format(abs(trade['initialUnits'])/1000, '.1f')
+            kunits = format(abs(trade['initialUnits'])/1000, '.1f')
             end_side = 'buy' if start_side == 'sell' else 'sell'
             end_price = format(float(trade['averageClosePrice']), '.3f')
             pips = float(trade['realizedPL'])
@@ -154,9 +154,9 @@ def post_trade_tweets(test=False):
             emoji_head = tweet_messages.get_emoji('neutral')
             info = "【トレード終了" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
-                + "×" + Kunits + "KUnits\n"\
+                + " ×" + kunits + "kUnits\n"\
                 + end_side + " " + instrument + "@" + end_price\
-                + "×" + Kunits + "KUnits\n"\
+                + " ×" + kunits + "kUnits\n"\
                 + plus + money + "円(" + plus +format(pips, '.1f') + " pips)"
             if pips > 0:
                 action = 'take_profit'
