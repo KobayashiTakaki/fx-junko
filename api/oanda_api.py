@@ -49,7 +49,7 @@ def format_trade(trade):
         else str(datetime.datetime.strptime(
             trade.closeTime.split('.')[0] + '+00:00',
             '%Y-%m-%dT%H:%M:%S%z'))
-    stopLossOrderState = '' if trade.stopLossOrder.state None else trade.stopLossOrder.state
+    stopLossOrderState = '' if trade.stopLossOrder.state is None else trade.stopLossOrder.state
 
     return {
         'tradeId': tradeId,
