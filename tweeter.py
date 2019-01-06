@@ -85,7 +85,7 @@ def update_trade_states():
 
     db.write_log('tweeter', 'trade state updated')
 
-def post_trade_tweets():
+def post_trade_tweets(test=False):
     update_trade_states()
 
     table_name = 'trade_tweet_states'
@@ -136,7 +136,10 @@ def post_trade_tweets():
                 + info + "\n"
                 + tags
             )
-            twitter_api.tweet(content)
+            if test:
+                print(content)
+            else:
+                twitter_api.tweet(content)
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'OPEN'
 
@@ -171,7 +174,10 @@ def post_trade_tweets():
                 + info + "\n"
                 + tags
             )
-            twitter_api.tweet(content)
+            if test:
+                print(content)
+            else:
+                twitter_api.tweet(content)
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'CLOSED'
 
