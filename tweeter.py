@@ -102,7 +102,6 @@ def post_pending_tweets():
     ).reindex(columns=table_columns)
 
     unsent_records = state_records.query('trade_state != tweeted_state')
-    print(unsent_records)
 
     for i, row in unsent_records.iterrows():
         #trade_idが一致するレコードをtradesテーブルから取得
@@ -174,8 +173,8 @@ def post_pending_tweets():
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'CLOSED'
 
-        #DBに書き込み
-        state_records.to_sql(table_name, conn, if_exists='replace')
+    #DBに書き込み
+    state_records.to_sql(table_name, conn, if_exists='replace')
 
 def clear_pending_tweets():
     table_name = 'trade_tweet_states'
