@@ -9,7 +9,6 @@ import db.db as db
 trader = trader.Trader()
 start_time = (datetime.datetime.now(datetime.timezone.utc)
     + datetime.timedelta(minutes=1)).strftime('%H:%M')
-is_active = True
 
 def trader_loop():
     trader.loop()
@@ -28,14 +27,12 @@ def activate():
     schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
-    is_active = False
     schedule.clear()
-
 
 schedule.every().day.at(start_time).do(activate)
 schedule.every().day.at('23:00').do(deactivate)
 
-while is_active:
+while True:
     try:
         schedule.run_pending()
         time.sleep(1)
