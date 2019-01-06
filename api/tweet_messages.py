@@ -71,7 +71,6 @@ kaomojis = {
         "(。ì _ í。)",
         "_(┐「ε:)_",
         "(´-ω-`)",
-        "（´◕ д ◕｀）",
         "(๑•́ ₃ •̀๑)",
         "( ᵒ̴̶̷̥́ _ᵒ̴̶̷̣̥̀ )",
         "(๑ó⌓ò๑)",
@@ -123,7 +122,8 @@ emojis = {
         ':grin:',
         ':satisfied:',
         ':star2:',
-        ':raised_hands:'
+        ':raised_hands:',
+        ':sparkling_heart:'
     ],
     'negative': [
         ':sweat_smile:',
@@ -138,7 +138,9 @@ emojis = {
         ':sweat:',
         ':pensive:',
         ':scream:',
-        ':angry:'
+        ':angry:',
+        ':umbrella:',
+        ':broken_heart:'
     ],
     'neutral': [
         ':zzz:',
@@ -158,7 +160,11 @@ emojis = {
         ':hamster:',
         ':mouse:',
         ':dog:',
-        ':zap:'
+        ':zap:',
+        ':boom:',
+        ':exclamation:',
+        ':wave:',
+        ':eyes:'
     ]
 }
 def get_kaomoji(feeling):
