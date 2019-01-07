@@ -229,11 +229,9 @@ def post_pl_tweet():
     money_total = 0
 
     for i, row in trades.iterrows():
-        pips = float(row['realizedPL'])
-        amount = abs(float(row['initialUnits']))
-        money = pips * amount / 100
+        pips = trade['realizedPL']/abs(trade['initialUnits'])*100
         pips_total += pips
-        money_total += money
+        money_total += float(row['realizedPL'])
 
     plus = "+" if pips_total > 0 else ""
     feeling = 'positive' if pips_total > 0 else 'negative'
