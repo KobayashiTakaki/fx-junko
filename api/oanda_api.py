@@ -74,7 +74,7 @@ def get_candles(instrument=instrument, params=candles_params, completed_only=Tru
 
 def market_order(units):
     stop_loss = {
-        'distance': str(0.180)
+        'distance': str(0.110)
     }
 
     params = {
