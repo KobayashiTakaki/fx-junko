@@ -1,6 +1,7 @@
 import configparser
 from requests_oauthlib import OAuth1Session
 import db.db as db
+import time
 
 config = configparser.ConfigParser()
 config.read('api/twitter_conf.ini')
@@ -30,6 +31,8 @@ def tweet(content):
                 done = True
         except Exception as e:
             db.write_log('exception', str(e))
+            #高速連投を避けるためのsleep
+            time.sleep(5)
             continue
         finally:
             retry +=1

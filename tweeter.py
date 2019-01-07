@@ -3,6 +3,7 @@ import api.twitter_api as twitter_api
 import api.tweet_messages as tweet_messages
 import pandas as pd
 import datetime
+import time
 import random
 import emoji
 
@@ -179,6 +180,9 @@ def post_trade_tweets(test=False):
                 twitter_api.tweet(content)
             #tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'CLOSED'
+
+        #高速連投を避けるためのsleep
+        time.sleep(5)
 
     #DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace')
