@@ -18,15 +18,17 @@ def tweeter_loop():
     tweeter.post_trade_tweets()
 
 def activate():
-    schedule.clear(tag='fx')
+    #最初にfxタグのスケジュールをクリアする
+    schedule.clear('fx')
     if oanda_api.is_market_open():
+        #fxタグのスケジュールを登録
         schedule.every(60).seconds.do(analyzer_loop).tag('fx')
         schedule.every(60).seconds.do(trader_loop).tag('fx')
         schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
     trader.exit()
-    schedule.clear(tag='fx')
+    schedule.clear('fx')
 
 def delete_old_log():
     db.delete_old_log()
@@ -37,14 +39,21 @@ def update_long_price_data():
 def pl_tweet():
     tweeter.post_pl_tweet()
 
+#このファイル最初の実行時にactivateを実行
+activate()
+
+#日〜木23:00UTC(月〜金08:00JST)にactivateを実行
 schedule.every().sunday.at('23:00').do(activate)
 schedule.every().monday.at('23:00').do(activate)
 schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
+
+#金曜20:00UTC(土曜05:00JST)にdeactivateを実行
 schedule.every().friday.at('20:00').do(deactivate)
 
-schedule.every().weeks.do(delete_old_log)
+#週1回実行するもの
+schedule.every().friday.at('20:00').do(delete_old_log)
 schedule.every().day.at('22:00').do(update_long_price_data)
 schedule.every().saturday.at('00:00').do(pl_tweet)
 
