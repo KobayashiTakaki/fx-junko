@@ -215,7 +215,7 @@ def delete_old_records():
     )
     conn.commit()
 
-def post_pl_tweet():
+def post_pl_tweet(test=False):
     span = datetime.timedelta(weeks=1)
     date_from = (datetime.datetime.now() - span).strftime(time_format)
     trades = pd.read_sql_query(
@@ -254,4 +254,7 @@ def post_pl_tweet():
     content = info + "\n"\
         + tags
 
-    twitter_api.tweet(content)
+    if test:
+        print(content)
+    else:
+        twitter_api.tweet(content)
