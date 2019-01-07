@@ -224,7 +224,6 @@ def post_pl_tweet(test=False):
     #時間
     start_time = '23:00'
     start_datetime = start_date + ' ' + start_time
-    print(start_datetime)
     trades = pd.read_sql_query(
         'select * from trades '
         + 'where openTime > \'' + start_datetime + '\' '
