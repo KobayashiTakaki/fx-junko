@@ -216,11 +216,18 @@ def delete_old_records():
     conn.commit()
 
 def post_pl_tweet(test=False):
-    span = datetime.timedelta(weeks=1)
-    date_from = (datetime.datetime.now() - span).strftime(time_format)
+    #日付を日曜日にするために引く日数
+    days_shift = datetime.datetime.now(datetime.timezone.utc).weekday() + 1
+    #今日からdays_shiftを引いた日付
+    start_date = (datetime.datetime.now(datetime.timezone.utc)\
+        - datetime.timedelta(days=days_shift)).strftime('%Y-%m-%d')
+    #時間
+    start_time = '23:00'
+    start_datetime = start_date + ' ' + start_time
+    print(start_datetime)
     trades = pd.read_sql_query(
         'select * from trades '
-        + 'where openTime > \'' + date_from + '\' '
+        + 'where openTime > \'' + start_datetime + '\' '
         + 'and state = \'CLOSED\';'
         , conn
     )
@@ -229,7 +236,7 @@ def post_pl_tweet(test=False):
     money_total = 0
 
     for i, row in trades.iterrows():
-        pips = trade['realizedPL']/abs(trade['initialUnits'])*100
+        pips = row['realizedPL']/abs(row['initialUnits'])*100
         pips_total += pips
         money_total += float(row['realizedPL'])
 
