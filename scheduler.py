@@ -52,9 +52,9 @@ schedule.every().thursday.at('23:00').do(activate)
 #金曜20:00UTC(土曜05:00JST)にdeactivateを実行
 schedule.every().friday.at('20:00').do(deactivate)
 
-#週1回実行するもの
-schedule.every().friday.at('20:00').do(delete_old_log)
+#情報更新とか
 schedule.every().day.at('22:00').do(update_long_price_data)
+schedule.every().friday.at('20:00').do(delete_old_log)
 schedule.every().saturday.at('00:00').do(pl_tweet)
 
 while True:
