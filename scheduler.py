@@ -22,8 +22,8 @@ def activate():
     schedule.clear('fx')
     if oanda_api.is_market_open():
         #fxタグのスケジュールを登録
-        schedule.every(60).seconds.do(analyzer_loop).tag('fx')
-        schedule.every(60).seconds.do(trader_loop).tag('fx')
+        schedule.every(30).seconds.do(analyzer_loop).tag('fx')
+        schedule.every(30).seconds.do(trader_loop).tag('fx')
         schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
