@@ -108,17 +108,36 @@ def is_close_last_stop_loss(side):
 
     return False
 
-def is_macd_trending(direction, least_slope=0):
-    count = 3
+def is_macd_trending(direction, least_slope=0, use_current=False):
+    df = None
 
-    #最新のレコードをcount件取得
-    df = pd.read_sql_query(
-        'select datetime, macd from prices order by datetime desc '
-        + 'limit ' + str(count) + ';'
-        , conn
-    )
-    #降順で取得したのを昇順に変更
-    df = df.sort_values('datetime')
+    if use_current:
+        df = pd.read_sql_query(
+            'select * from prices;'
+            , conn
+        )
+        instrument = "USD_JPY"
+        params = {
+            'granularity': 'S5',
+            'count': 1
+        }
+        candle = oanda_api.get_candles(instrument, params, False)
+        df_current = pd.DataFrame(candle)
+        df = df.append(df_current, ignore_index = True)
+        df = df.sort_values('datetime')
+        df = calc_macd(df).tail(3)
+
+    else:
+        count = 3
+
+        #最新のレコードをcount件取得
+        df = pd.read_sql_query(
+            'select datetime, macd from prices order by datetime desc '
+            + 'limit ' + str(count) + ';'
+            , conn
+        )
+        #降順で取得したのを昇順に変更
+        df = df.sort_values('datetime')
 
     #macdの値の近似直線の傾きを算出
     y = list(df['macd'])
