@@ -108,7 +108,7 @@ def is_close_last_stop_loss(side):
 
     return False
 
-def is_macd_trending(direction, least_slope=0, use_current=False):
+def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
     df = None
 
     if use_current:
@@ -125,11 +125,9 @@ def is_macd_trending(direction, least_slope=0, use_current=False):
         df_current = pd.DataFrame(candle)
         df = df.append(df_current, ignore_index = True)
         df = df.sort_values('datetime')
-        df = calc_macd(df).tail(3)
+        df = calc_macd(df).tail(count)
 
     else:
-        count = 3
-
         #最新のレコードをcount件取得
         df = pd.read_sql_query(
             'select datetime, macd from prices order by datetime desc '
