@@ -73,6 +73,10 @@ def get_candles(instrument=instrument, params=candles_params, completed_only=Tru
     return list(map(lambda candle: format_candle(candle), candles))
 
 def market_order(units):
+    stop_loss = {
+        'distance': str(0.100)
+    }
+
     trailing_stop_loss = {
         'distance': str(0.100)
     }
@@ -82,6 +86,7 @@ def market_order(units):
         'instrument': instrument,
         'units': str(units),
         'timeInForce': 'FOK',
+        'stopLossOnFill': stop_loss,
         'trailingStopLossOnFill': trailing_stop_loss
     }
 
