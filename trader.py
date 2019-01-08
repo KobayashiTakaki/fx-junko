@@ -98,7 +98,7 @@ class Trader():
                         'distance': str(min_distance)
                     }
                 }
-                oanda_api.update_trade(tradeId, params)
+                oanda_api.change_trade_order(tradeId, params)
                 db.write_log('trader', 'shrinked trailing stop')
 
 if __name__=='__main__':
