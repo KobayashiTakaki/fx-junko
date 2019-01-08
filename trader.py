@@ -13,7 +13,7 @@ class Trader():
 
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
-        shrink_trailing_stop()
+        self.shrink_trailing_stop()
         if self.open_trade is not None:
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
