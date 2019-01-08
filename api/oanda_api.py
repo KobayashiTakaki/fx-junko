@@ -114,6 +114,10 @@ def get_trade(trade_id):
     trade = context.trade.get(account_id, str(trade_id)).get('trade', 200)
     return format_trade(trade)
 
+def change_trade_order(trade_id, params):
+    response = context.trade.set_dependent_orders(account_id, trade_id, **params)
+    return response
+
 def close_trade(trade_id):
     response = context.trade.close(account_id, str(trade_id))
     return response
