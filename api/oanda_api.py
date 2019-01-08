@@ -110,6 +110,10 @@ def get_trades(state, count):
 
     return list(map(lambda trade: format_trade(trade), trades))
 
+def get_trade(trade_id):
+    trade = context.trade.get(account_id, str(trade_id)).get('trade', 200)
+    return format_trade(trade)
+
 def close_trade(trade_id):
     response = context.trade.close(account_id, str(trade_id))
     return response
