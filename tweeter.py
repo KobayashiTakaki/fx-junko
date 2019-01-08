@@ -115,7 +115,7 @@ def post_trade_tweets(test=False):
             action = 'entry'
             feeling = 'neutral'
             instrument = trade['instrument'].replace('_', '/')
-            start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
+            start_side = '買い' if int(trade['initialUnits']) > 0 else '売り'
             start_price = format(float(trade['price']), '.3f')
             kunits = format(abs(trade['initialUnits'])/1000, '.1f')
             emoji_head = tweet_messages.get_emoji('neutral')
@@ -141,10 +141,10 @@ def post_trade_tweets(test=False):
         #イグジット時のツイートを投稿
         if row['trade_state'] == 'CLOSED':
             instrument = trade['instrument'].replace('_', '/')
-            start_side = 'buy' if int(trade['initialUnits']) > 0 else 'sell'
+            start_side = '買い' if int(trade['initialUnits']) > 0 else '売り'
             start_price = format(float(trade['price']), '.3f')
             kunits = format(abs(trade['initialUnits'])/1000, '.1f')
-            end_side = 'buy' if start_side == 'sell' else 'sell'
+            end_side = '買い' if start_side == '売り' else '売り'
             end_price = format(float(trade['averageClosePrice']), '.3f')
             pips = format(trade['realizedPL']/abs(trade['initialUnits'])*100, '.1f')
             money = format(trade['realizedPL'], '.1f')
