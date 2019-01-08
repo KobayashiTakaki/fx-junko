@@ -9,9 +9,11 @@ class Trader():
     def __init__(self):
         self.entry_amount = 10000
         self.open_trade = None
+        self.time_format = db.time_format
 
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
+        shrink_trailing_stop()
         if self.open_trade is not None:
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
@@ -76,6 +78,27 @@ class Trader():
 
         oanda_api.close_trade(self.open_trade['tradeId'])
         self.open_trade = analyzer.refresh_open_trade()
+
+    def shrink_trailing_stop(self):
+        min_distance = 0.050
+        if float(self.open_trade['trailingStopLossOrderDistance']) > min_distance:
+            tradeId = self.open_trade['tradeId']
+            trade  = oanda_api.get_trade(tradeId)
+
+            pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
+            now = datetime.datetime.now(datetime.timezone.utc)
+            open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
+            enough_time = datetime.timedelta(minutes=20)
+
+            if pips > 5 \
+            or now - open_time > enough_time:
+                params = {
+                    'trailingStopLoss': {
+                      'distance': str(min_distance)
+                    }
+                }
+                oanda_api.update_trade(tradeId, params)
+                db.write_log('trader', 'shrinked trailing stop')
 
 if __name__=='__main__':
     trader = Trader()
