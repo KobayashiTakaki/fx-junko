@@ -201,7 +201,9 @@ def update_trade_data(count=10):
         'unrealizedPL',
         'averageClosePrice',
         'closeTime',
-        'stopLossOrderState'
+        'stopLossOrderState',
+        'trailingStopLossOrderState',
+        'trailingStopLossOrderDistance'
     ]
     #oanda_apiからtradeを取得
     #DataFrameのindexとしてtradeIdを設定
