@@ -94,7 +94,7 @@ class Trader():
             or now - open_time > enough_time:
                 params = {
                     'trailingStopLoss': {
-                      'distance': str(min_distance)
+                        'distance': str(min_distance)
                     }
                 }
                 oanda_api.update_trade(tradeId, params)
