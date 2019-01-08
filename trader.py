@@ -13,7 +13,6 @@ class Trader():
 
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
-        self.shrink_trailing_stop()
         if self.open_trade is not None:
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
@@ -28,6 +27,8 @@ class Trader():
                     self.exit()
             else:
                 db.write_log('trader', 'not enough time to exit')
+
+            self.shrink_trailing_stop()
 
         else:
             #ポジションがない場合
