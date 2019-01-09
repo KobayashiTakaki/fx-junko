@@ -155,7 +155,7 @@ class Trader():
         if pips > 10:
             self.exit()
 
-        margin = 0.01
+        margin = 0.02
         stop_loss = {
             'distance': str(margin)
         }
