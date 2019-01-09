@@ -93,22 +93,25 @@ class Trader():
         self.open_trade = analyzer.refresh_open_trade()
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
 
-    def entry_scalping(self, side):
-        amount = 10000
-        if side == 'buy'else '-10000'
-
+    def entry_scalping(self, side, amount=self.entry_amount):
+        minus = -1 if side == 'sell' else 1
+        units = minus*amount
         stop_loss = {
             'distance': str(0.020)
         }
         params = {
-            'stopLossOrder': stop_loss
+            'type': 'MARKET',
+            'instrument': self.instrument,
+            'units': str(units),
+            'timeInForce': 'FOK',
+            'stopLossOnFill': stop_loss
         }
         res = oanda_api.market_order(params)
         if res.status == 201:
+            db.write_log('trader', 'entried by scalping. amount: ' + str(units))
             self.is_scalping = True
         else:
-            raise exception('scalping entry failed')
-
+            raise Exception('scalping entry failed')
 
     def exit(self):
         db.write_log('trader', 'close position')
