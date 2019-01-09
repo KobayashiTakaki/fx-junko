@@ -29,7 +29,7 @@ class Trader():
             else:
                 db.write_log('trader', 'not enough time to exit')
 
-            self.shrink_trailing_stop()
+            self.shrink_stop_loss()
 
         else:
             #ポジションがない場合
@@ -119,8 +119,8 @@ class Trader():
         oanda_api.close_trade(self.open_trade['tradeId'])
         self.open_trade = analyzer.refresh_open_trade()
 
-    def shrink_trailing_stop(self):
-        min_distance = 0.050
+    def shrink_stop_loss(self):
+        distance = 0.010
         if float(self.open_trade['trailingStopLossOrderDistance']) > min_distance:
             tradeId = self.open_trade['tradeId']
             trade  = oanda_api.get_trade(tradeId)
@@ -133,8 +133,8 @@ class Trader():
             if pips > 5 \
             or now - open_time > enough_time:
                 params = {
-                    'trailingStopLoss': {
-                        'distance': str(min_distance)
+                    'stopLoss': {
+                        'distance': str(distance)
                     }
                 }
                 oanda_api.change_trade_order(tradeId, params)
