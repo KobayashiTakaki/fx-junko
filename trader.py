@@ -10,6 +10,7 @@ class Trader():
         self.entry_amount = 10000
         self.open_trade = None
         self.time_format = db.time_format
+        self.instrument = 'USD_JPY'
 
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
@@ -42,13 +43,13 @@ class Trader():
                         if analyzer.market_trend() != -1 \
                         and not analyzer.is_close_last_stop_loss('buy'):
                             db.write_log('trader', 'entry by buy')
-                            self.entry(self.entry_amount)
+                            self.entry('buy')
                     #下向きクロスだったら売りでエントリー
                     else:
                         if analyzer.market_trend() != 1 \
                         and not analyzer.is_close_last_stop_loss('sell'):
                             db.write_log('trader', 'entry by sell')
-                            self.entry(-self.entry_amount)
+                            self.entry('sell')
                 else:
                     db.write_log('trader', 'not enough')
             else:
