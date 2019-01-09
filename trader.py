@@ -59,12 +59,12 @@ class Trader():
             else:
                 db.write_log('trader', 'not crossed')
 
-            if analyzer.is_macd_trending('up', 0.008, 2, True):
+            if analyzer.is_macd_trending('up', 0.009, 2, True):
                 db.write_log('trader', 'macd is up trend')
                 db.write_log('trader', 'entry by buy')
                 self.entry_scalping('buy')
 
-            if analyzer.is_macd_trending('down', -0.008, 2, True):
+            if analyzer.is_macd_trending('down', -0.009, 2, True):
                 db.write_log('trader', 'macd is down trend')
                 db.write_log('trader', 'entry by sell')
                 self.entry_scalping('sell')
