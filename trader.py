@@ -121,24 +121,24 @@ class Trader():
 
     def shrink_stop_loss(self):
         distance = 0.010
-        if float(self.open_trade['trailingStopLossOrderDistance']) > min_distance:
-            tradeId = self.open_trade['tradeId']
-            trade  = oanda_api.get_trade(tradeId)
 
-            pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
-            now = datetime.datetime.now(datetime.timezone.utc)
-            open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
-            enough_time = datetime.timedelta(minutes=20)
+        tradeId = self.open_trade['tradeId']
+        trade  = oanda_api.get_trade(tradeId)
 
-            if pips > 5 \
-            or now - open_time > enough_time:
-                params = {
-                    'stopLoss': {
-                        'distance': str(distance)
-                    }
+        pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
+        now = datetime.datetime.now(datetime.timezone.utc)
+        open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
+        enough_time = datetime.timedelta(minutes=20)
+
+        if pips > 5 \
+        or now - open_time > enough_time:
+            params = {
+                'stopLoss': {
+                    'distance': str(distance)
                 }
-                oanda_api.change_trade_order(tradeId, params)
-                db.write_log('trader', 'shrinked trailing stop')
+            }
+            oanda_api.change_trade_order(tradeId, params)
+            db.write_log('trader', 'shrinked trailing stop')
 
     def deal_scalping_trade(self):
     trade = oanda_api.get_trade(self.open_trade['tradeId'])
