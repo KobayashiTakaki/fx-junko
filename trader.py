@@ -58,22 +58,57 @@ class Trader():
             if analyzer.is_macd_trending('up', 0.008, 2, True):
                 db.write_log('trader', 'macd is up trend')
                 db.write_log('trader', 'entry by buy')
-                self.entry(self.entry_amount)
+                self.entry('buy')
 
             if analyzer.is_macd_trending('down', -0.008, 2, True):
                 db.write_log('trader', 'macd is down trend')
                 db.write_log('trader', 'entry by sell')
-                self.entry(-self.entry_amount)
+                self.entry('sell')
 
-    def entry(self, amount):
-        response = oanda_api.market_order(amount)
+    def entry(self, side, amount=self.entry_amount):
+        minus = -1 if side == 'sell' else 1
+        units = minus*amount
+        stop_loss = {
+            'distance': str(0.090)
+        }
+        trailing_stop_loss = {
+            'distance': str(0.100)
+        }
+
+        params = {
+            'type': 'MARKET',
+            'instrument': self.instrument,
+            'units': str(units),
+            'timeInForce': 'FOK',
+            'stopLossOnFill': stop_loss,
+            'trailingStopLossOnFill': trailing_stop_loss
+        }
+
+        response = oanda_api.market_order(params)
         if response.status == 201:
-            db.write_log('trader', 'entry. amount: ' + str(amount))
+            db.write_log('trader', 'entry. amount: ' + str(units))
         else:
             raise Exception('entry failed')
 
         self.open_trade = analyzer.refresh_open_trade()
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
+
+    def entry_scalping(self, side):
+        amount = 10000
+        if side == 'buy'else '-10000'
+
+        stop_loss = {
+            'distance': str(0.020)
+        }
+        params = {
+            'stopLossOrder': stop_loss
+        }
+        res = oanda_api.market_order(params)
+        if res.status == 201:
+            self.is_scalping = True
+        else:
+            raise exception('scalping entry failed')
+
 
     def exit(self):
         db.write_log('trader', 'close position')
@@ -101,6 +136,22 @@ class Trader():
                 }
                 oanda_api.change_trade_order(tradeId, params)
                 db.write_log('trader', 'shrinked trailing stop')
+
+    def deal_scalping_trade(self):
+    trade = oanda_api.get_trade(self.open_trade['tradeId'])
+    pips = trade['unrealizedPL'] / abs(trade['initialUnits']) * 100
+    if  pips > 10:
+        self.exit()
+
+    margin = 0.01
+    stop_loss = {
+        'distance': str(margin)
+    }
+    params = {
+        'stopLossOrder': stop_loss
+    }
+
+    oanda_api.update_trade_order(trade['tradeId'], params)
 
 if __name__=='__main__':
     trader = Trader()
