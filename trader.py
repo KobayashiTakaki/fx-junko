@@ -152,18 +152,16 @@ class Trader():
         if trade['unrealizedPL'] == '':
             raise Exception('changing stoploss failed')
         pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
-        if pips > 10:
-            self.exit()
+        if pips > 2:
+            margin = 0.02
+            stop_loss = {
+                'distance': str(margin)
+            }
+            params = {
+                'stopLoss': stop_loss
+            }
 
-        margin = 0.02
-        stop_loss = {
-            'distance': str(margin)
-        }
-        params = {
-            'stopLoss': stop_loss
-        }
-
-        oanda_api.change_trade_order(tradeId, params)
+            oanda_api.change_trade_order(tradeId, params)
 
 if __name__=='__main__':
     trader = Trader()
