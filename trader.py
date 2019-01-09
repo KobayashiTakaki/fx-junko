@@ -144,7 +144,7 @@ class Trader():
                 }
             }
             oanda_api.change_trade_order(tradeId, params)
-            db.write_log('trader', 'shrinked trailing stop')
+            db.write_log('trader', 'shrinked stop loss')
 
     def deal_scalping_trade(self):
         tradeId = self.open_trade['tradeId']
