@@ -11,10 +11,15 @@ class Trader():
         self.open_trade = None
         self.time_format = db.time_format
         self.instrument = 'USD_JPY'
+        self.is_scalping = False
 
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
+
         if self.open_trade is not None:
+            if self.is_scalping:
+                self.deal_scalping_trade()
+
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
                 if int(self.open_trade['initialUnits']) > 0:
@@ -35,6 +40,7 @@ class Trader():
             #ポジションがない場合
             db.write_log('trader', 'i dont have a open position')
 
+            self.is_scalping = False
             is_macd_crossed = analyzer.is_macd_crossed()
             if is_macd_crossed[0]:
                 if analyzer.is_cross_interval_enough():
@@ -58,14 +64,15 @@ class Trader():
             if analyzer.is_macd_trending('up', 0.008, 2, True):
                 db.write_log('trader', 'macd is up trend')
                 db.write_log('trader', 'entry by buy')
-                self.entry('buy')
+                self.entry_scalping('buy')
 
             if analyzer.is_macd_trending('down', -0.008, 2, True):
                 db.write_log('trader', 'macd is down trend')
                 db.write_log('trader', 'entry by sell')
-                self.entry('sell')
+                self.entry_scalping('sell')
 
-    def entry(self, side, amount=self.entry_amount):
+    def entry(self, side):
+        amount = self.entry_amount
         minus = -1 if side == 'sell' else 1
         units = minus*amount
         stop_loss = {
@@ -93,7 +100,8 @@ class Trader():
         self.open_trade = analyzer.refresh_open_trade()
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
 
-    def entry_scalping(self, side, amount=self.entry_amount):
+    def entry_scalping(self, side):
+        amount = self.entry_amount
         minus = -1 if side == 'sell' else 1
         units = minus*amount
         stop_loss = {
@@ -141,20 +149,23 @@ class Trader():
             db.write_log('trader', 'shrinked trailing stop')
 
     def deal_scalping_trade(self):
-    trade = oanda_api.get_trade(self.open_trade['tradeId'])
-    pips = trade['unrealizedPL'] / abs(trade['initialUnits']) * 100
-    if  pips > 10:
-        self.exit()
+        tradeId = self.open_trade['tradeId']
+        trade = oanda_api.get_trade(tradeId)
+        if trade['unrealizedPL'] == '':
+            raise Exception('changing stoploss failed')
+        pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
+        if pips > 10:
+            self.exit()
 
-    margin = 0.01
-    stop_loss = {
-        'distance': str(margin)
-    }
-    params = {
-        'stopLossOrder': stop_loss
-    }
+        margin = 0.01
+        stop_loss = {
+            'distance': str(margin)
+        }
+        params = {
+            'stopLoss': stop_loss
+        }
 
-    oanda_api.update_trade_order(trade['tradeId'], params)
+        oanda_api.change_trade_order(tradeId, params)
 
 if __name__=='__main__':
     trader = Trader()
