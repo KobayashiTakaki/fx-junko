@@ -126,7 +126,7 @@ class Trader():
         self.open_trade = analyzer.refresh_open_trade()
 
     def shrink_stop_loss(self):
-        distance = 0.010
+        distance = 0.050
 
         tradeId = self.open_trade['tradeId']
         trade  = oanda_api.get_trade(tradeId)
@@ -139,7 +139,7 @@ class Trader():
         if pips > 5 \
         or now - open_time > enough_time:
             params = {
-                'stopLoss': {
+                'trailingStopLoss': {
                     'distance': str(distance)
                 }
             }
