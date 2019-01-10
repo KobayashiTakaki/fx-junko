@@ -64,4 +64,5 @@ while True:
         time.sleep(1)
     except Exception as e:
         db.write_log('exception', str(e))
+        time.sleep(1)
         continue
