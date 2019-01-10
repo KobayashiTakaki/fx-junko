@@ -18,6 +18,9 @@ class Trader():
 
         if self.open_trade is not None:
             if self.is_scalping:
+                if self.open_trade['is_scal'] != '1':
+                    analyzer.set_is_scal(self.open_trade['tradeId'])
+
                 self.deal_scalping_trade()
 
             db.write_log('trader', 'i have an open trade')
@@ -137,7 +140,7 @@ class Trader():
     def shrink_stop_loss(self):
         distance = 0.050
         if self.open_trade['trailingStopLossOrderDistance'] != '':
-            if float(self.open_trade['trailingStopLossOrderDistance']) < distance:
+            if float(self.open_trade['trailingStopLossOrderDistance']) > distance:
                 tradeId = self.open_trade['tradeId']
                 trade  = oanda_api.get_trade(tradeId)
 
