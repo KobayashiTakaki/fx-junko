@@ -279,7 +279,7 @@ def refresh_open_trade():
 
     return df.iloc[-1]
 
-def set_is_scal(self, tradeId):
+def set_is_scal(tradeId):
     self.conn.execute(
         'update trades set is_scal = 1 '
         + 'where tradeId = ' + str(tradeId) + ';'
