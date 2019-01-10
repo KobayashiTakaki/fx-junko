@@ -34,16 +34,20 @@ def is_macd_crossed(use_current=False):
 
     max_macd = 0.045
 
-    if price_last['macd_direction'] < price_newer['macd_direction']\
-        and price_last['macd'] > -max_macd:
-        #シグナルを上向きにクロス
-        #かつ、クロス時のmacdが低すぎない
-        return True, 1
-    elif price_last['macd_direction'] > price_newer['macd_direction']\
-        and price_last['macd'] < max_macd:
-        #シグナルを下向きにクロス
-        #かつ、クロス時のmacdが高すぎない
-        return True, -1
+    if price_last['macd_direction'] < price_newer['macd_direction']:
+        if price_last['macd'] > -max_macd:
+            #シグナルを上向きにクロス
+            #かつ、クロス時のmacdが低すぎない
+            return True, 1
+        else:
+            db.write_log('last macd: ' + '0:.5f'.format(price_last['macd']) + '. too low.')
+    elif price_last['macd_direction'] > price_newer['macd_direction']:
+        if price_last['macd'] < max_macd:
+            #シグナルを下向きにクロス
+            #かつ、クロス時のmacdが高すぎない
+            return True, -1
+        else:
+            db.write_log('last macd: ' + '0:.5f'.format(price_last['macd']) + '. too high.')
 
     return False, 0
 
