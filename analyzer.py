@@ -40,14 +40,14 @@ def is_macd_crossed(use_current=False):
             #かつ、クロス時のmacdが低すぎない
             return True, 1
         else:
-            db.write_log('analyzer', 'last macd: ' + '0:.5f'.format(price_last['macd']) + '. too low.')
+            db.write_log('analyzer', 'last macd: ' + '{0:.5f}'.format(price_last['macd']) + '. too low.')
     elif price_last['macd_direction'] > price_newer['macd_direction']:
         if price_last['macd'] < max_macd:
             #シグナルを下向きにクロス
             #かつ、クロス時のmacdが高すぎない
             return True, -1
         else:
-            db.write_log('analyzer', 'last macd: ' + '0:.5f'.format(price_last['macd']) + '. too high.')
+            db.write_log('analyzer', 'last macd: ' + '{0:.5f}'.format(price_last['macd']) + '. too high.')
 
     return False, 0
 
@@ -151,7 +151,7 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
     x = np.linspace(1, len(y), len(y))
     slope = np.polyfit(x, y, 1)[0]
 
-    db.write_log('analyzer', 'macd slope: ' + '0:.5f'.format(slope))
+    db.write_log('analyzer', 'macd slope: ' + '{0:.5f}'.format(slope))
     if direction == 'down':
         if slope <= least_slope:
             return True
