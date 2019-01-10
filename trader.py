@@ -144,7 +144,7 @@ class Trader():
             pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
             now = datetime.datetime.now(datetime.timezone.utc)
             open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
-            enough_time = datetime.timedelta(minutes=20)
+            enough_time = datetime.timedelta(minutes=15)
 
             if pips > 5 \
             or now - open_time > enough_time:
