@@ -38,7 +38,7 @@ def update_trade_states():
         + 'where exists ('
         + 'select * from ' + table_name + ' as states '
         + 'where trades.tradeId = states.trade_id '
-        + ');'
+        + ') and where is_scal <> 1;'
         , conn
     )
 
@@ -47,7 +47,7 @@ def update_trade_states():
         + 'where not exists ('
         + 'select * from ' + table_name + ' as states '
         + 'where trades.tradeId = states.trade_id '
-        + ');'
+        + ') and where is_scal <> 1;'
         , conn
     )
 
