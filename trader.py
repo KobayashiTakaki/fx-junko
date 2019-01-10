@@ -51,12 +51,16 @@ class Trader():
                         and analyzer.is_macd_trending('up', 0.004, 3, True):
                             db.write_log('trader', 'entry by buy')
                             self.entry('buy')
+                        else:
+                            db.write_log('trader', 'too weak to buy')
                     #下向きクロスだったら売りでエントリー
                     else:
                         if analyzer.market_trend() != 1\
                         and analyzer.is_macd_trending('down', -0.004, 3, True):
                             db.write_log('trader', 'entry by sell')
                             self.entry('sell')
+                        else:
+                            db.write_log('trader', 'too weak to sell')
                 else:
                     db.write_log('trader', 'not enough')
             else:
