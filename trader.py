@@ -24,10 +24,10 @@ class Trader():
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
                 if int(self.open_trade['initialUnits']) > 0:
-                    if analyzer.is_macd_trending('down', -0.005):
+                    if analyzer.is_macd_trending('down', -0.003):
                         self.exit()
                 else:
-                    if analyzer.is_macd_trending('up', 0.005):
+                    if analyzer.is_macd_trending('up', 0.003):
                         self.exit()
 
                 if analyzer.is_macd_crossed()[0]:
@@ -47,12 +47,14 @@ class Trader():
                 if analyzer.is_cross_interval_enough():
                     #上向きクロスだったら買いでエントリー
                     if is_macd_crossed[1] == 1:
-                        if analyzer.market_trend() != -1:
+                        if analyzer.market_trend() != -1\
+                        and analyzer.is_macd_trending('up', 0.004, 3, True):
                             db.write_log('trader', 'entry by buy')
                             self.entry('buy')
                     #下向きクロスだったら売りでエントリー
                     else:
-                        if analyzer.market_trend() != 1:
+                        if analyzer.market_trend() != 1\
+                        and analyzer.is_macd_trending('down', -0.004, 3, True):
                             db.write_log('trader', 'entry by sell')
                             self.entry('sell')
                 else:
@@ -60,12 +62,12 @@ class Trader():
             else:
                 db.write_log('trader', 'not crossed')
 
-            if analyzer.is_macd_trending('up', 0.009, 2, True):
+            if analyzer.is_macd_trending('up', 0.008, 2, True):
                 db.write_log('trader', 'macd is up trend')
                 db.write_log('trader', 'entry by buy')
                 self.entry_scalping('buy')
 
-            if analyzer.is_macd_trending('down', -0.009, 2, True):
+            if analyzer.is_macd_trending('down', -0.008, 2, True):
                 db.write_log('trader', 'macd is down trend')
                 db.write_log('trader', 'entry by sell')
                 self.entry_scalping('sell')
