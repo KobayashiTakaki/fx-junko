@@ -12,6 +12,7 @@ class Trader():
         self.time_format = db.time_format
         self.instrument = 'USD_JPY'
         self.is_scalping = False
+        self.conn = db.conn
 
     def loop(self):
         self.open_trade = analyzer.refresh_open_trade()
@@ -119,6 +120,9 @@ class Trader():
         else:
             raise Exception('scalping entry failed')
 
+        self.open_trade = analyzer.refresh_open_trade()
+        self.set_is_scal(self.open_trade['tradeId'])
+
     def exit(self):
         db.write_log('trader', 'close position')
 
@@ -162,6 +166,12 @@ class Trader():
             }
 
             oanda_api.change_trade_order(tradeId, params)
+
+    def set_is_scal(self, tradeId):
+        self.conn.execute(
+            'update trades set is_scal = 1 '
+            + 'where tradeId = ' + str(tradeId) + ';'
+        )
 
 if __name__=='__main__':
     trader = Trader()
