@@ -133,30 +133,31 @@ class Trader():
 
     def shrink_stop_loss(self):
         distance = 0.050
+        if self.open_trade['trailingStopLossOrderDistance'] < distance:
+            tradeId = self.open_trade['tradeId']
+            trade  = oanda_api.get_trade(tradeId)
 
-        tradeId = self.open_trade['tradeId']
-        trade  = oanda_api.get_trade(tradeId)
+            pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
+            now = datetime.datetime.now(datetime.timezone.utc)
+            open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
+            enough_time = datetime.timedelta(minutes=20)
 
-        pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
-        now = datetime.datetime.now(datetime.timezone.utc)
-        open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
-        enough_time = datetime.timedelta(minutes=20)
-
-        if pips > 5 \
-        or now - open_time > enough_time:
-            params = {
-                'trailingStopLoss': {
-                    'distance': str(distance)
+            if pips > 5 \
+            or now - open_time > enough_time:
+                params = {
+                    'trailingStopLoss': {
+                        'distance': str(distance)
+                    }
                 }
-            }
-            oanda_api.change_trade_order(tradeId, params)
-            db.write_log('trader', 'shrinked stop loss')
+                oanda_api.change_trade_order(tradeId, params)
+                db.write_log('trader', 'shrinked stop loss')
 
     def deal_scalping_trade(self):
         tradeId = self.open_trade['tradeId']
         trade = oanda_api.get_trade(tradeId)
         if trade['unrealizedPL'] == '':
             raise Exception('changing stoploss failed')
+
         pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
         if pips > 2:
             margin = 0.02
@@ -168,6 +169,9 @@ class Trader():
             }
 
             oanda_api.change_trade_order(tradeId, params)
+
+        if pips > 10:
+            self.exit()
 
     def set_is_scal(self, tradeId):
         self.conn.execute(
