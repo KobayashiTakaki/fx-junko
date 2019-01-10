@@ -156,7 +156,7 @@ class Trader():
         tradeId = self.open_trade['tradeId']
         trade = oanda_api.get_trade(tradeId)
         if trade['unrealizedPL'] == '':
-            raise Exception('changing stoploss failed')
+            raise Exception('trade already closed')
 
         pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
         if pips > 2:
