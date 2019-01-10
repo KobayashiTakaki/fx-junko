@@ -284,7 +284,6 @@ def is_exit_interval_enough():
             open_trade.iloc[0]['openTime'],
             db_time_fromat
         )
-        print(open_time)
         now = datetime.datetime.now(datetime.timezone.utc)
         if now - open_time > datetime.timedelta(minutes=5):
             return True
