@@ -151,7 +151,7 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
     x = np.linspace(1, len(y), len(y))
     slope = np.polyfit(x, y, 1)[0]
 
-    db.write_log('analyzer', 'macd slope: ' + str(slope))
+    db.write_log('analyzer', 'macd slope: ' + '0:.5f'.format(slope))
     if direction == 'down':
         if slope <= least_slope:
             return True
