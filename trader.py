@@ -137,7 +137,7 @@ class Trader():
 
     def shrink_stop_loss(self):
         distance = 0.050
-        if self.open_trade['trailingStopLossOrderDistance'] < distance:
+        if float(self.open_trade['trailingStopLossOrderDistance']) < distance:
             tradeId = self.open_trade['tradeId']
             trade  = oanda_api.get_trade(tradeId)
 
