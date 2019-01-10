@@ -279,6 +279,12 @@ def refresh_open_trade():
 
     return df.iloc[-1]
 
+    def set_is_scal(self, tradeId):
+        self.conn.execute(
+            'update trades set is_scal = 1 '
+            + 'where tradeId = ' + str(tradeId) + ';'
+        )
+
 def is_exit_interval_enough():
     open_trade = pd.read_sql_query(
         "select * from trades where state = 'OPEN' order by openTime;"
