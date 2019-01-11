@@ -24,10 +24,10 @@ class Trader():
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
                 if int(self.open_trade['initialUnits']) > 0:
-                    if analyzer.is_macd_trending('down', -0.003):
+                    if analyzer.is_macd_trending('down', -0.002):
                         self.exit()
                 else:
-                    if analyzer.is_macd_trending('up', 0.003):
+                    if analyzer.is_macd_trending('up', 0.002):
                         self.exit()
 
                 if analyzer.is_macd_crossed()[0]:
@@ -35,7 +35,7 @@ class Trader():
             else:
                 db.write_log('trader', 'not enough time to exit')
 
-            self.shrink_stop_loss()
+            #self.shrink_stop_loss()
 
         else:
             #ポジションがない場合
@@ -80,11 +80,8 @@ class Trader():
         amount = self.entry_amount
         minus = -1 if side == 'sell' else 1
         units = minus*amount
-        stop_loss = {
-            'distance': str(0.090)
-        }
         trailing_stop_loss = {
-            'distance': str(0.100)
+            'distance': str(0.150)
         }
 
         params = {
@@ -92,7 +89,6 @@ class Trader():
             'instrument': self.instrument,
             'units': str(units),
             'timeInForce': 'FOK',
-            'stopLossOnFill': stop_loss,
             'trailingStopLossOnFill': trailing_stop_loss
         }
 
@@ -170,7 +166,7 @@ class Trader():
             raise Exception('trade already closed')
 
         pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
-        if pips > 2:
+        if pips > 5:
             margin = 0.02
             stop_loss = {
                 'distance': str(margin)
@@ -182,6 +178,13 @@ class Trader():
             oanda_api.change_trade_order(tradeId, params)
 
         if pips > 10:
+            self.exit()
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+        open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
+        enough_time = datetime.timedelta(minutes=10)
+
+        if now - open_time > enough_time:
             self.exit()
 
 if __name__=='__main__':
