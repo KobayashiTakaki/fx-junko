@@ -99,10 +99,6 @@ class Trader():
         }
 
         response = oanda_api.market_order(params)
-        if response.status == 201:
-            db.write_log('trader', 'entry. amount: ' + str(units))
-        else:
-            raise Exception('entry failed')
 
         self.open_trade = analyzer.refresh_open_trade()
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
