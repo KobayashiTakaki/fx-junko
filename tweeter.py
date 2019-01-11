@@ -258,6 +258,7 @@ def post_scal_tweet(test=False):
             unsent_records.iloc[-1]['open_time'], time_format)
         now = datetime.datetime.now(datetime.timezone.utc)
         interval = datetime.timedelta(minutes=15)
+        #一定時間以上経過していたらtweet実行
         if now - last_open_time > interval:
             #tradeIdのlistをstrに変換して、カンマ区切りの文字列にjoin
             tradeIds = ', '.join(map(str, list(unsent_records['trade_id'])))
@@ -277,7 +278,6 @@ def post_scal_tweet(test=False):
             feeling = 'positive' if pips_total > 0 else 'negative'
             scal_tweet = tweet_messages.get_scal_tweet(side)
             kaomoji = tweet_messages.get_kaomoji(feeling)
-
 
             content = scal_tweet[0]\
                 + '{0:.0f}'.format(abs(money_toral)) + "円" + scal_tweet[1]\

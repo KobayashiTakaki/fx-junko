@@ -11,10 +11,6 @@ db_time_fromat = db.time_format
 
 # TODO: 5分足と15分足を切り替えられるようにする
 
-def loop():
-    update_price_data()
-    db.write_log('analyzer', 'updated data')
-
 def is_macd_crossed(use_current=False):
     df = pd.read_sql_query('select * from prices order by datetime;', conn)
 
