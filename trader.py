@@ -4,6 +4,7 @@ import api.oanda_api as oanda_api
 import api.twitter_api as twitter_api
 import analyzer
 import db.db as db
+import recorder
 
 class Trader():
     def __init__(self):
@@ -101,6 +102,7 @@ class Trader():
         response = oanda_api.market_order(params)
 
         self.open_trade = oanda_api.get_open_trade()
+        recorder.add_trade_record(self.open_trade, 'trades')
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
 
     def entry_scalping(self, side):
@@ -125,7 +127,7 @@ class Trader():
             raise Exception('scalping entry failed')
 
         self.open_trade = oanda_api.get_open_trade()
-        analyzer.set_is_scal(self.open_trade['tradeId'])
+        recorder.add_trade_record(self.open_trade, 'scal_trades')
 
     def exit(self):
         db.write_log('trader', 'close position')
