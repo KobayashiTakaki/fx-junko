@@ -83,12 +83,14 @@ def update_scal_states():
     table_columns = [
         'trade_id',
         'open_time',
+        'close_time'
         'tweeted'
     ]
     conn.execute(
         'create table if not exists ' + table_name + '('
         + 'trade_id integer not null primary key,'
         + 'open_time text,'
+        + 'close_time text'
         + 'tweeted integer'
         + ');'
     )
@@ -100,7 +102,7 @@ def update_scal_states():
 
     #close状態のscal tradeで、statesテーブルに存在しないレコードを取得
     new_trades = pd.read_sql_query(
-        'select tradeId, openTime, state from scal_trades '
+        'select tradeId, openTime, closeTime, state from scal_trades '
         + 'where not exists ('
         + 'select * from ' + table_name + ' as states '
         + 'where scal_trades.tradeId = states.trade_id '
@@ -113,6 +115,7 @@ def update_scal_states():
         new_record = pd.Series()
         new_record['trade_id'] = row['tradeId']
         new_record['open_time'] = row['openTime']
+        new_record['close_time'] = row['closeTime']
         new_record['tweeted'] = ''
         #行をappend
         state_records = state_records.append(new_record, ignore_index=True)
