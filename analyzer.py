@@ -262,22 +262,6 @@ def update_trade_data(count=10):
     .sort_values('tradeId').reset_index(drop=True)\
     .to_sql('trades', conn, if_exists="replace")
 
-def refresh_open_trade():
-    update_trade_data()
-    df = pd.read_sql_query(
-        "select * from trades where state = 'OPEN' order by openTime;"
-        , conn)
-
-    #複数tradeがあったら最新のtradeだけ残して全部クローズする
-    if len(df) > 1:
-        for i in range(0, len(df)-1):
-            oanda_api.close_trade(df.at[i, 'tradeId'])
-
-    if len(df) == 0:
-        return None
-
-    return df.iloc[-1]
-
 def set_is_scal(tradeId):
     conn.execute(
         'update trades set is_scal = 1 '
