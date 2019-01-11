@@ -242,6 +242,7 @@ def post_scal_tweet(test=False):
     table_columns = [
         'trade_id',
         'open_time',
+        'close_time',
         'tweeted'
     ]
 
@@ -256,8 +257,8 @@ def post_scal_tweet(test=False):
     unsent_records = state_records.query('tweeted != 1')
 
     if len(unsent_records) > 0:
-        #最新のscal tradeのopen_timeと現在を比較
-        last_open_time = datetime.datetime.strptime(
+        #最新のscal tradeのclose_timeと現在を比較
+        last_close_time = datetime.datetime.strptime(
             unsent_records.iloc[-1]['close_time'], time_format)
         now = datetime.datetime.now(datetime.timezone.utc)
         interval = datetime.timedelta(minutes=15)
