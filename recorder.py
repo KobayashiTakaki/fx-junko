@@ -23,6 +23,24 @@ trades_header = [
     'trailingStopLossOrderDistance'
 ]
 
+price_header = [
+    'datetime',
+    'open',
+    'high',
+    'low',
+    'close',
+    'macd',
+    'macd_signal',
+    'macd2',
+    'macd_direction',
+    'crossed'
+]
+
+def now_in_unixtime():
+    tz = datetime.timezone.utc
+    now = datetime.datetime.now(tz)
+    return int(now.timestamp())
+
 def add_trade_record(trade, table_name):
     conn.execute(
         'create table if not exists ' + table_name + '('
@@ -56,3 +74,16 @@ def update_trade_data(table_name):
     conn.commit()
 
     fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
+
+def update_price_data():
+    params = {
+        'granularity': 'M5',
+        'toTime': now_in_unixtime(),
+        'count': 60,
+        'completed_only': True
+    }
+
+    candles = oanda_api.get_candles(params=params)
+    df = pd.DataFrame(candles)
+    df = price_util.calc_macd(df)
+    df.reindex(columns=price_header).to_sql('prices', conn, if_exists="replace", index=False)

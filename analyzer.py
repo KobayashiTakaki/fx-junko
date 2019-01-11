@@ -11,11 +11,6 @@ db_time_fromat = db.time_format
 
 # TODO: 5分足と15分足を切り替えられるようにする
 
-def now_in_unixtime():
-    tz = datetime.timezone.utc
-    now = datetime.datetime.now(tz)
-    return int(now.timestamp())
-
 def loop():
     update_price_data()
     db.write_log('analyzer', 'updated data')
@@ -161,59 +156,6 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
             return True
 
     return False
-
-def update_price_data():
-    price_header = [
-        'datetime',
-        'open',
-        'high',
-        'low',
-        'close',
-        'macd',
-        'macd_signal',
-        'macd2',
-        'macd_direction',
-        'crossed'
-    ]
-
-    params = {
-        'granularity': 'M5',
-        'toTime': now_in_unixtime(),
-        'count': 60,
-        'completed_only': True
-    }
-
-    candles = oanda_api.get_candles(params=params)
-    df = pd.DataFrame(candles)
-    df = calc_macd(df)
-    df.reindex(columns=price_header).to_sql('prices', conn, if_exists="replace")
-
-def calc_macd(df):
-    macd = pd.DataFrame()
-    macd['ema12'] = df['close'].ewm(span=12).mean()
-    macd['ema26'] = df['close'].ewm(span=26).mean()
-    macd['macd'] = macd['ema12'] - macd['ema26']
-    macd['signal'] = macd['macd'].rolling(window=9).mean()
-    df['macd'] = macd['macd']
-    df['macd_signal'] = macd['signal']
-    df['macd2'] = macd['macd'] - macd['signal']
-    #macd_direction: macdがシグナルより上なら1, シグナル以下なら-1
-    df['macd_direction'] = df['macd2'].apply(lambda v: 1 if v > 0 else -1)
-
-    #macdのcrossを判定
-    for i in range(1, len(df)):
-        last_price = df.iloc[i-1]
-        price = df.iloc[i]
-        if last_price['macd_direction'] > price['macd_direction']:
-            #1つ前のmacd_drectionが大きい->下向きにクロスした
-            df.at[i, 'crossed'] = str(-1)
-        elif last_price['macd_direction'] < price['macd_direction']:
-            #1つ前のmacd_drectionが小さい->上向きにクロスした
-            df.at[i, 'crossed'] = str(1)
-        else:
-            df.at[i, 'crossed'] = str(0)
-
-    return df
 
 def set_is_scal(tradeId):
     conn.execute(
