@@ -19,9 +19,6 @@ class Trader():
 
         if self.open_trade is not None:
             if self.is_scalping:
-                if self.open_trade['is_scal'] != '1':
-                    analyzer.set_is_scal(self.open_trade['tradeId'])
-
                 self.deal_scalping_trade()
 
             db.write_log('trader', 'i have an open trade')
