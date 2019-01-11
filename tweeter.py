@@ -103,7 +103,7 @@ def update_scal_states():
         'select tradeId, openTime, state from scal_trades '
         + 'where not exists ('
         + 'select * from ' + table_name + ' as states '
-        + 'where trades.tradeId = states.trade_id '
+        + 'where scal_trades.tradeId = states.trade_id '
         + ') and state = \'CLOSED\';'
         , conn
     )
@@ -263,7 +263,7 @@ def post_scal_tweet(test=False):
             tradeIds = ', '.join(map(str, list(unsent_records['trade_id'])))
             #tradesテーブルからtrade_idが一致するレコードを取得
             trades = pd.read_sql_query(
-                'select * from trades where tradeId in ({});'.format(tradeIds)
+                'select * from scal_trades where tradeId in ({});'.format(tradeIds)
                 , conn
             )
             money_toral = 0
