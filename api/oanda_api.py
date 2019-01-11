@@ -89,7 +89,6 @@ def market_order(params):
     else:
         raise Exception('oanda_api: entry failed')
 
-
 def get_trades(state, count):
     params = {
         'state': state,
