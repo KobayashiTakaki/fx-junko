@@ -14,7 +14,7 @@ class Trader():
         self.is_scalping = False
 
     def loop(self):
-        self.open_trade = analyzer.refresh_open_trade()
+        self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
             if self.is_scalping:
@@ -100,7 +100,7 @@ class Trader():
 
         response = oanda_api.market_order(params)
 
-        self.open_trade = analyzer.refresh_open_trade()
+        self.open_trade = oanda_api.get_open_trade()
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
 
     def entry_scalping(self, side):
@@ -124,14 +124,14 @@ class Trader():
         else:
             raise Exception('scalping entry failed')
 
-        self.open_trade = analyzer.refresh_open_trade()
+        self.open_trade = oanda_api.get_open_trade()
         analyzer.set_is_scal(self.open_trade['tradeId'])
 
     def exit(self):
         db.write_log('trader', 'close position')
 
         oanda_api.close_trade(self.open_trade['tradeId'])
-        self.open_trade = analyzer.refresh_open_trade()
+        self.open_trade = oanda_api.get_open_trade()
 
     def shrink_stop_loss(self):
         distance = 0.050

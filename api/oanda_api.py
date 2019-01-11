@@ -103,6 +103,23 @@ def get_trade(trade_id):
     trade = context.trade.get(account_id, str(trade_id)).get('trade', 200)
     return format_trade(trade)
 
+def get_open_trade():
+    trades = context.trade.list_open(account_id).get('trades', 200)
+    if len(trades) == 0:
+        return None
+    elif len(trades) > 1:
+        #idを取得してsort
+        ids = sorted([trade.id for trade in trades])
+        print(ids)
+        for i in range(0, len(ids)-1):
+            #複数tradeがあったら最新のtradeだけ残して全部クローズする
+            close_trade(ids[i])
+        #idsの一番最後に一致するtradeを返す
+        last_trade = [trade for trade in trades if trade.id == ids[-1]][0]
+        return format_trade(last_trade)
+
+    return format_trade(trades[0])
+
 def change_trade_order(trade_id, params):
     response = context.trade.set_dependent_orders(account_id, trade_id, **params)
     return response
