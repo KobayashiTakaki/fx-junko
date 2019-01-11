@@ -20,7 +20,7 @@ def update_trade_states():
     ]
     conn.execute(
         'create table if not exists ' + table_name + '('
-        + 'trade_id number not null primary key,'
+        + 'trade_id integer not null primary key,'
         + 'open_time text,'
         + 'trade_state text,'
         + 'tweeted_state text'
@@ -87,9 +87,9 @@ def update_scal_states():
     ]
     conn.execute(
         'create table if not exists ' + table_name + '('
-        + 'trade_id number not null primary key,'
+        + 'trade_id integer not null primary key,'
         + 'open_time text,'
-        + 'tweeted text'
+        + 'tweeted integer'
         + ');'
     )
 
