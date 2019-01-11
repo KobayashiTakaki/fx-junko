@@ -102,6 +102,11 @@ class Trader():
         response = oanda_api.market_order(params)
 
         self.open_trade = oanda_api.get_open_trade()
+        retry = 0
+        while self.open_trade is None and retry < 3 :
+            sleep(0.3)
+            retry += 1
+
         recorder.add_trade_record(self.open_trade, 'trades')
         db.write_log('trader', 'open_trade: ' + str(self.open_trade))
 
@@ -127,6 +132,10 @@ class Trader():
             raise Exception('scalping entry failed')
 
         self.open_trade = oanda_api.get_open_trade()
+        retry = 0
+        while self.open_trade is None and retry < 3 :
+            sleep(0.3)
+            retry += 1
         recorder.add_trade_record(self.open_trade, 'scal_trades')
 
     def exit(self):
