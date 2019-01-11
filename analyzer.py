@@ -153,12 +153,6 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
 
     return False
 
-def set_is_scal(tradeId):
-    conn.execute(
-        'update trades set is_scal = 1 '
-        + 'where tradeId = ' + str(tradeId) + ';'
-    )
-
 def is_exit_interval_enough():
     open_trade = pd.read_sql_query(
         "select * from trades where state = 'OPEN' order by openTime;"
