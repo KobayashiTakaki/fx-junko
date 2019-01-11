@@ -258,7 +258,7 @@ def post_scal_tweet(test=False):
     if len(unsent_records) > 0:
         #最新のscal tradeのopen_timeと現在を比較
         last_open_time = datetime.datetime.strptime(
-            unsent_records.iloc[-1]['open_time'], time_format)
+            unsent_records.iloc[-1]['close_time'], time_format)
         now = datetime.datetime.now(datetime.timezone.utc)
         interval = datetime.timedelta(minutes=15)
         #一定時間以上経過していたらtweet実行
