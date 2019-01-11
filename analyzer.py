@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import db.db  as db
 import api.oanda_api as oanda_api
+import util.price_util as price_util
 
 conn = db.conn
 db_time_fromat = db.time_format
@@ -26,7 +27,7 @@ def is_macd_crossed(use_current=False):
         candle = oanda_api.get_candles(self.instrument, self.params, False)
         df_current = pd.DataFrame(candle).loc[:,['datetime', 'close']]
         df = df.append(df_current, ignore_index = True)
-        df = calc_macd(df)
+        df = price_util.calc_macd(df)
 
     price_last = df.iloc[-2]
     price_newer = df.iloc[-1]
@@ -133,7 +134,7 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
         df_current = pd.DataFrame(candle)
         df = df.append(df_current, ignore_index = True)
         df = df.sort_values('datetime')
-        df = calc_macd(df).tail(count)
+        df = price_util.calc_macd(df).tail(count)
 
     else:
         #最新のレコードをcount件取得

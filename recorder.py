@@ -2,6 +2,7 @@ import datetime
 import pandas as pd
 import db.db  as db
 import api.oanda_api as oanda_api
+import util.price_util as price_util
 
 conn = db.conn
 db_time_fromat = db.time_format
