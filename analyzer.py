@@ -229,8 +229,7 @@ def update_trade_data(count=10):
         'closeTime',
         'stopLossOrderState',
         'trailingStopLossOrderState',
-        'trailingStopLossOrderDistance',
-        'is_scal'
+        'trailingStopLossOrderDistance'
     ]
     #oanda_apiからtradeを取得
     #DataFrameのindexとしてtradeIdを設定

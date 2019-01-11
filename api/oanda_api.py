@@ -55,7 +55,6 @@ def format_trade(trade):
         else trade.trailingStopLossOrder.state
     trailingStopLossOrderDistance = '' if trade.trailingStopLossOrder is None\
         else trade.trailingStopLossOrder.distance
-    is_scal = ''
 
     return {
         'tradeId': tradeId,
@@ -70,8 +69,7 @@ def format_trade(trade):
         'closeTime': closeTime,
         'stopLossOrderState': stopLossOrderState,
         'trailingStopLossOrderState': trailingStopLossOrderState,
-        'trailingStopLossOrderDistance': trailingStopLossOrderDistance,
-        'is_scal': is_scal
+        'trailingStopLossOrderDistance': trailingStopLossOrderDistance
     }
 
 def get_candles(instrument=instrument, params=candles_params, completed_only=True):

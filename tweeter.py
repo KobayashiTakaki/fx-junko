@@ -38,7 +38,7 @@ def update_trade_states():
         + 'where exists ('
         + 'select * from ' + table_name + ' as states '
         + 'where trades.tradeId = states.trade_id '
-        + ') and is_scal <> 1;'
+        + ');'
         , conn
     )
 
@@ -47,7 +47,7 @@ def update_trade_states():
         + 'where not exists ('
         + 'select * from ' + table_name + ' as states '
         + 'where trades.tradeId = states.trade_id '
-        + ') and is_scal <> 1;'
+        + ');'
         , conn
     )
 
@@ -100,11 +100,11 @@ def update_scal_states():
 
     #close状態のscal tradeで、statesテーブルに存在しないレコードを取得
     new_trades = pd.read_sql_query(
-        'select tradeId, openTime, state from trades '
+        'select tradeId, openTime, state from scal_trades '
         + 'where not exists ('
         + 'select * from ' + table_name + ' as states '
         + 'where trades.tradeId = states.trade_id '
-        + ') and is_scal = 1 and state = \'CLOSED\';'
+        + ') and state = \'CLOSED\';'
         , conn
     )
 
