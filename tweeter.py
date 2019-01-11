@@ -246,7 +246,6 @@ def post_scal_tweet(test=False):
         'tweeted'
     ]
 
-
     state_records = pd.read_sql_query(
         'select * from ' + table_name + ' '
         + 'order by open_time;'
@@ -263,7 +262,7 @@ def post_scal_tweet(test=False):
         now = datetime.datetime.now(datetime.timezone.utc)
         interval = datetime.timedelta(minutes=15)
         #一定時間以上経過していたらtweet実行
-        if now - last_open_time > interval:
+        if now - last_close_time > interval:
             #tradeIdのlistをstrに変換して、カンマ区切りの文字列にjoin
             tradeIds = ', '.join(map(str, list(unsent_records['trade_id'])))
             #tradesテーブルからtrade_idが一致するレコードを取得
