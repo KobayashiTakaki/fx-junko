@@ -82,7 +82,6 @@ def get_candles(instrument=instrument, params=candles_params, completed_only=Tru
 def market_order(params):
     response = context.order.market(account_id, **params)
     if response.status == 201:
-        db.write_log('oanda_api', 'entry succeeded.')
         return response
     else:
         raise Exception('oanda_api: entry failed')
