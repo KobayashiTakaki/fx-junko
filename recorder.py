@@ -42,11 +42,8 @@ def now_in_unixtime():
     return int(now.timestamp())
 
 def add_trade_record(trade, table_name):
-    conn.execute(
-        'create table if not exists ' + table_name + '('
-        + ','.join(trades_header)
-        + ');'
-    )
+    create_trades_table(table_name)
+
     records = conn.execute('select * from ' + table_name + ' '
         + 'where tradeId = ' + trade['tradeId'] + ';').fetchall()
     if len(records) == 0:
@@ -54,12 +51,16 @@ def add_trade_record(trade, table_name):
         df.to_sql(table_name, conn, if_exists="append", index=False)
 
 def update_trade_data(table_name):
+    create_trades_table(table_name)
+
     #tradesテーブルからOPENのtrade_idを取得
     open_ids = list(pd.read_sql_query(
         'select tradeId from ' + table_name + ' '
         + 'where state=\'OPEN\''
         ,conn
     )['tradeId'])
+    #joinするため文字列型に変換
+    open_ids = list(map(str, open_ids))
 
     fetched_trades = pd.DataFrame(columns=trades_header)
     for id in open_ids:
@@ -87,3 +88,22 @@ def update_price_data():
     df = pd.DataFrame(candles)
     df = price_util.calc_macd(df)
     df.reindex(columns=price_header).to_sql('prices', conn, if_exists="replace", index=False)
+
+def create_trades_table(table_name):
+    conn.execute(
+        'create table if not exists ' + table_name + '('
+        + 'tradeId integer primary key, '
+        + 'instrument text, '
+        + 'price real, '
+        + 'openTime text, '
+        + 'state text, '
+        + 'initialUnits real, '
+        + 'realizedPL real, '
+        + 'unrealizedPL real, '
+        + 'averageClosePrice real, '
+        + 'closeTime text,'
+        + 'stopLossOrderState text, '
+        + 'trailingStopLossOrderState  text, '
+        + 'trailingStopLossOrderDistance real'
+        + ');'
+    )
