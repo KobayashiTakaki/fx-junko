@@ -3,6 +3,7 @@ import time
 import trader
 import analyzer
 import tweeter
+import recorder
 import db.db as db
 import api.oanda_api as oanda_api
 
@@ -13,6 +14,10 @@ def trader_loop():
 
 def analyzer_loop():
     analyzer.loop()
+
+def recorder_loop():
+    recorder.update_trade_data('trades')
+    recorder.update_trade_data('scal_trades')
 
 def tweeter_loop():
     tweeter.post_trade_tweets()
@@ -25,6 +30,7 @@ def activate():
         #fxタグのスケジュールを登録
         schedule.every(10).seconds.do(analyzer_loop).tag('fx')
         schedule.every(10).seconds.do(trader_loop).tag('fx')
+        schedule.every(30).seconds.do(recorder_loop).tag('fx')
         schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():

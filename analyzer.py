@@ -17,7 +17,6 @@ def now_in_unixtime():
 
 def loop():
     update_price_data()
-    update_trade_data()
     db.write_log('analyzer', 'updated data')
 
 def is_macd_crossed(use_current=False):
