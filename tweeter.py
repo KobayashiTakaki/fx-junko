@@ -83,7 +83,7 @@ def update_scal_states():
     table_columns = [
         'trade_id',
         'open_time',
-        'close_time'
+        'close_time',
         'tweeted'
     ]
     conn.execute(
