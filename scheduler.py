@@ -12,12 +12,12 @@ trader = trader.Trader()
 def trader_loop():
     trader.loop()
 
-def analyzer_loop():
-    analyzer.loop()
-
-def recorder_loop():
+def update_trade_data():
     recorder.update_trade_data('trades')
     recorder.update_trade_data('scal_trades')
+
+def update_price_data():
+    recorder.update_price_data()
 
 def tweeter_loop():
     tweeter.post_trade_tweets()
@@ -28,9 +28,9 @@ def activate():
     schedule.clear('fx')
     if oanda_api.is_market_open():
         #fxタグのスケジュールを登録
-        schedule.every(10).seconds.do(analyzer_loop).tag('fx')
         schedule.every(10).seconds.do(trader_loop).tag('fx')
-        schedule.every(30).seconds.do(recorder_loop).tag('fx')
+        schedule.every(30).seconds.do(update_trade_data).tag('fx')
+        schedule.every(60).seconds.do(update_price_data).tag('fx')
         schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
