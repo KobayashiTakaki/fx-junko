@@ -62,7 +62,7 @@ class Trader():
                         else:
                             db.write_log('trader', 'too weak to sell')
                 else:
-                    db.write_log('trader', 'not enough')
+                    db.write_log('trader', 'not enough cross interval')
             else:
                 db.write_log('trader', 'not crossed')
 
@@ -95,6 +95,7 @@ class Trader():
         response = oanda_api.market_order(params)
 
         self.open_trade = oanda_api.get_open_trade()
+        #open_tradeがAPIから取れるまでちょっと待つ
         retry = 0
         while self.open_trade is None and retry < 3 :
             sleep(0.3)
@@ -125,6 +126,7 @@ class Trader():
             raise Exception('scalping entry failed')
 
         self.open_trade = oanda_api.get_open_trade()
+        #open_tradeがAPIから取れるまでちょっと待つ
         retry = 0
         while self.open_trade is None and retry < 3 :
             sleep(0.3)

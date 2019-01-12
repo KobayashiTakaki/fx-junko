@@ -10,6 +10,8 @@ import emoji
 conn = db.conn
 time_format = db.time_format
 
+# TODO: DataFrameを作成する際にsort=Trueを指定する
+
 def update_trade_states():
     table_name = 'trade_tweet_states'
     table_columns = [

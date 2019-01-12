@@ -10,6 +10,7 @@ conn = db.conn
 db_time_fromat = db.time_format
 
 # TODO: 5分足と15分足を切り替えられるようにする
+# TODO: DataFrameを作成する際にsort=Trueを指定する
 
 def is_macd_crossed(use_current=False):
     df = pd.read_sql_query('select * from prices order by datetime;', conn)
