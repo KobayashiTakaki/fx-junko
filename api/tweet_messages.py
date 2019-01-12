@@ -177,6 +177,10 @@ emojis = {
 }
 
 scal = {
+    'intro': [
+        'スキャルピングしてたら',
+        'スキャルで'
+    ],
     'win': [
         '勝った〜',
         'ふえた',
@@ -199,5 +203,4 @@ def get_emoji(feeling):
     return emoji.emojize(emoji_str, use_aliases=True)
 
 def get_scal_tweet(side):
-    line1 = 'スキャルピングしてたら'
-    return line1, random.choice(scal[side])
+    return random.choice(scal['intro']), random.choice(scal[side])
