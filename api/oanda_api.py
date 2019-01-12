@@ -2,6 +2,8 @@ import configparser
 import datetime
 import v20
 
+# TODO: responseのステータスコード確認を入れる
+
 config = configparser.ConfigParser()
 config.read('api/oanda_conf.ini')
 
