@@ -132,10 +132,10 @@ class Trader():
         recorder.add_trade_record(self.open_trade, 'scal_trades')
 
     def exit(self):
-        db.write_log('trader', 'close position')
-
-        oanda_api.close_trade(self.open_trade['tradeId'])
-        self.open_trade = oanda_api.get_open_trade()
+        if self.open_trade is not None:
+            db.write_log('trader', 'close position')
+            oanda_api.close_trade(self.open_trade['tradeId'])
+            self.open_trade = oanda_api.get_open_trade()
 
     def shrink_stop_loss(self):
         distance = 0.050
