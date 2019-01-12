@@ -64,18 +64,21 @@ def update_trade_data(table_name):
         #joinするため文字列型に変換
         open_ids = list(map(str, open_ids))
 
+        #APIからopen_idのtradeを取得し、DataFrameに追加していく
         fetched_trades = pd.DataFrame(columns=trades_header)
         for id in open_ids:
             trade = oanda_api.get_trade(id)
             s = pd.Series(trade)
             fetched_trades = fetched_trades.append(s,ignore_index=True)
 
+        #open_idのレコードをtradesテーブルから削除
         conn.execute(
             'delete from '+ table_name + ' where tradeId in ('
             + ','.join(open_ids) + ');'
         )
         conn.commit()
 
+        #APIから取得したデータをtradesテーブルに追加
         fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
 
 def update_price_data():

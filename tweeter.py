@@ -53,6 +53,7 @@ def update_trade_states():
         , conn
     )
 
+    #statesテーブルから取ったレコードとtradesテーブルから取ったレコードを結合
     merge_exist = pd.merge(state_records, exist_trades,
         left_on='trade_id', right_on='tradeId')
 

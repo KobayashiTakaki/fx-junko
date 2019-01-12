@@ -24,12 +24,15 @@ class Trader():
             db.write_log('trader', 'i have an open trade')
             if analyzer.is_exit_interval_enough():
                 if int(self.open_trade['initialUnits']) > 0:
+                    #macdが下向きになってたらexit
                     if analyzer.is_macd_trending('down', -0.002):
                         self.exit()
                 else:
+                    #macdが上向きになってたらexit
                     if analyzer.is_macd_trending('up', 0.002):
                         self.exit()
 
+                #macdがシグナルと交差してたらexit
                 if analyzer.is_macd_crossed()[0]:
                     self.exit()
             else:
@@ -168,6 +171,7 @@ class Trader():
             raise Exception('trade already closed')
 
         pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
+        #一定以上儲かったら利確
         if pips > 5:
             margin = 0.02
             stop_loss = {
@@ -179,13 +183,14 @@ class Trader():
 
             oanda_api.change_trade_order(tradeId, params)
 
+        #一定以上儲かったらexit
         if pips > 10:
             self.exit()
 
         now = datetime.datetime.now(datetime.timezone.utc)
         open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
         enough_time = datetime.timedelta(minutes=10)
-
+        #一定時間経過したらexit
         if now - open_time > enough_time:
             self.exit()
 
