@@ -11,6 +11,7 @@ conn = db.conn
 time_format = db.time_format
 
 # TODO: DataFrameを作成する際にsort=Trueを指定する
+# TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
 
 def update_trade_states():
     table_name = 'trade_tweet_states'
