@@ -77,8 +77,7 @@ def update_trade_states():
         state_records = state_records.append(new_record, ignore_index=True)
 
     #ソートして、DBに書き込み
-    state_records.sort_values('trade_id').reset_index(drop=True)\
-    .to_sql(table_name, conn, if_exists='replace')
+    state_records.to_sql(table_name, conn, if_exists='replace')
 
     db.write_log('tweeter', 'trade state updated')
 
@@ -124,9 +123,8 @@ def update_scal_states():
         #行をappend
         state_records = state_records.append(new_record, ignore_index=True)
 
-    #ソートして、DBに書き込み
-    state_records.sort_values('trade_id').reset_index(drop=True)\
-    .to_sql(table_name, conn, if_exists='replace')
+    #DBに書き込み
+    state_records.to_sql(table_name, conn, if_exists='replace')
 
     db.write_log('tweeter', 'scal trade state updated')
 
@@ -142,7 +140,8 @@ def post_trade_tweets(test=False):
     ]
 
     state_records = pd.read_sql_query(
-        'select * from ' + table_name + ';'
+        'select * from ' + table_name + ' '
+        + ' order by open_time;'
         , conn
     ).reindex(columns=table_columns)
 
