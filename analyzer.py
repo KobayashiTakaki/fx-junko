@@ -155,18 +155,14 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
 
     return False
 
-def is_exit_interval_enough():
-    open_trade = pd.read_sql_query(
-        "select * from trades where state = 'OPEN' order by openTime;"
-        , conn)
-    if len(open_trade > 0):
-        open_time = datetime.datetime.strptime(
-            open_trade.iloc[0]['openTime'],
-            db_time_fromat
-        )
-        now = datetime.datetime.now(datetime.timezone.utc)
-        if now - open_time > datetime.timedelta(minutes=5):
-            return True
+def is_exit_interval_enough(open_trade):
+    open_time = datetime.datetime.strptime(
+        open_trade['openTime'],
+        db_time_fromat
+    )
+    now = datetime.datetime.now(datetime.timezone.utc)
+    if now - open_time > datetime.timedelta(minutes=5):
+        return True
 
     return False
 

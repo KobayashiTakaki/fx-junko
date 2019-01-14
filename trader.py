@@ -22,7 +22,7 @@ class Trader():
                 self.deal_scalping_trade()
 
             db.write_log('trader', 'i have an open trade')
-            if analyzer.is_exit_interval_enough():
+            if analyzer.is_exit_interval_enough(self.open_trade):
                 if int(self.open_trade['initialUnits']) > 0:
                     #macdが下向きになってたらexit
                     if analyzer.is_macd_trending('down', -0.002):
