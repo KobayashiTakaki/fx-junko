@@ -77,7 +77,7 @@ def update_trade_states():
         state_records = state_records.append(new_record, ignore_index=True)
 
     #ソートして、DBに書き込み
-    state_records.to_sql(table_name, conn, if_exists='replace')
+    state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
     db.write_log('tweeter', 'trade state updated')
 
@@ -124,7 +124,7 @@ def update_scal_states():
         state_records = state_records.append(new_record, ignore_index=True)
 
     #DBに書き込み
-    state_records.to_sql(table_name, conn, if_exists='replace')
+    state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
     db.write_log('tweeter', 'scal trade state updated')
 
@@ -236,7 +236,7 @@ def post_trade_tweets(test=False):
         time.sleep(5)
 
     #DBに書き込み
-    state_records.to_sql(table_name, conn, if_exists='replace')
+    state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def post_scal_tweet(test=False):
     update_scal_states()
@@ -300,7 +300,7 @@ def post_scal_tweet(test=False):
             state_records['tweeted'] = 1
 
             #DBに書き込み
-            state_records.to_sql(table_name, conn, if_exists='replace')
+            state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def clear_pending_tweets():
     table_name = 'trade_tweet_states'
@@ -322,7 +322,7 @@ def clear_pending_tweets():
             = state_records.iloc[i]['trade_state']
 
     #DBに書き込み
-    state_records.to_sql(table_name, conn, if_exists='replace')
+    state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def delete_old_records():
     table_name = 'trade_tweet_states'
