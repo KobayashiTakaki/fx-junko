@@ -25,11 +25,11 @@ class Trader():
             if analyzer.is_exit_interval_enough(self.open_trade):
                 if int(self.open_trade['initialUnits']) > 0:
                     #macdが下向きになってたらexit
-                    if analyzer.is_macd_trending('down', -0.002, True):
+                    if analyzer.is_macd_trending('down', -0.002, 3, True):
                         self.exit()
                 else:
                     #macdが上向きになってたらexit
-                    if analyzer.is_macd_trending('up', 0.002, True):
+                    if analyzer.is_macd_trending('up', 0.002, 3, True):
                         self.exit()
 
                 #macdがシグナルと交差してたらexit
