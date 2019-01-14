@@ -69,12 +69,12 @@ class Trader():
             else:
                 db.write_log('trader', 'not crossed')
 
-            if analyzer.is_macd_trending('up', 0.008, 2, True):
+            if analyzer.is_macd_trending('up', 0.0065, 2, True):
                 db.write_log('trader', 'macd is up trend')
                 db.write_log('trader', 'entry by buy')
                 self.entry_scalping('buy')
 
-            if analyzer.is_macd_trending('down', -0.008, 2, True):
+            if analyzer.is_macd_trending('down', -0.0065, 2, True):
                 db.write_log('trader', 'macd is down trend')
                 db.write_log('trader', 'entry by sell')
                 self.entry_scalping('sell')
@@ -172,7 +172,7 @@ class Trader():
 
         pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
         #一定以上儲かったら利確
-        if pips > 5:
+        if pips > 4:
             margin = 0.02
             stop_loss = {
                 'distance': str(margin)
