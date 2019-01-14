@@ -116,10 +116,10 @@ def update_scal_states():
     #statesテーブルにないtradeの行を追加する
     for i, row in new_trades.iterrows():
         new_record = pd.Series()
-        new_record['trade_id'] = row['tradeId']
+        new_record['trade_id'] = int(row['tradeId'])
         new_record['open_time'] = row['openTime']
         new_record['close_time'] = row['closeTime']
-        new_record['tweeted'] = ''
+        new_record['tweeted'] = 0
         #行をappend
         state_records = state_records.append(new_record, ignore_index=True)
 
