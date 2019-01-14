@@ -182,10 +182,12 @@ class Trader():
             }
 
             oanda_api.change_trade_order(tradeId, params)
+            db.write_log('trader', 'set scal stop loss')
 
         #一定以上儲かったらexit
         if pips > 10:
             self.exit()
+            db.write_log('trader', 'enough profit by scal trade. exit.')
 
         now = datetime.datetime.now(datetime.timezone.utc)
         open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
@@ -193,6 +195,7 @@ class Trader():
         #一定時間経過したらexit
         if now - open_time > enough_time:
             self.exit()
+            db.write_log('trader', 'too long to keep scal trade. exit.')
 
 if __name__=='__main__':
     trader = Trader()
