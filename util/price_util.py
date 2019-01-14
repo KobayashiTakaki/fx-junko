@@ -5,7 +5,7 @@ def calc_macd(df):
     macd['ema12'] = df['close'].ewm(span=12).mean()
     macd['ema26'] = df['close'].ewm(span=26).mean()
     macd['macd'] = macd['ema12'] - macd['ema26']
-    macd['signal'] = macd['macd'].rolling(window=9).mean()
+    macd['signal'] = macd['macd'].ewm(span=9).mean()
     df['macd'] = macd['macd']
     df['macd_signal'] = macd['signal']
     df['macd2'] = macd['macd'] - macd['signal']
