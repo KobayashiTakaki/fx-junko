@@ -61,7 +61,7 @@ def update_trade_states():
     #既にstatesテーブルにあるtrade_stateの値を
     #tradeテーブルから取得したstateで上書き
     for i, row in merge_exist.iterrows():
-        row['trade_state'] = row['state']
+        merge_exist.at[i, 'trade_state'] = row['state']
 
     #結合したtradeの列を削除して代入
     state_records = merge_exist.drop(['tradeId', 'state'], axis=1)
