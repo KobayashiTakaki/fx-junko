@@ -61,7 +61,7 @@ def is_cross_interval_enough(minutes=5):
     )
     db.write_log('analyzer', 'cross_interval_2: ' + str(cross_interval_2))
 
-    enough_minutes = minutes * 10
+    enough_minutes = minutes * 12
     enough_time = datetime.timedelta(minutes=enough_minutes)
 
     #-1回クロスと-2回クロスの間が十分離れていない
