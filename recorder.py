@@ -81,18 +81,21 @@ def update_trade_data(table_name):
         #APIから取得したデータをtradesテーブルに追加
         fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
 
-def update_price_data():
+def update_price_data(minutes=5):
+    granularity = 'M{}'.format(minutes)
     params = {
-        'granularity': 'M5',
+        'granularity': granularity,
         'toTime': now_in_unixtime(),
         'count': 60,
         'completed_only': True
     }
 
+    table_name = 'prices' if minutes = 5 else 'prices_{}min'.format(minutes)
+
     candles = oanda_api.get_candles(params=params)
     df = pd.DataFrame(candles)
     df = price_util.calc_macd(df)
-    df.reindex(columns=price_header).to_sql('prices', conn, if_exists="replace", index=False)
+    df.reindex(columns=price_header).to_sql(table_name, conn, if_exists="replace", index=False)
 
 def create_trades_table(table_name):
     conn.execute(

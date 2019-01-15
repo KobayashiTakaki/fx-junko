@@ -17,7 +17,10 @@ def update_trade_data():
     recorder.update_trade_data('scal_trades')
 
 def update_price_data():
-    recorder.update_price_data()
+    if trader.is_scalping:
+        recorder.update_price_data(1)
+    else:
+        recorder.update_price_data()
 
 def tweeter_loop():
     tweeter.post_trade_tweets()

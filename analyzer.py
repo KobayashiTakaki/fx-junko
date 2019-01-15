@@ -13,13 +13,15 @@ db_time_fromat = db.time_format
 # TODO: DataFrameを作成する際にsort=Trueを指定する
 # TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
 
-def is_macd_crossed():
-    df = pd.read_sql_query('select * from prices order by datetime;', conn)
+def is_macd_crossed(minutes=5):
+    table_name = 'prices' if minutes = 5 else 'prices_{}min'.format(minutes)
+
+    df = pd.read_sql_query('select * from ' + table_name + ' order by datetime;', conn)
 
     price_last = df.iloc[-2]
     price_newer = df.iloc[-1]
 
-    max_macd = 0.045
+    max_macd = 0.045 if minutes = 5 else 0.03
 
     if price_last['macd_direction'] < price_newer['macd_direction']:
         if float(price_last['macd']) > -max_macd:
@@ -38,7 +40,7 @@ def is_macd_crossed():
 
     return False, 0
 
-def is_cross_interval_enough():
+def is_cross_interval_enough(minues=5):
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
 
     #pricesテーブルにcrossedのレコードが3件以上無いならTrue
@@ -59,7 +61,8 @@ def is_cross_interval_enough():
     )
     db.write_log('analyzer', 'cross_interval_2: ' + str(cross_interval_2))
 
-    enough_time = datetime.timedelta(minutes=55)
+    enough_minutes = minutes * 11
+    enough_time = datetime.timedelta(minutes=enough_minutes)
 
     #-1回クロスと-2回クロスの間が十分離れていない
     #かつ-2回クロスと-3回クロスの間が十分離れていない場合、False
@@ -104,12 +107,13 @@ def is_close_last_stop_loss(side):
 
     return False
 
-def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
+def is_macd_trending(direction, least_slope=0, count=3, use_current=False, minutes=5):
+    table_name = 'prices' if minutes = 5 else 'prices_{}min'.format(minutes)
     df = None
 
     if use_current:
         df = pd.read_sql_query(
-            'select * from prices;'
+            'select * from ' + table_name + ';'
             , conn
         )
         instrument = "USD_JPY"
@@ -126,7 +130,7 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
     else:
         #最新のレコードをcount件取得
         df = pd.read_sql_query(
-            'select datetime, macd from prices order by datetime desc '
+            'select datetime, macd from ' + table_name + ' order by datetime desc '
             + 'limit ' + str(count) + ';'
             , conn
         )
@@ -150,13 +154,13 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False):
 
     return False
 
-def is_exit_interval_enough(open_trade):
+def is_exit_interval_enough(open_trade, minutes=5):
     open_time = datetime.datetime.strptime(
         open_trade['openTime'],
         db_time_fromat
     )
     now = datetime.datetime.now(datetime.timezone.utc)
-    if now - open_time > datetime.timedelta(minutes=5):
+    if now - open_time > datetime.timedelta(minutes=minutes):
         return True
 
     return False
@@ -188,6 +192,18 @@ def market_trend():
     db.write_log('analyzer', 'long_price_slope: ' + str(slope))
     #どのくらいの傾きにするのが適当か調べるため今のところは0を返す
     return 0
+
+def is_scalping_suitable():
+    table_name = 'prices_1min'
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ';'
+    )
+    max_price = df['high'].max()
+    min_price = df['low'].min()
+    if max_price - min_price < 0.01:
+        return False
+    else:
+        return True
 
 if __name__=='__main__':
     try:
