@@ -90,17 +90,21 @@ class Trader():
 
             if analyzer.is_macd_trending('up', 0.007, 2, True, minutes):
                 db.write_log('trader', 'macd is up trend')
-                if self.is_scalping:
-                    db.write_log('trader', 'entry by buy')
-                    self.entry_scalping('buy')
-                    return
+                if not self.is_scalping:
+                    self.is_scalping = True
+
+                db.write_log('trader', 'entry by buy')
+                self.entry_scalping('buy')
+                return
 
             if analyzer.is_macd_trending('down', -0.007, 2, True, minutes):
                 db.write_log('trader', 'macd is down trend')
-                if self.is_scalping:
-                    db.write_log('trader', 'entry by sell')
-                    self.entry_scalping('sell')
-                    return
+                if not self.is_scalping:
+                    self.is_scalping = True
+
+                db.write_log('trader', 'entry by sell')
+                self.entry_scalping('sell')
+                return
 
     def entry(self, side):
         amount = self.entry_amount
