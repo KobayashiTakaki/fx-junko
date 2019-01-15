@@ -40,7 +40,7 @@ def is_macd_crossed(minutes=5):
 
     return False, 0
 
-def is_cross_interval_enough(minues=5):
+def is_cross_interval_enough(minutes=5):
     df = pd.read_sql_query('select datetime,crossed from prices where crossed <> 0 order by datetime;', conn)
 
     #pricesテーブルにcrossedのレコードが3件以上無いならTrue
