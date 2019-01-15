@@ -197,6 +197,7 @@ def is_scalping_suitable():
     table_name = 'prices_1min'
     df = pd.read_sql_query(
         'select * from ' + table_name + ';'
+        ,conn
     )
     max_price = df['high'].max()
     min_price = df['low'].min()
