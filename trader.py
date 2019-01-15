@@ -14,9 +14,11 @@ class Trader():
         self.instrument = 'USD_JPY'
         self.is_scalping = False
         self.minutes = 5
+        self.least_entry_slope = 0.004
 
     def loop(self):
         self.minutes = 1 if self.is_scalping else 5
+        self.least_entry_slope = 0.0025 if self.is_scalping else 0.004
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
@@ -56,7 +58,7 @@ class Trader():
                     #上向きクロスだったら買いでエントリー
                     if is_macd_crossed[1] == 1:
                         if analyzer.market_trend() != -1\
-                        and analyzer.is_macd_trending('up', 0.004, 3, True, self.minutes):
+                        and analyzer.is_macd_trending('up', self.least_entry_slope, 3, True, self.minutes):
                             if not self.is_scalping:
                                 db.write_log('trader', 'entry by buy')
                                 self.entry('buy')
@@ -69,7 +71,7 @@ class Trader():
                     #下向きクロスだったら売りでエントリー
                     else:
                         if analyzer.market_trend() != 1\
-                        and analyzer.is_macd_trending('down', -0.004, 3, True, self.minutes):
+                        and analyzer.is_macd_trending('down', -self.least_entry_slope, 3, True, self.minutes):
                             if not self.is_scalping:
                                 db.write_log('trader', 'entry by sell')
                                 self.entry('sell')
