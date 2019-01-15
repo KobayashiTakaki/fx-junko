@@ -15,7 +15,7 @@ class Trader():
         self.is_scalping = False
 
     def loop(self):
-        minutes = 5 if !self.is_scalping else 1
+        minutes = 1 if self.is_scalping else 5
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
@@ -45,7 +45,7 @@ class Trader():
             #ポジションがない場合
             db.write_log('trader', 'i dont have a open position')
 
-            if !analyzer.is_scalping_suitable():
+            if not analyzer.is_scalping_suitable():
                 self.is_scalping = False
                 minutes = 5
 
@@ -56,7 +56,7 @@ class Trader():
                     if is_macd_crossed[1] == 1:
                         if analyzer.market_trend() != -1\
                         and analyzer.is_macd_trending('up', 0.004, 3, True, minutes):
-                            if !self.is_scalping:
+                            if not self.is_scalping:
                                 db.write_log('trader', 'entry by buy')
                                 self.entry('buy')
                             else:
@@ -69,7 +69,7 @@ class Trader():
                     else:
                         if analyzer.market_trend() != 1\
                         and analyzer.is_macd_trending('down', -0.004, 3, True, minutes):
-                            if !self.is_scalping:
+                            if not self.is_scalping:
                                 db.write_log('trader', 'entry by sell')
                                 self.entry('sell')
                             else:
@@ -80,7 +80,7 @@ class Trader():
                             db.write_log('trader', 'too weak to sell')
                 else:
                     db.write_log('trader', 'not enough cross interval')
-                    if !self.is_scalping:
+                    if not self.is_scalping:
                         db.write_log('trader', 'change to scal mode')
                         self.is_scalping = True
                         minutes = 1
