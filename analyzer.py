@@ -13,14 +13,8 @@ db_time_fromat = db.time_format
 # TODO: DataFrameを作成する際にsort=Trueを指定する
 # TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
 
-def is_macd_crossed(use_current=False):
+def is_macd_crossed():
     df = pd.read_sql_query('select * from prices order by datetime;', conn)
-
-    if use_current:
-        candle = oanda_api.get_candles(self.instrument, self.params, False)
-        df_current = pd.DataFrame(candle).loc[:,['datetime', 'close']]
-        df = df.append(df_current, ignore_index = True)
-        df = price_util.calc_macd(df)
 
     price_last = df.iloc[-2]
     price_newer = df.iloc[-1]
