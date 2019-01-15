@@ -13,9 +13,10 @@ class Trader():
         self.time_format = db.time_format
         self.instrument = 'USD_JPY'
         self.is_scalping = False
+        self.minutes = 5
 
     def loop(self):
-        minutes = 1 if self.is_scalping else 5
+        self.minutes = 1 if self.is_scalping else 5
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
@@ -23,18 +24,18 @@ class Trader():
                 self.deal_scalping_trade()
 
             db.write_log('trader', 'i have an open trade')
-            if analyzer.is_exit_interval_enough(self.open_trade, minutes):
+            if analyzer.is_exit_interval_enough(self.open_trade, self.minutes):
                 if int(self.open_trade['initialUnits']) > 0:
                     #macdが下向きになってたらexit
-                    if analyzer.is_macd_trending('down', -0.002, 2, True, minutes):
+                    if analyzer.is_macd_trending('down', -0.002, 2, True, self.minutes):
                         self.exit()
                 else:
                     #macdが上向きになってたらexit
-                    if analyzer.is_macd_trending('up', 0.002, 2, True, minutes):
+                    if analyzer.is_macd_trending('up', 0.002, 2, True, self.minutes):
                         self.exit()
 
                 #macdがシグナルと交差してたらexit
-                if analyzer.is_macd_crossed(minutes)[0]:
+                if analyzer.is_macd_crossed(self.minutes)[0]:
                     self.exit()
             else:
                 db.write_log('trader', 'not enough time to exit')
@@ -47,15 +48,15 @@ class Trader():
 
             if not analyzer.is_scalping_suitable():
                 self.is_scalping = False
-                minutes = 5
+                self.minutes = 5
 
-            is_macd_crossed = analyzer.is_macd_crossed(minutes)
+            is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
             if is_macd_crossed[0]:
-                if analyzer.is_cross_interval_enough(minutes):
+                if analyzer.is_cross_interval_enough(self.minutes):
                     #上向きクロスだったら買いでエントリー
                     if is_macd_crossed[1] == 1:
                         if analyzer.market_trend() != -1\
-                        and analyzer.is_macd_trending('up', 0.004, 3, True, minutes):
+                        and analyzer.is_macd_trending('up', 0.004, 3, True, self.minutes):
                             if not self.is_scalping:
                                 db.write_log('trader', 'entry by buy')
                                 self.entry('buy')
@@ -68,7 +69,7 @@ class Trader():
                     #下向きクロスだったら売りでエントリー
                     else:
                         if analyzer.market_trend() != 1\
-                        and analyzer.is_macd_trending('down', -0.004, 3, True, minutes):
+                        and analyzer.is_macd_trending('down', -0.004, 3, True, self.minutes):
                             if not self.is_scalping:
                                 db.write_log('trader', 'entry by sell')
                                 self.entry('sell')
@@ -83,12 +84,12 @@ class Trader():
                     if not self.is_scalping:
                         db.write_log('trader', 'change to scal mode')
                         self.is_scalping = True
-                        minutes = 1
+                        self.minutes = 1
                         recorder.update_price_data(1)
             else:
                 db.write_log('trader', 'not crossed')
 
-            if analyzer.is_macd_trending('up', 0.007, 2, True, minutes):
+            if analyzer.is_macd_trending('up', 0.007, 2, True, self.minutes):
                 db.write_log('trader', 'macd is up trend')
                 if not self.is_scalping:
                     self.is_scalping = True
@@ -97,7 +98,7 @@ class Trader():
                 self.entry_scalping('buy')
                 return
 
-            if analyzer.is_macd_trending('down', -0.007, 2, True, minutes):
+            if analyzer.is_macd_trending('down', -0.007, 2, True, self.minutes):
                 db.write_log('trader', 'macd is down trend')
                 if not self.is_scalping:
                     self.is_scalping = True
