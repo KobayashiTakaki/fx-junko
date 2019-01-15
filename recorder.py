@@ -90,7 +90,7 @@ def update_price_data(minutes=5):
         'completed_only': True
     }
 
-    table_name = 'prices' if minutes = 5 else 'prices_{}min'.format(minutes)
+    table_name = 'prices' if minutes == 5 else 'prices_{}min'.format(minutes)
 
     candles = oanda_api.get_candles(params=params)
     df = pd.DataFrame(candles)

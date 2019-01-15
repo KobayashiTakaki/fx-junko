@@ -14,14 +14,14 @@ db_time_fromat = db.time_format
 # TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
 
 def is_macd_crossed(minutes=5):
-    table_name = 'prices' if minutes = 5 else 'prices_{}min'.format(minutes)
+    table_name = 'prices' if minutes == 5 else 'prices_{}min'.format(minutes)
 
     df = pd.read_sql_query('select * from ' + table_name + ' order by datetime;', conn)
 
     price_last = df.iloc[-2]
     price_newer = df.iloc[-1]
 
-    max_macd = 0.045 if minutes = 5 else 0.03
+    max_macd = 0.045 if minutes == 5 else 0.03
 
     if price_last['macd_direction'] < price_newer['macd_direction']:
         if float(price_last['macd']) > -max_macd:
@@ -108,7 +108,7 @@ def is_close_last_stop_loss(side):
     return False
 
 def is_macd_trending(direction, least_slope=0, count=3, use_current=False, minutes=5):
-    table_name = 'prices' if minutes = 5 else 'prices_{}min'.format(minutes)
+    table_name = 'prices' if minutes == 5 else 'prices_{}min'.format(minutes)
     df = None
 
     if use_current:
