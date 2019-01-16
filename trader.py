@@ -51,6 +51,7 @@ class Trader():
             if not analyzer.is_scalping_suitable():
                 self.is_scalping = False
                 self.minutes = 5
+                recorder.update_price_data(5)
 
             is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
             if is_macd_crossed[0]:
