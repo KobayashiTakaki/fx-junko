@@ -48,7 +48,8 @@ class Trader():
             #ポジションがない場合
             db.write_log('trader', 'i dont have a open position')
 
-            if not analyzer.is_scalping_suitable():
+            if self.is_scalping \
+            and not analyzer.is_scalping_suitable():
                 self.is_scalping = False
                 self.minutes = 5
                 recorder.update_price_data(5)
