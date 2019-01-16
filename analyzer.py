@@ -201,7 +201,8 @@ def is_scalping_suitable():
     )
     max_price = df['high'].max()
     min_price = df['low'].min()
-    if max_price - min_price < 0.01:
+    if max_price - min_price < 0.1:
+        db.write_log('analyzer', 'scalping not suitable')
         return False
     else:
         return True
