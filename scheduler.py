@@ -49,7 +49,9 @@ def update_long_price_data():
 def pl_tweet():
     tweeter.post_pl_tweet()
 
-#このファイル最初の実行時にactivateを実行
+#このファイル最初の実行時にprice data更新とactivateを実行
+update_price_data()
+update_price_data(1)
 activate()
 
 #日〜木23:00UTC(月〜金08:00JST)にactivateを実行
