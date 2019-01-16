@@ -210,6 +210,20 @@ def is_scalping_suitable():
     else:
         return True
 
+def is_last_price_move_big():
+    table_name = 'prices'
+    #最新の１行を取得
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'order by datetime desc limit 1;'
+        ,conn
+    )
+    #highとlowの差が大きかったらTrue
+    if df['high'] - df['low'] > 0.08:
+        return True
+
+    return False
+
 if __name__=='__main__':
     try:
         loop()

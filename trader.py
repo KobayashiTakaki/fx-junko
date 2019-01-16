@@ -86,11 +86,14 @@ class Trader():
                             db.write_log('trader', 'too weak to sell')
                 else:
                     db.write_log('trader', 'not enough cross interval')
-                    if not self.is_scalping:
-                        db.write_log('trader', 'change to scal mode')
-                        self.is_scalping = True
-                        self.minutes = 1
-                        recorder.update_price_data(1)
+
+            if not self.is_scalping:
+                if analyzer.is_last_price_move_big():
+                    db.write_log('trader', 'change to scal mode')
+                    self.is_scalping = True
+                    self.minutes = 1
+                    recorder.update_price_data(1)
+
             else:
                 db.write_log('trader', 'not crossed')
 
