@@ -195,8 +195,11 @@ def market_trend():
 
 def is_scalping_suitable():
     table_name = 'prices_1min'
+    time_from = (datetime.datetime.now(datetime.timezone.utc)\
+        - datetime.timedelta(minutes=30)).strftime(db_time_format)
     df = pd.read_sql_query(
-        'select * from ' + table_name + ';'
+        'select * from ' + table_name + ' '
+        + 'where datetmie > \'' + time_from + '\';'
         ,conn
     )
     max_price = df['high'].max()
