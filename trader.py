@@ -95,6 +95,8 @@ class Trader():
                 db.write_log('trader', 'macd is up trend')
                 if not self.is_scalping:
                     self.is_scalping = True
+                    self.minutes = 1
+                    recorder.update_price_data(1)
 
                 db.write_log('trader', 'entry by buy')
                 self.entry_scalping('buy')
