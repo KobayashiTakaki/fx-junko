@@ -7,7 +7,7 @@ import api.oanda_api as oanda_api
 import util.price_util as price_util
 
 conn = db.conn
-db_time_fromat = db.time_format
+db_time_format = db.time_format
 
 # TODO: 5分足と15分足を切り替えられるようにする
 # TODO: DataFrameを作成する際にsort=Trueを指定する
@@ -49,15 +49,15 @@ def is_cross_interval_enough(minutes=5):
 
     #-1回クロスと-2回クロスの間の時間
     cross_interval_1 = (
-        datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_fromat)
-        - datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
+        datetime.datetime.strptime(df.iloc[-1]['datetime'], db_time_format)
+        - datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_format)
     )
     db.write_log('analyzer', 'cross_interval_1: ' + str(cross_interval_1))
 
     #-2回クロスと-3回クロスの間の時間
     cross_interval_2 = (
-        datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_fromat)
-        - datetime.datetime.strptime(df.iloc[-3]['datetime'], db_time_fromat)
+        datetime.datetime.strptime(df.iloc[-2]['datetime'], db_time_format)
+        - datetime.datetime.strptime(df.iloc[-3]['datetime'], db_time_format)
     )
     db.write_log('analyzer', 'cross_interval_2: ' + str(cross_interval_2))
 
@@ -89,7 +89,7 @@ def is_close_last_stop_loss(side):
     #前回のstop lossから経過した時間
     interval_from_last_stop = (
         datetime.datetime.now(datetime.timezone.utc) -
-        datetime.datetime.strptime(last_stop['closeTime'], db_time_fromat)
+        datetime.datetime.strptime(last_stop['closeTime'], db_time_format)
     )
     enough_time = datetime.timedelta(minutes=60)
 
@@ -157,7 +157,7 @@ def is_macd_trending(direction, least_slope=0, count=3, use_current=False, minut
 def is_exit_interval_enough(open_trade, minutes=5):
     open_time = datetime.datetime.strptime(
         open_trade['openTime'],
-        db_time_fromat
+        db_time_format
     )
     now = datetime.datetime.now(datetime.timezone.utc)
     if now - open_time > datetime.timedelta(minutes=minutes):
@@ -196,7 +196,7 @@ def market_trend():
 def is_scalping_suitable():
     table_name = 'prices_1min'
     time_from = (datetime.datetime.now(datetime.timezone.utc)\
-        - datetime.timedelta(minutes=60)).strftime(db_time_fromat)
+        - datetime.timedelta(minutes=60)).strftime(db_time_format)
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
         + 'where datetmie > \'' + time_from + '\';'
