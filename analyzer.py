@@ -199,7 +199,7 @@ def is_scalping_suitable():
         - datetime.timedelta(minutes=60)).strftime(db_time_format)
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'where datetmie > \'' + time_from + '\';'
+        + 'where datetime > \'' + time_from + '\';'
         ,conn
     )
     max_price = df['high'].max()
