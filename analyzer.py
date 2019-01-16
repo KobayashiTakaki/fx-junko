@@ -215,7 +215,7 @@ def is_last_price_move_big():
     #最新の2行を取得
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'order by datetime desc limit 2;'
+        + 'order by datetime desc limit 5;'
         ,conn
     )
     #highとlowの差が大きかったらTrue
