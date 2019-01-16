@@ -223,7 +223,7 @@ class Trader():
 
         now = datetime.datetime.now(datetime.timezone.utc)
         open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
-        enough_time = datetime.timedelta(minutes=10)
+        enough_time = datetime.timedelta(minutes=25)
         #一定時間経過したらexit
         if now - open_time > enough_time:
             self.exit()
