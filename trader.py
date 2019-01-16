@@ -14,11 +14,11 @@ class Trader():
         self.instrument = 'USD_JPY'
         self.is_scalping = False
         self.minutes = 5
-        self.least_entry_slope = 0.004
+        self.least_entry_slope = 0.002
 
     def loop(self):
         self.minutes = 1 if self.is_scalping else 5
-        self.least_entry_slope = 0.0025 if self.is_scalping else 0.004
+        self.least_entry_slope = 0.0025 if self.is_scalping else 0.002
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
@@ -50,6 +50,7 @@ class Trader():
 
             if self.is_scalping \
             and not analyzer.is_scalping_suitable():
+                db.write_log('trader', 'end scalping mode')
                 self.is_scalping = False
                 self.minutes = 5
                 recorder.update_price_data(5)
@@ -93,25 +94,25 @@ class Trader():
             else:
                 db.write_log('trader', 'not crossed')
 
-            if analyzer.is_macd_trending('up', 0.007, 2, True, self.minutes):
-                db.write_log('trader', 'macd is up trend')
-                if not self.is_scalping:
-                    self.is_scalping = True
-                    self.minutes = 1
-                    recorder.update_price_data(1)
+            # if analyzer.is_macd_trending('up', 0.007, 2, True, self.minutes):
+            #     db.write_log('trader', 'macd is up trend')
+            #     if not self.is_scalping:
+            #         self.is_scalping = True
+            #         self.minutes = 1
+            #         recorder.update_price_data(1)
+            #
+            #     db.write_log('trader', 'entry by buy')
+            #     self.entry_scalping('buy')
+            #     return
 
-                db.write_log('trader', 'entry by buy')
-                self.entry_scalping('buy')
-                return
-
-            if analyzer.is_macd_trending('down', -0.007, 2, True, self.minutes):
-                db.write_log('trader', 'macd is down trend')
-                if not self.is_scalping:
-                    self.is_scalping = True
-
-                db.write_log('trader', 'entry by sell')
-                self.entry_scalping('sell')
-                return
+            # if analyzer.is_macd_trending('down', -0.007, 2, True, self.minutes):
+            #     db.write_log('trader', 'macd is down trend')
+            #     if not self.is_scalping:
+            #         self.is_scalping = True
+            #
+            #     db.write_log('trader', 'entry by sell')
+            #     self.entry_scalping('sell')
+            #     return
 
     def entry(self, side):
         amount = self.entry_amount
