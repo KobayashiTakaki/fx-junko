@@ -54,6 +54,7 @@ class Trader():
                 db.write_log('trader', 'end scalping mode')
                 self.is_scalping = False
                 self.minutes = 5
+                self.entry_side = 'both'
                 recorder.update_price_data(5)
 
             is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
