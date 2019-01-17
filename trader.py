@@ -51,11 +51,7 @@ class Trader():
 
             if self.is_scalping \
             and not analyzer.is_scalping_suitable():
-                db.write_log('trader', 'end scalping mode')
-                self.is_scalping = False
-                self.minutes = 5
-                self.entry_side = 'both'
-                recorder.update_price_data(5)
+                change_trading_style('normal')
 
             is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
             if is_macd_crossed[0]:
@@ -93,10 +89,7 @@ class Trader():
 
             if not self.is_scalping:
                 if analyzer.is_last_price_move_big():
-                    db.write_log('trader', 'change to scal mode')
-                    self.is_scalping = True
-                    self.minutes = 1
-                    recorder.update_price_data(1)
+                    change_trading_style('scal')
 
             else:
                 db.write_log('trader', 'not crossed')
@@ -183,6 +176,19 @@ class Trader():
             db.write_log('trader', 'close position')
             oanda_api.close_trade(self.open_trade['tradeId'])
             self.open_trade = oanda_api.get_open_trade()
+            
+    def change_trading_style(self, style):
+        if style == 'scal':
+            db.write_log('trader', 'change to scal mode')
+            self.is_scalping = True
+            self.minutes = 1
+            recorder.update_price_data(1)
+        else:
+            db.write_log('trader', 'change to normal mode')
+            self.is_scalping = False
+            self.minutes = 5
+            self.entry_side = 'both'
+            recorder.update_price_data(5)
 
     def shrink_stop_loss(self):
         distance = 0.050
