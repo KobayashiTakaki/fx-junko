@@ -229,16 +229,16 @@ def is_last_price_move_big():
 def get_scal_side():
     table_name = 'prices'
     time_from = (datetime.datetime.now(datetime.timezone.utc)\
-    - datetime.timedelta(minutes=30) 
+        - datetime.timedelta(minutes=30)
     ).strftime(db_time_format)
-    
+
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
         + 'where datetime > \'' + time_from + '\' '
         + 'order by datetime;'
         , conn
     )
-    
+
     if len(df) < 1:
         raise Exception('analyzer: failed to get prices data for get_scal_side')
 
