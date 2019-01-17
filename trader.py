@@ -52,7 +52,7 @@ class Trader():
 
             if self.is_scalping \
             and not analyzer.is_scalping_suitable():
-                change_trading_style('normal')
+                self.change_trading_style('normal')
 
             is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
             if is_macd_crossed[0]:
@@ -90,7 +90,7 @@ class Trader():
 
             if not self.is_scalping:
                 if analyzer.is_last_price_move_big():
-                    change_trading_style('scal')
+                    self.change_trading_style('scal')
 
             else:
                 db.write_log('trader', 'not crossed')
