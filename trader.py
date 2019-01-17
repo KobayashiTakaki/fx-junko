@@ -177,7 +177,7 @@ class Trader():
             db.write_log('trader', 'close position')
             oanda_api.close_trade(self.open_trade['tradeId'])
             self.open_trade = oanda_api.get_open_trade()
-            
+
     def change_trading_style(self, style):
         if style == 'scal':
             db.write_log('trader', 'change to scal mode')
@@ -185,11 +185,13 @@ class Trader():
             self.minutes = 1
             self.entry_side = analyzer.get_scal_side()
             recorder.update_price_data(1)
+            recorder.update_price_data(5)
         else:
             db.write_log('trader', 'change to normal mode')
             self.is_scalping = False
             self.minutes = 5
             self.entry_side = 'both'
+            recorder.update_price_data(1)
             recorder.update_price_data(5)
 
     def shrink_stop_loss(self):
