@@ -67,6 +67,7 @@ class Trader():
                                 self.entry('buy')
                             else:
                                 db.write_log('trader', 'entry by buy scalping')
+                                self.change_trading_style('scal')
                                 self.entry_scalping('buy')
                             return
                         else:
@@ -81,6 +82,7 @@ class Trader():
                                 self.entry('sell')
                             else:
                                 db.write_log('trader', 'entry by sell scalping')
+                                self.change_trading_style('scal')
                                 self.entry_scalping('sell')
                             return
                         else:
