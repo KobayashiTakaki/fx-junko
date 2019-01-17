@@ -234,7 +234,7 @@ def get_scal_side():
     
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'where datetime > ' + time_from + ' '
+        + 'where datetime > \'' + time_from + '\' '
         + 'order by datetime;'
         , conn
     )
