@@ -238,6 +238,9 @@ def get_scal_side():
         + 'order by datetime;'
         , conn
     )
+    
+    if len(df) < 1:
+        raise Exception('analyzer: failed to get prices data for get_scal_side')
 
     #closeの傾きを計算
     y = list(df['close'])
