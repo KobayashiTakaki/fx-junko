@@ -24,6 +24,7 @@ class Trader():
 
         if self.open_trade is not None:
             if self.is_scalping:
+                self.entry_side = analyzer.get_scal_side()
                 self.deal_scalping_trade()
 
             db.write_log('trader', 'i have an open trade')
@@ -182,6 +183,7 @@ class Trader():
             db.write_log('trader', 'change to scal mode')
             self.is_scalping = True
             self.minutes = 1
+            self.entry_side = analyzer.get_scal_side()
             recorder.update_price_data(1)
         else:
             db.write_log('trader', 'change to normal mode')
