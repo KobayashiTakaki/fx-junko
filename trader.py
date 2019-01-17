@@ -19,7 +19,7 @@ class Trader():
 
     def loop(self):
         self.minutes = 1 if self.is_scalping else 5
-        self.least_entry_slope = 0.0025 if self.is_scalping else 0.002
+        self.least_entry_slope = 0.001 if self.is_scalping else 0.002
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
