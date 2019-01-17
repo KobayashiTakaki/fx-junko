@@ -13,6 +13,7 @@ class Trader():
         self.time_format = db.time_format
         self.instrument = 'USD_JPY'
         self.is_scalping = False
+        self.entry_side = 'both'
         self.minutes = 5
         self.least_entry_slope = 0.002
 
@@ -61,6 +62,7 @@ class Trader():
                     #上向きクロスだったら買いでエントリー
                     if is_macd_crossed[1] == 1:
                         if analyzer.market_trend() != -1\
+                        and not self.entry_side 'sell'\
                         and analyzer.is_macd_trending('up', self.least_entry_slope, 3, True, self.minutes):
                             if not self.is_scalping:
                                 db.write_log('trader', 'entry by buy')
@@ -74,6 +76,7 @@ class Trader():
                     #下向きクロスだったら売りでエントリー
                     else:
                         if analyzer.market_trend() != 1\
+                        and not self.entry_side 'buy'\
                         and analyzer.is_macd_trending('down', -self.least_entry_slope, 3, True, self.minutes):
                             if not self.is_scalping:
                                 db.write_log('trader', 'entry by sell')
