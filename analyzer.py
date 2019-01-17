@@ -226,6 +226,32 @@ def is_last_price_move_big():
 
     return False
 
+def get_scal_side():
+    table_name = 'prices'
+    time_from = (datetime.datetime.now(datetime.timezone.utc)\
+    - datetime.timedelta(minetes=60) 
+    ).strftime(db_time_format)
+    
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'where datetime > ' + time_from + ';'
+    )
+
+    #closeの傾きを計算
+    y = list(df['close'])
+    x = np.linspace(1, len(y), len(y))
+    price_slope = np.polyfit(x, y, 1)[0]
+
+    db. write_log ('analyzer','price_slope: {0:.5f}'. format(price_slope))
+
+    border_slope = 0.03
+    if price_slope > border_slope:
+        return 'buy'
+    elif price_slope < -border_slope:
+        return 'sell'
+    else:
+        return 'both'
+
 if __name__=='__main__':
     try:
         loop()
