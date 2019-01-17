@@ -229,7 +229,7 @@ def is_last_price_move_big():
 def get_scal_side():
     table_name = 'prices'
     time_from = (datetime.datetime.now(datetime.timezone.utc)\
-    - datetime.timedelta(minetes=60) 
+    - datetime.timedelta(minutes=60) 
     ).strftime(db_time_format)
     
     df = pd.read_sql_query(
@@ -244,7 +244,7 @@ def get_scal_side():
     x = np.linspace(1, len(y), len(y))
     price_slope = np.polyfit(x, y, 1)[0]
 
-    db. write_log ('analyzer','price_slope: {0:.5f}'. format(price_slope))
+    db. write_log ('analyzer','price_slope: {0:.5f}'.format(price_slope))
 
     border_slope = 0.03
     if price_slope > border_slope:
