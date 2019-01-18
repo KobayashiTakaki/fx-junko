@@ -227,7 +227,7 @@ def is_last_price_move_big():
     return False
 
 def get_scal_side():
-    table_name = 'prices'
+    table_name = 'prices_1min'
     time_from = (datetime.datetime.now(datetime.timezone.utc)\
         - datetime.timedelta(minutes=30)
     ).strftime(db_time_format)
