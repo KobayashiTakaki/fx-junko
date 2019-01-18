@@ -255,7 +255,7 @@ def get_scal_side():
 
     db. write_log ('analyzer','price_slope: {0:.5f}'.format(price_slope))
 
-    border_slope = 0.02
+    border_slope = 0.005
     if price_slope > border_slope:
         return 'buy'
     elif price_slope < -border_slope:
