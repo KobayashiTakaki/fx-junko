@@ -235,7 +235,7 @@ def is_last_price_move_big():
 def get_scal_side():
     table_name = 'prices_1min'
     time_from = (datetime.datetime.now(datetime.timezone.utc)\
-        - datetime.timedelta(minutes=30)
+        - datetime.timedelta(minutes=15)
     ).strftime(db_time_format)
 
     df = pd.read_sql_query(
