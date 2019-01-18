@@ -33,7 +33,7 @@ def activate():
         #fxタグのスケジュールを登録
         schedule.every(10).seconds.do(trader_loop).tag('fx')
         schedule.every(30).seconds.do(update_trade_data).tag('fx')
-        schedule.every(60).seconds.do(update_price_data).tag('fx')
+        schedule.every(20).seconds.do(update_price_data).tag('fx')
         schedule.every(60).seconds.do(tweeter_loop).tag('fx')
 
 def deactivate():
