@@ -18,6 +18,8 @@ class Trader():
         self.least_entry_slope = 0.002
 
     def loop(self):
+        db.write_log('trader', 'is_scalping: {}'.format(self.is_scalping))
+        db.write_log('trader', 'entry_side: {}'.format(self.entry_side))
         self.minutes = 1 if self.is_scalping else 5
         self.least_entry_slope = 0.001 if self.is_scalping else 0.002
         self.open_trade = oanda_api.get_open_trade()
@@ -48,7 +50,7 @@ class Trader():
 
         else:
             #ポジションがない場合
-            db.write_log('trader', 'i dont have a open position')
+            db.write_log('trader', 'i dont have an open trade')
 
             if self.is_scalping \
             and not analyzer.is_scalping_suitable():
