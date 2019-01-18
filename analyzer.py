@@ -23,7 +23,7 @@ def is_macd_crossed(minutes=5):
     
     time_now = datetime.datetime.now(datetime.timezone.utc)
     time_last_price = datetime.datetime.strptime(price_newer['datetime'], db_time_format)
-    max_time = datetime.timedelta(minutes=minutes*3)
+    max_time = datetime.timedelta(minutes=minutes*5)
     
     if time_now - time_last_price > max_time:
         raise Exception('analyzer: price data too old for is_macd_crossed.')
