@@ -52,9 +52,10 @@ class Trader():
             #ポジションがない場合
             db.write_log('trader', 'i dont have an open trade')
 
-            if self.is_scalping \
-            and not analyzer.is_scalping_suitable():
-                self.change_trading_style('normal')
+            if self.is_scalping:
+                self.entry_side = analyzer.get_scal_side()
+                if not analyzer.is_scalping_suitable():
+                    self.change_trading_style('normal')
 
             is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
             if is_macd_crossed[0]:
