@@ -20,15 +20,15 @@ def is_macd_crossed(minutes=5):
 
     price_last = df.iloc[-2]
     price_newer = df.iloc[-1]
-    
+
     time_now = datetime.datetime.now(datetime.timezone.utc)
     time_last_price = datetime.datetime.strptime(price_newer['datetime'], db_time_format)
     max_time = datetime.timedelta(minutes=minutes*5)
-    
+
     if time_now - time_last_price > max_time:
         raise Exception('analyzer: price data too old for is_macd_crossed.')
 
-    max_macd = 0.045 if minutes == 5 else 0.03
+    max_macd = 0.045 if minutes == 5 else 0.02
 
     if price_last['macd_direction'] < price_newer['macd_direction']:
         if float(price_last['macd']) > -max_macd:
