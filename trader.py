@@ -52,6 +52,10 @@ class Trader():
             #ポジションがない場合
             db.write_log('trader', 'i dont have an open trade')
 
+            if not self.is_scalping:
+                if analyzer.is_last_price_move_big():
+                    self.change_trading_style('scal')
+
             if self.is_scalping:
                 self.entry_side = analyzer.get_scal_side()
                 if not analyzer.is_scalping_suitable():
@@ -92,10 +96,6 @@ class Trader():
                             db.write_log('trader', 'too weak to sell')
                 else:
                     db.write_log('trader', 'not enough cross interval')
-
-            if not self.is_scalping:
-                if analyzer.is_last_price_move_big():
-                    self.change_trading_style('scal')
 
             else:
                 db.write_log('trader', 'not crossed')
