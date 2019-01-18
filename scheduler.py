@@ -75,6 +75,8 @@ while True:
         time.sleep(1)
     except Exception as e:
         db.write_log('exception', str(e))
+        recorder.update_price_data(1)
+        recorder.update_price_data()
         #trader.exit()
         time.sleep(10)
         continue
