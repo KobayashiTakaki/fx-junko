@@ -75,6 +75,6 @@ while True:
         time.sleep(1)
     except Exception as e:
         db.write_log('exception', str(e))
-        trader.exit()
+        #trader.exit()
         time.sleep(10)
         continue
