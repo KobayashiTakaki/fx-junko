@@ -245,7 +245,7 @@ class Trader():
         enough_time = datetime.timedelta(minutes=6)
         #一定時間経過して伸びなかったらexit
         if now - open_time > enough_time \
-        and pips pips < 4:
+        and pips < 4:
             self.exit()
             db.write_log('trader', 'scal trade not growing. exit.')
 
