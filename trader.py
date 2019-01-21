@@ -168,7 +168,7 @@ class Trader():
             db.write_log('trader', 'change to scal mode')
             self.is_scalping = True
             self.minutes = 1
-            self.entry_side = analyzer.get_scal_side()
+            self.entry_side = 'both'
             recorder.update_price_data(1)
             recorder.update_price_data(5)
         else:
