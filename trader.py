@@ -52,15 +52,6 @@ class Trader():
             #ポジションがない場合
             db.write_log('trader', 'i dont have an open trade')
 
-            if not self.is_scalping:
-                if analyzer.is_last_price_move_big():
-                    self.change_trading_style('scal')
-
-            if self.is_scalping:
-                self.entry_side = analyzer.get_scal_side()
-                if not analyzer.is_scalping_suitable():
-                    self.change_trading_style('normal')
-
             is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
             if is_macd_crossed[0]:
                 if analyzer.is_cross_interval_enough(self.minutes):
@@ -99,6 +90,15 @@ class Trader():
 
             else:
                 db.write_log('trader', 'not crossed')
+                
+            if not self.is_scalping:
+                if analyzer.is_last_price_move_big():
+                    self.change_trading_style('scal')
+
+            if self.is_scalping:
+                self.entry_side = analyzer.get_scal_side()
+                if not analyzer.is_scalping_suitable():
+                    self.change_trading_style('normal')
 
             # if analyzer.is_macd_trending('up', 0.007, 2, True, self.minutes):
             #     db.write_log('trader', 'macd is up trend')
