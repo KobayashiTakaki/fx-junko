@@ -189,16 +189,6 @@ def update_long_price_data():
     df = pd.DataFrame(candles)
     df.reindex(columns=price_header).to_sql('long_prices', conn, if_exists="replace")
 
-def market_trend():
-    df = pd.read_sql_query("select close from long_prices order by datetime;", conn)
-    #closeの値の近似直線の傾きを算出
-    y = list(df['close'])
-    x = np.linspace(1, len(y), len(y))
-    slope = np.polyfit(x, y, 1)[0]
-    db.write_log('analyzer', 'long_price_slope: ' + str(slope))
-    #どのくらいの傾きにするのが適当か調べるため今のところは0を返す
-    return 0
-
 def is_scalping_suitable():
     table_name = 'prices_1min'
     time_from = (datetime.datetime.now(datetime.timezone.utc)\
