@@ -33,7 +33,11 @@ price_header = [
     'macd_signal',
     'macd2',
     'macd_direction',
-    'crossed'
+    'macd_crossed',
+    'boll_2_up',
+    'boll_1_up',
+    'boll_1_down',
+    'boll_2_down'
 ]
 
 def now_in_unixtime():
@@ -113,5 +117,24 @@ def create_trades_table(table_name):
         + 'stopLossOrderState text, '
         + 'trailingStopLossOrderState  text, '
         + 'trailingStopLossOrderDistance real'
+        + ');'
+    )
+
+def create_prices_table(table_name):
+    conn.execute(
+        'create table if not exists ' + table_name + '('
+        + 'datetime text primary key, '
+        + 'open real, '
+        + 'high real, '
+        + 'low real, '
+        + 'close real, '
+        + 'macd real, '
+        + 'macd2 real, '
+        + 'macd_direction integer, '
+        + 'macd_crossed integer, '
+        + 'boll_2_up real,'
+        + 'boll_1_up real, '
+        + 'boll_1_down real, '
+        + 'boll_2_down real'
         + ');'
     )
