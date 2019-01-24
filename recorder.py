@@ -129,6 +129,7 @@ def create_prices_table(table_name):
         + 'low real, '
         + 'close real, '
         + 'macd real, '
+        + 'macd_signal real, '
         + 'macd2 real, '
         + 'macd_direction integer, '
         + 'macd_crossed integer, '
