@@ -60,7 +60,7 @@ def update_trade_data(table_name):
     )['tradeId'])
 
     if len(open_ids) > 0:
-        #joinするため文字列型に変換
+        #リストの中身を文字列型に変換(joinするため)
         open_ids = list(map(str, open_ids))
 
         #APIからopen_idのtradeを取得し、DataFrameに追加していく
