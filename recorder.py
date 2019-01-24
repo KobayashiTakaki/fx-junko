@@ -85,21 +85,38 @@ def update_trade_data(table_name):
         #APIから取得したデータをtradesテーブルに追加
         fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
 
-def update_price_data(minutes=5):
-    granularity = 'M{}'.format(minutes)
+def update_price_data(time_unit='M', time_count='5', count=60):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
+    create_prices_table(table_name)
+
+    granularity = '{0}{1}'.format(time_unit, time_count)
     params = {
         'granularity': granularity,
-        'toTime': now_in_unixtime(),
-        'count': 60,
-        'completed_only': True
+        'count': count
     }
 
-    table_name = 'prices' if minutes == 5 else 'prices_{}min'.format(minutes)
+    #APIから取得してDFに入れる
+    candles = pd.DataFrame(oanda_api.get_candles(params=params))\
+        .sort_values('datetime')
 
-    candles = oanda_api.get_candles(params=params)
-    df = pd.DataFrame(candles)
-    df = price_util.calc_macd(df)
-    df.reindex(columns=price_header).to_sql(table_name, conn, if_exists="replace", index=False)
+    #DBから最新のレコードを取得
+    last_record = pd.read_sql_query(
+            'select * from ' + table_name + ' '
+            'order by datetime desc limit 1;'
+            ,conn
+        ).iloc[0]
+
+    candles_count = len(candles)
+    if not (last_record.empty):
+        #DBの最新レコードより古いcandleは削除
+        while not (candles.empty) \
+            and candles.iloc[0]['datetime'] <= last_record['datetime']:
+            #一番最初の行を削除
+            candles = candles.drop(candles.head(1).index, axis=0)
+
+    #DBに書き込み
+    candles.reindex(columns=price_header) \
+        .to_sql(table_name, conn, if_exists="append", index=False)
 
 def create_trades_table(table_name):
     conn.execute(
