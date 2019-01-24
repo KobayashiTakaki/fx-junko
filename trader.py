@@ -104,28 +104,6 @@ class Trader():
             oanda_api.close_trade(self.open_trade['tradeId'])
             self.open_trade = oanda_api.get_open_trade()
 
-    def shrink_stop_loss(self):
-        distance = 0.050
-        if self.open_trade['trailingStopLossOrderDistance'] != '':
-            if float(self.open_trade['trailingStopLossOrderDistance']) > distance:
-                tradeId = self.open_trade['tradeId']
-                trade  = oanda_api.get_trade(tradeId)
-
-                pips = float(trade['unrealizedPL']) / abs(trade['initialUnits']) * 100
-                now = datetime.datetime.now(datetime.timezone.utc)
-                open_time = datetime.datetime.strptime(trade['openTime'], self.time_format)
-                enough_time = datetime.timedelta(minutes=15)
-
-                if pips > 5 \
-                or now - open_time > enough_time:
-                    params = {
-                        'trailingStopLoss': {
-                            'distance': str(distance)
-                        }
-                    }
-                    oanda_api.change_trade_order(tradeId, params)
-                    db.write_log('trader', 'shrinked stop loss')
-
 if __name__=='__main__':
     trader = Trader()
     trader.loop()
