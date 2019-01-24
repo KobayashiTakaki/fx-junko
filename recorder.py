@@ -40,11 +40,6 @@ price_header = [
     'boll_2_down'
 ]
 
-def now_in_unixtime():
-    tz = datetime.timezone.utc
-    now = datetime.datetime.now(tz)
-    return int(now.timestamp())
-
 def add_trade_record(trade, table_name):
     create_trades_table(table_name)
 
