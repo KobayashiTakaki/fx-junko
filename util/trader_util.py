@@ -21,7 +21,13 @@ def is_macd_crossed(time_unit='M', time_count=5, within=1):
     # 最新のレコードのdatetimeが古くないか確認
     time_now = datetime.datetime.now(datetime.timezone.utc)
     time_last_price = datetime.datetime.strptime(df.iloc[0]['datetime'], db_time_format)
-    max_time = datetime.timedelta(minutes=minutes*5)
+    time_args = {}
+    if time_unit == 'M':
+        time_unit_full = 'minutes'
+    time_args = {
+        time_unit_full: time_count*5
+    }
+    max_time = datetime.timedelta(**time_args)
 
     if time_now - time_last_price > max_time:
         raise Exception('is_macd_crossed: price data too old for is_macd_crossed.')
