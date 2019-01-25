@@ -6,8 +6,10 @@ import tweeter
 import recorder
 import db.db as db
 import api.oanda_api as oanda_api
+import logger
 
 trader = trader.Trader()
+logger = logger.get_logger('scheduler')
 
 def trader_loop():
     trader.loop()
@@ -69,7 +71,7 @@ while True:
         schedule.run_pending()
         time.sleep(1)
     except Exception as e:
-        db.write_log('exception', str(e))
+        logger.debug(str(e))
         recorder.update_price_data(1)
         recorder.update_price_data()
         #trader.exit()
