@@ -40,7 +40,7 @@ def delete_old_log():
     db.delete_old_log()
 
 def update_long_price_data():
-    analyzer.update_long_price_data()
+    analyzer.update_long_price_data(count=26)
 
 def pl_tweet():
     tweeter.post_pl_tweet()
