@@ -125,6 +125,15 @@ def update_macd(table_name):
     df.reindex(columns=price_header) \
         .to_sql(table_name, conn, if_exists="replace", index=False)
 
+def update_bollinger(table_name):
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ';'
+        ,conn
+    )
+    df = price_util.calc_bollinger(df)
+    df.reindex(columns=price_header) \
+        .to_sql(table_name, conn, if_exists="replace", index=False)
+
 def create_trades_table(table_name):
     conn.execute(
         'create table if not exists ' + table_name + '('
