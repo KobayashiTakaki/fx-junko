@@ -9,8 +9,8 @@ import util.price_util as price_util
 conn = db.conn
 db_time_format = db.time_format
 
-def is_macd_crossed(guranularity='M5', within=1):
-    table_name = 'prices_{}'.format(guranularity)
+def is_macd_crossed(time_unit='M', time_count=5, within=1):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のpriceをwithin+1件取得(datetimeの降順)
     df = pd.read_sql_query(
@@ -39,9 +39,9 @@ def is_macd_crossed(guranularity='M5', within=1):
             return True, -1
 
     return False, 0
-    
-def is_candle_over_bollinger(guranularity='M5'):
-    table_name = 'prices_{}'.format(guranularity)
+
+def is_candle_over_bollinger(time_unit='M', time_count=5):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のレコードを1件取得
     df = pd.read_sql_query(
@@ -67,8 +67,8 @@ def is_candle_over_bollinger(guranularity='M5'):
 
     return False, 0
 
-def is_candle_over_middle(guranularity='M5', toward):
-    table_name = 'prices_{}'.format(guranularity)
+def is_candle_over_middle(time_unit='M', time_count=5, toward):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のレコードを1件取得
     df = pd.read_sql_query(

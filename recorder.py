@@ -78,11 +78,11 @@ def update_trade_data(table_name):
         #APIから取得したデータをtradesテーブルに追加
         fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
 
-def update_price_data(granularity='M5', count=60):
-    table_name = 'prices_{}'.format(granularity)
+def update_price_data(time_unit='M', time_count=5, count=60):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
     create_prices_table(table_name)
 
-    granularity = '{}'.format(granularity)
+    granularity = '{0}{1}'.format(time_unit, time_count)
     params = {
         'granularity': granularity,
         'count': count
