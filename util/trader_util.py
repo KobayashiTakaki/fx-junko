@@ -109,6 +109,3 @@ def is_candle_over_middle(time_unit='M', time_count=5, toward='up'):
             return True
 
     return False
-
-def is_candle_over_bollinger_within():
-    return
