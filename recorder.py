@@ -34,10 +34,9 @@ price_header = [
     'macd2',
     'macd_direction',
     'macd_crossed',
-    'boll_2_up',
-    'boll_1_up',
-    'boll_1_down',
-    'boll_2_down'
+    'boll_upper',
+    'boll_mid',
+    'boll_lower'
 ]
 
 def add_trade_record(trade, table_name):
@@ -159,9 +158,8 @@ def create_prices_table(table_name):
         + 'macd2 real, '
         + 'macd_direction integer, '
         + 'macd_crossed integer, '
-        + 'boll_2_up real,'
-        + 'boll_1_up real, '
-        + 'boll_1_down real, '
-        + 'boll_2_down real'
+        + 'boll_upper real,'
+        + 'boll_mid real, '
+        + 'boll_lower real '
         + ');'
     )
