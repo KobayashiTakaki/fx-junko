@@ -20,7 +20,7 @@ def is_macd_crossed(guranularity='M5', within=1):
 
     # 最新のレコードのdatetimeが古くないか確認
     time_now = datetime.datetime.now(datetime.timezone.utc)
-    time_last_price = datetime.datetime.strptime(price_newer['datetime'], db_time_format)
+    time_last_price = datetime.datetime.strptime(df.iloc[0]['datetime'], db_time_format)
     max_time = datetime.timedelta(minutes=minutes*5)
 
     if time_now - time_last_price > max_time:
