@@ -135,14 +135,14 @@ def is_current_price_over_middle(time_unit='M', time_count=5, toward='up'):
     if toward == 'down':
         #bollinger band の中値と下バンドの間1/5
         border = last_candle.iloc[0]['boll_mid'] \
-            - (last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
+            - abs(last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
         #borderを下回った
         if current_candle[0]['close'] < border:
             return True
     else:
         #bollinger band の中値と上バンドの間1/5
         border = last_candle.iloc[0]['boll_mid'] \
-            - (last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
+            + abs(last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
         #borderを上回った
         if current_candle[0]['close'] > border:
             return True
