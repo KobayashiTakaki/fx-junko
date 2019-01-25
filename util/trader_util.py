@@ -44,14 +44,14 @@ def is_macd_crossed(time_unit='M', time_count=5, within=1):
 
     return False, 0
 
-def is_candle_over_bollinger(time_unit='M', time_count=5, back=0):
+def is_candle_over_bollinger(time_unit='M', time_count=5, within=1, toward='up'):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
-    count = back + 1
-    # 最新のレコードをcount件取得
+
+    # 最新のpriceをwithin+1件取得(datetimeの降順)
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
         + 'order by datetime desc limit '
-        + str(count) + ';'
+        + str(within) + ';'
         , conn)
 
     # 最新のレコードのdatetimeが古くないか確認
@@ -66,15 +66,17 @@ def is_candle_over_bollinger(time_unit='M', time_count=5, back=0):
     if time_now - time_last_price > max_time:
         raise Exception('is_candle_over_bollinger: price data too old for is_candle_over_bollinger.')
 
-    # candleの終値がbollinger bandを超えているか判定
-    if df.iloc[back]['close'] > df.iloc[back]['boll_upper']:
-        # 終値がbollinger bandの上側を超えた
-        return True, 1
-    elif df.iloc[back]['close'] < df.iloc[back]['boll_lower']:
-        # 終値がbollinger bandの下側を下回った
-        return True, -1
+    for i in range(0, within):
+        if toward == 'down':
+            if df.iloc[i]['close'] < df.iloc[i]['boll_lower']:
+                # 終値がbollinger bandの下側を下回った
+                return True
+        else:
+            if df.iloc[i]['close'] > df.iloc[i]['boll_upper']:
+                # 終値がbollinger bandの上側を超えた
+                return True
 
-    return False, 0
+    return False
 
 def is_candle_over_middle(time_unit='M', time_count=5, toward='up'):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
@@ -107,3 +109,6 @@ def is_candle_over_middle(time_unit='M', time_count=5, toward='up'):
             return True
 
     return False
+
+def is_candle_over_bollinger_within():
+    return
