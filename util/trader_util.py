@@ -1,4 +1,4 @@
-import datetime
+pullimport datetime
 from time import sleep
 import pandas as pd
 import numpy as np
@@ -9,37 +9,34 @@ import util.price_util as price_util
 conn = db.conn
 db_time_format = db.time_format
 
-def is_macd_crossed(guranularity='M5'):
+def is_macd_crossed(guranularity='M5', within=1):
     table_name = 'prices_{}'.format(guranularity)
 
-    df = pd.read_sql_query('select * from ' + table_name + ' order by datetime;', conn)
+    # 最新のpriceをwithin+1件取得(datetimeの降順)
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'order by datetime desc limit ' + within+1 + ' '
+        +';', conn)
 
-    price_last = df.iloc[-2]
-    price_newer = df.iloc[-1]
-
+    # 最新のレコードのdatetimeが古くないか確認
     time_now = datetime.datetime.now(datetime.timezone.utc)
     time_last_price = datetime.datetime.strptime(price_newer['datetime'], db_time_format)
     max_time = datetime.timedelta(minutes=minutes*5)
 
     if time_now - time_last_price > max_time:
-        raise Exception('analyzer: price data too old for is_macd_crossed.')
+        raise Exception('is_macd_crossed: price data too old for is_macd_crossed.')
 
-    max_macd = 0.045 if minutes == 5 else 0.02
-
-    if price_last['macd_direction'] < price_newer['macd_direction']:
-        if float(price_last['macd']) > -max_macd:
-            #シグナルを上向きにクロス
-            #かつ、クロス時のmacdが低すぎない
+    # withinの件数、クロスを判定
+    for i in range(0, within):
+        price_newer = df.iloc[i]
+        price_older = df.iloc[i+1]
+        #シグナルを上向きにクロス
+        if price_older['macd_direction'] < price_newer['macd_direction']:
             return True, 1
-        else:
-            db.write_log('analyzer', 'last macd: ' + '{0:.5f}'.format(price_last['macd']) + '. too low.')
-    elif price_last['macd_direction'] > price_newer['macd_direction']:
-        if float(price_last['macd']) < max_macd:
-            #シグナルを下向きにクロス
-            #かつ、クロス時のmacdが高すぎない
+
+        #シグナルを下向きにクロス
+        elif price_older['macd_direction'] > price_newer['macd_direction']:
             return True, -1
-        else:
-            db.write_log('analyzer', 'last macd: ' + '{0:.5f}'.format(price_last['macd']) + '. too high.')
 
     return False, 0
 
