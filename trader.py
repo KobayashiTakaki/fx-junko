@@ -53,10 +53,10 @@ class Trader():
                 # macdが上向きにクロス
                 if is_macd_crossed[0] and is_macd_crossed[1] == 1:
 
-                    #15本以内に逆向きのbollinger bandを超えていない
+                    #逆向きのbollinger bandを超えていない
                     if not util.is_candle_over_bollinger(
                         time_unit=self.time_unit, time_count=self.time_count,
-                        within=15, toward='down'):
+                        within=14, toward='down'):
                         self.logger.debug('entry by buy')
                         self.entry('buy')
                         return
@@ -77,10 +77,10 @@ class Trader():
                 # macdが下向きにクロス
                 if is_macd_crossed[0] and is_macd_crossed[1] == -1:
 
-                    #15本以内に逆向きのbollinger bandを超えていない
+                    #逆向きのbollinger bandを超えていない
                     if not util.is_candle_over_bollinger(
                         time_unit=self.time_unit, time_count=self.time_count,
-                        within=15, toward='up'):
+                        within=14, toward='up'):
                         self.logger.debug('entry by sell')
                         self.entry('sell')
                         return
