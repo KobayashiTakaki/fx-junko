@@ -349,20 +349,15 @@ def post_pl_tweet(test=False):
         + 'and state = \'CLOSED\';'
         , conn
     )
-    scal_trades = pd.read_sql_query(
-        'select * from scal_trades '
-        + 'where openTime > \'' + start_datetime + '\' '
-        + 'and state = \'CLOSED\';'
-        , conn
-    )
 
-    merged = pd.concat([trades, scal_trades])
-    print(merged)
+    #tradesのレコードが無ければreturn
+    if len(trades) < 1:
+        return
 
     pips_total = 0
     money_total = 0
 
-    for i, row in merged.iterrows():
+    for i, row in trades.iterrows():
         pips = row['realizedPL']/abs(row['initialUnits'])*100
         pips_total += pips
         money_total += float(row['realizedPL'])
