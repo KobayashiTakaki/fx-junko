@@ -39,3 +39,30 @@ def is_macd_crossed(guranularity='M5', within=1):
             return True, -1
 
     return False, 0
+    
+def is_candle_over_bollinger(guranularity='M5'):
+    table_name = 'prices_{}'.format(guranularity)
+
+    # 最新のレコードを1件取得
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'order by datetime desc limit 1;'
+        , conn)
+
+    # 最新のレコードのdatetimeが古くないか確認
+    time_now = datetime.datetime.now(datetime.timezone.utc)
+    time_last_price = datetime.datetime.strptime(df.iloc[0]['datetime'], db_time_format)
+    max_time = datetime.timedelta(minutes=minutes*5)
+
+    if time_now - time_last_price > max_time:
+        raise Exception('is_candle_over_bollinger: price data too old for is_candle_over_bollinger.')
+
+    # candleの終値がbollinger bandを超えているか判定
+    if df.iloc[0]['close'] > df.iloc[0]['boll_upper']:
+        # 終値がbollinger bandの上側を超えた
+        return True, 1
+    elif df.iloc[0]['close'] < df.iloc[0]['boll_lower']:
+        # 終値がbollinger bandの下側を下回った
+        return True, -1
+
+    return False, 0
