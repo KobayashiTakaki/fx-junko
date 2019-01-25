@@ -109,3 +109,42 @@ def is_candle_closed_over_middle(time_unit='M', time_count=5, toward='up'):
             return True
 
     return False
+
+def is_current_price_over_middle(time_unit='M', time_count=5, toward='up'):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
+    # 最新のレコードを1件取得
+    last_candle = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'order by datetime desc limit 1;'
+        , conn)
+
+    # 最新のレコードのdatetimeが古くないか確認
+    time_now = datetime.datetime.now(datetime.timezone.utc)
+    time_last_price = datetime.datetime.strptime(last_candle.iloc[0]['datetime'], db_time_format)
+    time_unit_full = 'minutes'
+    time_args = {
+        time_unit_full: time_count*5
+    }
+    max_time = datetime.timedelta(**time_args)
+    if time_now - time_last_price > max_time:
+        raise Exception('is_candle_over_middle: price data too old for is_candle_over_middle.')
+
+    # APIからpriceを取得
+    current_candle = oanda_api.get_current_candle()
+
+    if toward == 'down':
+        #bollinger band の中値と下バンドの間1/5
+        border = last_candle.iloc[0]['boll_mid'] \
+            - (last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
+        #borderを下回った
+        if current_candle[0]['close'] < border:
+            return True
+    else:
+        #bollinger band の中値と上バンドの間1/5
+        border = last_candle.iloc[0]['boll_mid'] \
+            - (last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
+        #borderを上回った
+        if current_candle[0]['close'] > border:
+            return True
+
+    return False
