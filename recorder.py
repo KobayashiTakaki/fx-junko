@@ -5,7 +5,7 @@ import api.oanda_api as oanda_api
 import util.price_util as price_util
 
 conn = db.conn
-db_time_fromat = db.time_format
+time_format = db.time_format
 
 trades_header = [
     'tradeId',
