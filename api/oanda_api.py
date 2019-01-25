@@ -81,6 +81,14 @@ def get_candles(instrument=instrument, params=candles_params, completed_only=Tru
 
     return list(map(lambda candle: format_candle(candle), candles))
 
+def get_current_candle(instrument=instrument):
+    params = {
+        'granularity': 'S5',
+        'count': 1
+    }
+    candles = context.instrument.candles(instrument, **params).get("candles", 200)
+    return list(map(lambda candle: format_candle(candle), candles))
+
 def market_order(params):
     response = context.order.market(account_id, **params)
     if response.status == 201:
