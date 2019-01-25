@@ -14,13 +14,9 @@ def trader_loop():
 
 def update_trade_data():
     recorder.update_trade_data('trades')
-    recorder.update_trade_data('scal_trades')
 
 def update_price_data():
-    if trader.is_scalping:
-        recorder.update_price_data(1)
-    else:
-        recorder.update_price_data()
+    recorder.update_price_data()
 
 def tweeter_loop():
     tweeter.post_trade_tweets()
@@ -50,7 +46,6 @@ def pl_tweet():
     tweeter.post_pl_tweet()
 
 #このファイル最初の実行時にprice data更新とactivateを実行
-recorder.update_price_data(1)
 recorder.update_price_data()
 activate()
 
