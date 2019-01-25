@@ -12,19 +12,6 @@ def calc_macd(df):
     #macd_direction: macdがシグナルより上なら1, シグナル以下なら-1
     df['macd_direction'] = df['macd2'].apply(lambda v: 1 if v > 0 else -1)
 
-    #macdのcrossを判定
-    for i in range(1, len(df)):
-        last_price = df.iloc[i-1]
-        price = df.iloc[i]
-        if last_price['macd_direction'] > price['macd_direction']:
-            #1つ前のmacd_drectionが大きい->下向きにクロスした
-            df.at[i, 'crossed'] = str(-1)
-        elif last_price['macd_direction'] < price['macd_direction']:
-            #1つ前のmacd_drectionが小さい->上向きにクロスした
-            df.at[i, 'crossed'] = str(1)
-        else:
-            df.at[i, 'crossed'] = str(0)
-
     return df
 
 def calc_bollinger(df):
