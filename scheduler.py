@@ -71,8 +71,7 @@ while True:
         time.sleep(1)
     except Exception as e:
         logger.debug(str(e))
-        recorder.update_price_data(1)
+        schedule.clear('fx')
         recorder.update_price_data()
-        #trader.exit()
-        time.sleep(10)
+        activate()
         continue
