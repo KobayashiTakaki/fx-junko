@@ -26,3 +26,19 @@ def calc_macd(df):
             df.at[i, 'crossed'] = str(0)
 
     return df
+
+def calc_bollinger(df):
+    window = 14
+    sigma = 2
+    boll = pd.DataFrame()
+    boll['mean'] = df['close'].rolling(window=window).mean()
+    boll['std'] = df['close'].rolling(window=window).std()
+    boll['upper'] = boll['mean'] + (boll['std'] * sigma)
+    boll['lower'] = boll['mean'] - (boll['std'] * sigma)
+
+    # dfに代入
+    df['boll_mid'] = boll['mean']
+    df['boll_upper'] = boll['2_up']
+    df['boll_lower'] = boll['2_down']
+
+    return df
