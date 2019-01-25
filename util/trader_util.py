@@ -9,10 +9,6 @@ import util.price_util as price_util
 conn = db.conn
 db_time_format = db.time_format
 
-# TODO: 5分足と15分足を切り替えられるようにする
-# TODO: DataFrameを作成する際にsort=Trueを指定する
-# TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
-
 def is_macd_crossed(minutes=5):
     table_name = 'prices' if minutes == 5 else 'prices_{}min'.format(minutes)
 
