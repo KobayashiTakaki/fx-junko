@@ -56,8 +56,8 @@ schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
 
-#金曜20:00UTC(土曜05:00JST)にdeactivateを実行
-schedule.every().friday.at('20:00').do(deactivate)
+#金曜22:00UTC(土曜07:00JST)にdeactivateを実行
+schedule.every().friday.at('22:00').do(deactivate)
 
 #情報更新とか
 schedule.every().day.at('22:00').do(update_long_price_data)
