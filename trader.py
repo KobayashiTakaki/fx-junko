@@ -24,14 +24,24 @@ class Trader():
             self.logger.debug('i have an open trade')
 
             if int(self.open_trade['initialUnits']) > 0:
-                # 中値を下回った
+                #現在値が中値を1/5以上下回った
+                if util.is_current_price_over_middle(
+                    time_unit=self.time_unit, time_count=self.time_count,
+                    toward='down'):
+                    self.exit()
+                # closeが中値を下回った
                 if util.is_candle_closed_over_middle(
                     time_unit=self.time_unit, time_count=self.time_count,
                     toward='down'):
                     self.logger.debug('over middle toward down. exit.')
                     self.exit()
             else:
-                # 中値を上回った
+                #現在値が中値を1/5以上上回った
+                if util.is_current_price_over_middle(
+                    time_unit=self.time_unit, time_count=self.time_count,
+                    toward='up'):
+                    self.exit()
+                # closeが中値を上回った
                 if util.is_candle_closed_over_middle(
                     time_unit=self.time_unit, time_count=self.time_count,
                     toward='up'):
