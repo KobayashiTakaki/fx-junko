@@ -15,8 +15,8 @@ def is_macd_crossed(guranularity='M5', within=1):
     # 最新のpriceをwithin+1件取得(datetimeの降順)
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'order by datetime desc limit ' + within+1 + ' '
-        +';', conn)
+        + 'order by datetime desc limit ' + within+1 + ';'
+        , conn)
 
     # 最新のレコードのdatetimeが古くないか確認
     time_now = datetime.datetime.now(datetime.timezone.utc)
