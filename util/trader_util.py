@@ -9,8 +9,8 @@ import util.price_util as price_util
 conn = db.conn
 db_time_format = db.time_format
 
-def is_macd_crossed(minutes=5):
-    table_name = 'prices' if minutes == 5 else 'prices_{}min'.format(minutes)
+def is_macd_crossed(guranularity='M5'):
+    table_name = 'prices_{}'.format(guranularity)
 
     df = pd.read_sql_query('select * from ' + table_name + ' order by datetime;', conn)
 
