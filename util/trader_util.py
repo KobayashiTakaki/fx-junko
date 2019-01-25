@@ -67,7 +67,7 @@ def is_candle_over_bollinger(time_unit='M', time_count=5):
 
     return False, 0
 
-def is_candle_over_middle(time_unit='M', time_count=5, toward):
+def is_candle_over_middle(time_unit='M', time_count=5, toward='up'):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のレコードを1件取得
