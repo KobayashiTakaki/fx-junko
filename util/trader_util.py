@@ -1,4 +1,4 @@
-pullimport datetime
+import datetime
 from time import sleep
 import pandas as pd
 import numpy as np
