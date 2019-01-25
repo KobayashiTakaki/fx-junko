@@ -25,14 +25,14 @@ class Trader():
 
             if int(self.open_trade['initialUnits']) > 0:
                 # 中値を下回った
-                if util.is_candle_over_middle(
+                if util.is_candle_closed_over_middle(
                     time_unit=self.time_unit, time_count=self.time_count,
                     toward='down'):
                     self.logger.debug('over middle toward down. exit.')
                     self.exit()
             else:
                 # 中値を上回った
-                if util.is_candle_over_middle(
+                if util.is_candle_closed_over_middle(
                     time_unit=self.time_unit, time_count=self.time_count,
                     toward='up'):
                     self.logger.debug('over middle toward up. exit.')
