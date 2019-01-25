@@ -30,16 +30,19 @@ def is_macd_crossed(time_unit='M', time_count=5, within=1):
     if time_now - time_last_price > max_time:
         raise Exception('is_macd_crossed: price data too old for is_macd_crossed.')
 
+    offset = 0.0025
     # withinの件数、クロスを判定
     for i in range(0, within):
         price_newer = df.iloc[i]
         price_older = df.iloc[i+1]
         #シグナルを上向きにクロス
-        if price_older['macd_direction'] < price_newer['macd_direction']:
+        if price_older['macd_2'] - offset < 0 \
+        and price_newer['macd_2'] > 0:
             return True, 1
 
         #シグナルを下向きにクロス
-        elif price_older['macd_direction'] > price_newer['macd_direction']:
+        if price_older['macd_2'] + offset > 0 \
+        and price_newer['macd_2'] < 0:
             return True, -1
 
     return False, 0
