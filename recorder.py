@@ -99,15 +99,20 @@ def update_price_data(granularity='M5', count=60):
             'select * from ' + table_name + ' '
             'order by datetime desc limit 1;'
             ,conn
-        ).iloc[0]
+        )
 
-    candles_count = len(candles)
     if not (last_record.empty):
         #DBの最新レコードより古いcandleは削除
-        while not (candles.empty) \
-            and candles.iloc[0]['datetime'] <= last_record['datetime']:
-            #一番最初の行を削除
-            candles = candles.drop(candles.head(1).index, axis=0)
+        while not (candles.empty):
+            last_record_datetime = \
+                datetime.datetime.strptime(last_record.iloc[0]['datetime'], time_format)
+            candle_datetime = \
+                datetime.datetime.strptime(candles.iloc[0]['datetime'], time_format)
+            if candle_datetime <= last_record_datetime:
+                #一番最初の行を削除
+                candles = candles.drop(candles.head(1).index, axis=0)
+            else:
+                break
 
     #DBに書き込み
     candles.reindex(columns=price_header) \
