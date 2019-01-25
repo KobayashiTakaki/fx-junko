@@ -38,7 +38,7 @@ def calc_bollinger(df):
 
     # dfに代入
     df['boll_mid'] = boll['mean']
-    df['boll_upper'] = boll['2_up']
-    df['boll_lower'] = boll['2_down']
+    df['boll_upper'] = boll['upper']
+    df['boll_lower'] = boll['lower']
 
     return df
