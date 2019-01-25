@@ -6,9 +6,11 @@ import datetime
 import time
 import random
 import emoji
+import logger
 
 conn = db.conn
 time_format = db.time_format
+logger = logger.get_logger('tweeter')
 
 # TODO: DataFrameを作成する際にsort=Trueを指定する
 # TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
@@ -79,7 +81,7 @@ def update_trade_states():
     #ソートして、DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
-    db.write_log('tweeter', 'trade state updated')
+    logger.debug('trade state updated')
 
 def update_scal_states():
     table_name = 'scal_tweet_states'
@@ -126,7 +128,7 @@ def update_scal_states():
     #DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
-    db.write_log('tweeter', 'scal trade state updated')
+    logger.debug('scal trade state updated')
 
 def post_trade_tweets(test=False):
     update_trade_states()
