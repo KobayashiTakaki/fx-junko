@@ -2,7 +2,7 @@ import datetime
 from time import sleep
 import api.oanda_api as oanda_api
 import api.twitter_api as twitter_api
-import analyzer
+import util.trader_util as util
 import db.db as db
 import recorder
 
@@ -12,70 +12,87 @@ class Trader():
         self.open_trade = None
         self.time_format = db.time_format
         self.instrument = 'USD_JPY'
-        self.entry_side = 'both'
-        self.minutes = 5
-        self.least_entry_slope = 0.002
+        self.time_unit = 'M'
+        self.time_count = 5
 
     def loop(self):
-        db.write_log('trader', 'entry_side: {}'.format(self.entry_side))
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
             db.write_log('trader', 'i have an open trade')
-            if analyzer.is_exit_interval_enough(self.open_trade, self.minutes):
-                if int(self.open_trade['initialUnits']) > 0:
-                    #macdが下向きになってたらexit
-                    if analyzer.is_macd_trending('down', -0.002, 2, True, self.minutes):
-                        self.exit()
-                else:
-                    #macdが上向きになってたらexit
-                    if analyzer.is_macd_trending('up', 0.002, 2, True, self.minutes):
-                        self.exit()
 
-                #macdがシグナルと交差してたらexit
-                if analyzer.is_macd_crossed(self.minutes)[0]:
+            if int(self.open_trade['initialUnits']) > 0:
+                # 中値を下回った
+                if util.is_candle_over_middle(
+                    time_unit=self.time_unit, time_count=self.time_count,
+                    toward='down'):
+                    db.write_log('trader', 'over middle toward down. exit.')
                     self.exit()
             else:
-                db.write_log('trader', 'not enough time to exit')
+                # 中値を上回った
+                if util.is_candle_over_middle(
+                    time_unit=self.time_unit, time_count=self.time_count,
+                    toward='up'):
+                    db.write_log('trader', 'over middle toward up. exit.')
+                    self.exit()
+
         else:
             #ポジションがない場合
             db.write_log('trader', 'i dont have an open trade')
+            # bollinger bandの上を超えた
+            if util.is_candle_over_bollinger(
+                time_unit=self.time_unit, time_count=self.time_count,
+                within=1, toward='up'):
+                db.write_log('trader', 'over upper bollinger')
 
-            is_macd_crossed = analyzer.is_macd_crossed(self.minutes)
-            if is_macd_crossed[0]:
-                if analyzer.is_cross_interval_enough(self.minutes):
-                    #上向きクロスだったら買いでエントリー
-                    if is_macd_crossed[1] == 1:
-                        if analyzer.market_trend() != -1\
-                        and self.entry_side != 'sell'\
-                        and analyzer.is_macd_trending('up', self.least_entry_slope, 3, True, self.minutes):
-                            db.write_log('trader', 'entry by buy')
-                            self.entry('buy')
-                            return
-                        else:
-                            db.write_log('trader', 'too weak to buy')
-                    #下向きクロスだったら売りでエントリー
+                is_macd_crossed = util.is_macd_crossed(
+                    time_unit=self.time_unit, time_count=self.time_count,
+                    within=8)
+                # macdが上向きにクロス
+                if is_macd_crossed[0] and is_macd_crossed[1] == 1:
+
+                    #15本以内に逆向きのbollinger bandを超えていない
+                    if not util.is_candle_over_bollinger(
+                        time_unit=self.time_unit, time_count=self.time_count,
+                        within=15, toward='down'):
+                        db.write_log('trader', 'entry by buy')
+                        self.entry('buy')
+                        return
                     else:
-                        if analyzer.market_trend() != 1\
-                        and self.entry_side != 'buy'\
-                        and analyzer.is_macd_trending('down', -self.least_entry_slope, 3, True, self.minutes):
-                            db.write_log('trader', 'entry by sell')
-                            self.entry('sell')
-                            return
-                        else:
-                            db.write_log('trader', 'too weak to sell')
+                        db.write_log('trader', 'recently overed against bollinger')
                 else:
-                    db.write_log('trader', 'not enough cross interval')
+                    db.write_log('trader', 'macd not crossed recently')
 
-            else:
-                db.write_log('trader', 'not crossed')
+            # bollinger bandの下を超えた
+            elif util.is_candle_over_bollinger(
+                time_unit=self.time_unit, time_count=self.time_count,
+                within=1, toward='down'):
+                db.write_log('trader', 'over lower bollinger')
+
+                is_macd_crossed = util.is_macd_crossed(
+                    time_unit=self.time_unit, time_count=self.time_count,
+                    within=8)
+                # macdが下向きにクロス
+                if is_macd_crossed[0] and is_macd_crossed[1] == -1:
+
+                    #15本以内に逆向きのbollinger bandを超えていない
+                    if not util.is_candle_over_bollinger(
+                        time_unit=self.time_unit, time_count=self.time_count,
+                        within=15, toward='up'):
+                        db.write_log('trader', 'entry by sell')
+                        self.entry('sell')
+                        return
+                    else:
+                        db.write_log('trader', 'recently overed against bollinger')
+                else:
+                    db.write_log('trader', 'macd not crossed recently')
 
     def entry(self, side):
         amount = self.entry_amount
         minus = -1 if side == 'sell' else 1
         units = minus*amount
-        trailing_stop_loss = {
-            'distance': str(0.150)
+        stop_loss = {
+            'distance': str(0.080)
         }
 
         params = {
@@ -83,7 +100,7 @@ class Trader():
             'instrument': self.instrument,
             'units': str(units),
             'timeInForce': 'FOK',
-            'trailingStopLossOnFill': trailing_stop_loss
+            'stopLossOnFill': stop_loss
         }
 
         response = oanda_api.market_order(params)
