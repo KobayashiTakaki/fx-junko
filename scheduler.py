@@ -20,7 +20,6 @@ def update_price_data():
 
 def tweeter_loop():
     tweeter.post_trade_tweets()
-    tweeter.post_scal_tweet()
 
 def activate():
     #最初にfxタグのスケジュールをクリアする
