@@ -66,3 +66,31 @@ def is_candle_over_bollinger(guranularity='M5'):
         return True, -1
 
     return False, 0
+
+def is_candle_over_middle(guranularity='M5', toward):
+    table_name = 'prices_{}'.format(guranularity)
+
+    # 最新のレコードを1件取得
+    df = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'order by datetime desc limit 1;'
+        , conn)
+
+    # 最新のレコードのdatetimeが古くないか確認
+    time_now = datetime.datetime.now(datetime.timezone.utc)
+    time_last_price = datetime.datetime.strptime(df.iloc[0]['datetime'], db_time_format)
+    max_time = datetime.timedelta(minutes=minutes*5)
+
+    if time_now - time_last_price > max_time:
+        raise Exception('is_candle_over_middle: price data too old for is_candle_over_middle.')
+
+    if toward == 'down':
+        #中値を下回った
+        if df.iloc[0]['close'] < df.iloc[0]['boll_mid']:
+            return True
+    else:
+        #中値を超えた
+        if df.iloc[0]['close'] > df.iloc[0]['boll_mid']:
+            return True
+
+    return False
