@@ -25,25 +25,29 @@ class Trader():
 
             if int(self.open_trade['initialUnits']) > 0:
                 #現在値が中値を1/5以上下回った
-                if util.is_current_price_over_middle(
-                    time_unit=self.time_unit, time_count=self.time_count,
+                if util.is_current_price_over_middle( \
+                    time_unit=self.time_unit, time_count=self.time_count, \
                     toward='down'):
+                    self.logger.debug('current price over middle toward down. exit.')
                     self.exit()
+
                 # closeが中値を下回った
-                if util.is_candle_closed_over_middle(
-                    time_unit=self.time_unit, time_count=self.time_count,
+                if util.is_candle_closed_over_middle( \
+                    time_unit=self.time_unit, time_count=self.time_count, \
                     toward='down'):
                     self.logger.debug('over middle toward down. exit.')
                     self.exit()
             else:
                 #現在値が中値を1/5以上上回った
-                if util.is_current_price_over_middle(
-                    time_unit=self.time_unit, time_count=self.time_count,
+                if util.is_current_price_over_middle( \
+                    time_unit=self.time_unit, time_count=self.time_count, \
                     toward='up'):
+                    self.logger.debug('current price over middle toward up. exit.')
                     self.exit()
+
                 # closeが中値を上回った
-                if util.is_candle_closed_over_middle(
-                    time_unit=self.time_unit, time_count=self.time_count,
+                if util.is_candle_closed_over_middle( \
+                    time_unit=self.time_unit, time_count=self.time_count, \
                     toward='up'):
                     self.logger.debug('over middle toward up. exit.')
                     self.exit()
@@ -52,20 +56,20 @@ class Trader():
             #ポジションがない場合
             self.logger.debug('i dont have an open trade')
             # bollinger bandの上を超えた
-            if util.is_candle_over_bollinger(
-                time_unit=self.time_unit, time_count=self.time_count,
+            if util.is_candle_over_bollinger( \
+                time_unit=self.time_unit, time_count=self.time_count, \
                 within=1, toward='up'):
                 self.logger.debug('over upper bollinger')
 
-                is_macd_crossed = util.is_macd_crossed(
-                    time_unit=self.time_unit, time_count=self.time_count,
+                is_macd_crossed = util.is_macd_crossed( \
+                    time_unit=self.time_unit, time_count=self.time_count, \
                     within=8)
+
                 # macdが上向きにクロス
                 if is_macd_crossed[0] and is_macd_crossed[1] == 1:
-
                     #逆向きのbollinger bandを超えていない
-                    if not util.is_candle_over_bollinger(
-                        time_unit=self.time_unit, time_count=self.time_count,
+                    if not util.is_candle_over_bollinger( \
+                        time_unit=self.time_unit, time_count=self.time_count, \
                         within=14, toward='down'):
                         self.logger.debug('entry by buy')
                         self.entry('buy')
@@ -76,20 +80,20 @@ class Trader():
                     self.logger.debug('macd not crossed recently')
 
             # bollinger bandの下を超えた
-            elif util.is_candle_over_bollinger(
-                time_unit=self.time_unit, time_count=self.time_count,
+            elif util.is_candle_over_bollinger( \
+                time_unit=self.time_unit, time_count=self.time_count, \
                 within=1, toward='down'):
                 self.logger.debug('over lower bollinger')
 
-                is_macd_crossed = util.is_macd_crossed(
-                    time_unit=self.time_unit, time_count=self.time_count,
+                is_macd_crossed = util.is_macd_crossed( \
+                    time_unit=self.time_unit, time_count=self.time_count, \
                     within=8)
+
                 # macdが下向きにクロス
                 if is_macd_crossed[0] and is_macd_crossed[1] == -1:
-
                     #逆向きのbollinger bandを超えていない
-                    if not util.is_candle_over_bollinger(
-                        time_unit=self.time_unit, time_count=self.time_count,
+                    if not util.is_candle_over_bollinger( \
+                        time_unit=self.time_unit, time_count=self.time_count, \
                         within=14, toward='up'):
                         self.logger.debug('entry by sell')
                         self.entry('sell')
