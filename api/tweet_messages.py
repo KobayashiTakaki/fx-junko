@@ -176,23 +176,6 @@ emojis = {
     ]
 }
 
-scal = {
-    'intro': [
-        'スキャルピングしてたら',
-        'スキャルで',
-        'スキャルしてたら'
-    ],
-    'win': [
-        '勝った〜',
-        'ふえた',
-        'とれた'
-    ],
-    'lose': [
-        'まけた',
-        'とけた',
-        'なくなった'
-    ]
-}
 def get_kaomoji(feeling):
     return random.choice(kaomojis[feeling])
 
@@ -202,6 +185,3 @@ def get_message(action):
 def get_emoji(feeling):
     emoji_str = random.choice(emojis[feeling])
     return emoji.emojize(emoji_str, use_aliases=True)
-
-def get_scal_tweet(side):
-    return random.choice(scal['intro']), random.choice(scal[side])

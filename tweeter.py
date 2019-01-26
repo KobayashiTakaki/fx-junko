@@ -12,9 +12,6 @@ conn = db.conn
 time_format = db.time_format
 logger = logger.get_logger('tweeter')
 
-# TODO: DataFrameを作成する際にsort=Trueを指定する
-# TODO: DataFrameをDBに書き込む際にindex=Falseを指定する
-
 def update_trade_states():
     table_name = 'trade_tweet_states'
     table_columns = [
@@ -82,53 +79,6 @@ def update_trade_states():
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
     logger.debug('trade state updated')
-
-def update_scal_states():
-    table_name = 'scal_tweet_states'
-    table_columns = [
-        'trade_id',
-        'open_time',
-        'close_time',
-        'tweeted'
-    ]
-    conn.execute(
-        'create table if not exists ' + table_name + '('
-        + 'trade_id integer not null primary key,'
-        + 'open_time text,'
-        + 'close_time text'
-        + 'tweeted integer'
-        + ');'
-    )
-
-    state_records = pd.read_sql_query(
-        'select * from ' + table_name + ';'
-        , conn
-    ).reindex(columns=table_columns)
-
-    #close状態のscal tradeで、statesテーブルに存在しないレコードを取得
-    new_trades = pd.read_sql_query(
-        'select tradeId, openTime, closeTime, state from scal_trades '
-        + 'where not exists ('
-        + 'select * from ' + table_name + ' as states '
-        + 'where scal_trades.tradeId = states.trade_id '
-        + ') and state = \'CLOSED\';'
-        , conn
-    )
-
-    #statesテーブルにないtradeの行を追加する
-    for i, row in new_trades.iterrows():
-        new_record = pd.Series()
-        new_record['trade_id'] = int(row['tradeId'])
-        new_record['open_time'] = row['openTime']
-        new_record['close_time'] = row['closeTime']
-        new_record['tweeted'] = 0
-        #行をappend
-        state_records = state_records.append(new_record, ignore_index=True)
-
-    #DBに書き込み
-    state_records.to_sql(table_name, conn, if_exists='replace', index=False)
-
-    logger.debug('scal trade state updated')
 
 def post_trade_tweets(test=False):
     update_trade_states()
@@ -239,70 +189,6 @@ def post_trade_tweets(test=False):
 
     #DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
-
-def post_scal_tweet(test=False):
-    update_scal_states()
-
-    table_name = 'scal_tweet_states'
-    table_columns = [
-        'trade_id',
-        'open_time',
-        'close_time',
-        'tweeted'
-    ]
-
-    state_records = pd.read_sql_query(
-        'select * from ' + table_name + ' '
-        + 'order by open_time;'
-        , conn
-    ).reindex(columns=table_columns)
-
-    #未投稿のscal tradesを取得
-    unsent_records = state_records.query('tweeted != 1')
-
-    if len(unsent_records) > 0:
-        #最新のscal tradeのclose_timeと現在を比較
-        last_close_time = datetime.datetime.strptime(
-            unsent_records.iloc[-1]['close_time'], time_format)
-        now = datetime.datetime.now(datetime.timezone.utc)
-        interval = datetime.timedelta(minutes=15)
-        #一定時間以上経過していたらtweet実行
-        if now - last_close_time > interval:
-            #tradeIdのlistをstrに変換して、カンマ区切りの文字列にjoin
-            tradeIds = ', '.join(map(str, list(unsent_records['trade_id'])))
-            #tradesテーブルからtrade_idが一致するレコードを取得
-            trades = pd.read_sql_query(
-                'select * from scal_trades where tradeId in ({});'.format(tradeIds)
-                , conn
-            )
-            money_toral = 0
-            pips_total = 0
-            for i, row in trades.iterrows():
-                pips = float(row['realizedPL'])/abs(row['initialUnits'])*100
-                money_toral += float(row['realizedPL'])
-                pips_total += pips
-
-            side = 'win' if pips_total > 0 else 'lose'
-            feeling = 'positive' if pips_total > 0 else 'negative'
-            scal_tweet = tweet_messages.get_scal_tweet(side)
-            kaomoji = tweet_messages.get_kaomoji(feeling)
-
-            content = scal_tweet[0]\
-                + '{0:.0f}'.format(abs(money_toral)) + "円" + scal_tweet[1]\
-                + kaomoji + "\n"\
-                + "(" + '{0:+.1f}'.format(pips_total) + "pips)"
-
-            if test:
-                print(content)
-            else:
-                twitter_api.tweet(content)
-
-            #tweeted_state更新
-            #全レコードのtweeted=1
-            state_records['tweeted'] = 1
-
-            #DBに書き込み
-            state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def clear_pending_tweets():
     table_name = 'trade_tweet_states'
