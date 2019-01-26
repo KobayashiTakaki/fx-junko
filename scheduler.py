@@ -54,11 +54,10 @@ schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
 
-#金曜22:00UTC(土曜07:00JST)にdeactivateを実行
-schedule.every().friday.at('22:00').do(deactivate)
+#金曜21:00UTC(土曜06:00JST)にdeactivateを実行
+schedule.every().friday.at('21:00').do(deactivate)
 
-#情報更新とか
-schedule.every().friday.at('20:00').do(delete_old_log)
+# 土曜00:00UTC(土曜09:00JST)に損益ツイート
 schedule.every().saturday.at('00:00').do(pl_tweet)
 
 while True:
