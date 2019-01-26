@@ -173,3 +173,13 @@ def create_prices_table(table_name):
         + 'boll_lower real '
         + ');'
     )
+
+def delete_old_price_data(table_name):
+    keep_span = datetime.timedelta(hours=12)
+    keep_from = (datetime.datetime.now(datetime.timezone.utc)
+        - keep_span).strftime(time_format)
+    conn.execute(
+        'delete from ' + table_name + ' '
+        'where datetime < \'' + keep_from + '\';'
+    )
+    conn.commit()
