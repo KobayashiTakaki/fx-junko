@@ -36,11 +36,13 @@ def is_macd_crossed(time_unit='M', time_count=5, within=1):
         price_newer = df.iloc[i]
         price_older = df.iloc[i+1]
         #シグナルを上向きにクロス
+        #macd2がマイナス→プラス
         if price_older['macd_2'] - offset < 0 \
         and price_newer['macd_2'] > 0:
             return True, 1
 
         #シグナルを下向きにクロス
+        #macd2がプラス→マイナス
         if price_older['macd_2'] + offset > 0 \
         and price_newer['macd_2'] < 0:
             return True, -1
