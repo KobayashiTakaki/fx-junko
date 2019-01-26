@@ -1,7 +1,6 @@
 import schedule
 import time
 import trader
-import analyzer
 import tweeter
 import recorder
 import db.db as db
