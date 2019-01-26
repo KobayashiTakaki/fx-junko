@@ -32,7 +32,6 @@ price_header = [
     'macd',
     'macd_signal',
     'macd2',
-    'macd_direction',
     'boll_upper',
     'boll_mid',
     'boll_lower'
@@ -169,7 +168,6 @@ def create_prices_table(table_name):
         + 'macd real, '
         + 'macd_signal real, '
         + 'macd2 real, '
-        + 'macd_direction integer, '
         + 'boll_upper real,'
         + 'boll_mid real, '
         + 'boll_lower real '

@@ -9,8 +9,6 @@ def calc_macd(df):
     df['macd'] = macd['macd'].round(6)
     df['macd_signal'] = macd['signal'].round(6)
     df['macd2'] = (macd['macd'] - macd['signal']).round(6)
-    #macd_direction: macdがシグナルより上なら1, シグナル以下なら-1
-    df['macd_direction'] = df['macd2'].apply(lambda v: 1 if v > 0 else -1)
 
     return df
 
