@@ -23,7 +23,9 @@ def tweeter_loop():
     tweeter.post_trade_tweets()
 
 def delete_old_records():
+    recorder.delete_old_price_data('prices_M5')
     recorder.delete_old_price_data()
+    tweeter.delete_old_records()
 
 def activate():
     #最初にfxタグのスケジュールをクリアする
@@ -49,8 +51,8 @@ def pl_tweet():
 recorder.update_price_data()
 activate()
 
-# 毎日23:00UTC(08:00JST)に古いレコード削除
-schedule.every().day.at('23:00').do(delete_old_records)
+# 毎日04:00UTC(13:00JST)に古いレコード削除
+schedule.every().day.at('04:00').do(delete_old_records)
 
 #日〜木23:00UTC(月〜金08:00JST)にactivateを実行
 schedule.every().sunday.at('23:00').do(activate)

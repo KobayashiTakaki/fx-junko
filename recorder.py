@@ -183,3 +183,14 @@ def delete_old_price_data(table_name):
         'where datetime < \'' + keep_from + '\';'
     )
     conn.commit()
+
+def delete_old_trade_data():
+    table_name = 'trades'
+    keep_span = datetime.timedelta(weeks=1)
+    keep_from = (datetime.datetime.now(datetime.timezone.utc)
+        - keep_span).strftime(time_format)
+    conn.execute(
+        'delete from ' + table_name + ' '
+        'where datetime < \'' + keep_from + '\';'
+    )
+    conn.commit()
