@@ -27,27 +27,30 @@ def update_trade_data(table_name):
         ,conn
     )['tradeId'])
 
-    if len(open_ids) > 0:
-        # リストの中身を文字列型に変換(joinするため)
-        open_ids = list(map(str, open_ids))
+    # 1件も無ければreturn
+    if len(open_ids) < 1:
+        return
 
-        # APIからopen_idのtradeを取得し、DataFrameに追加していく
-        header = table_defs.get_columns('trades')
-        fetched_trades = pd.DataFrame(columns=header)
-        for id in open_ids:
-            trade = oanda_api.get_trade(id)
-            s = pd.Series(trade)
-            fetched_trades = fetched_trades.append(s,ignore_index=True)
+    # リストの中身を文字列型に変換(joinするため)
+    open_ids = list(map(str, open_ids))
 
-        # open_idのレコードをtradesテーブルから削除
-        conn.execute(
-            'delete from '+ table_name + ' where tradeId in ('
-            + ','.join(open_ids) + ');'
-        )
-        conn.commit()
+    # APIからopen_idのtradeを取得し、DataFrameに追加していく
+    header = table_defs.get_columns('trades')
+    fetched_trades = pd.DataFrame(columns=header)
+    for id in open_ids:
+        trade = oanda_api.get_trade(id)
+        s = pd.Series(trade)
+        fetched_trades = fetched_trades.append(s,ignore_index=True)
 
-        # APIから取得したデータをtradesテーブルに追加
-        fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
+    # open_idのレコードをtradesテーブルから削除
+    conn.execute(
+        'delete from '+ table_name + ' where tradeId in ('
+        + ','.join(open_ids) + ');'
+    )
+    conn.commit()
+
+    # APIから取得したデータをtradesテーブルに追加
+    fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
 
 def update_price_data(time_unit='M', time_count=5, count=60):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
@@ -70,6 +73,7 @@ def update_price_data(time_unit='M', time_count=5, count=60):
             ,conn
         )
 
+    # DBにレコードがある時
     if not (last_record.empty):
         # DBの最新レコードより古いcandleは削除
         while not (candles.empty):
