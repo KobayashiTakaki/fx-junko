@@ -98,8 +98,10 @@ def update_price_data(time_unit='M', time_count=5, count=60):
     update_bollinger(table_name)
 
 def update_macd(table_name):
+    max_records = 30
     df = pd.read_sql_query(
-        'select * from ' + table_name + ';'
+        'select * from ' + table_name + ' '
+        + 'limit ' + max_records + ';'
         ,conn
     )
     df = price_util.calc_macd(df)
@@ -109,8 +111,10 @@ def update_macd(table_name):
         .to_sql(table_name, conn, if_exists="replace", index=False)
 
 def update_bollinger(table_name):
+    max_records = 30
     df = pd.read_sql_query(
-        'select * from ' + table_name + ';'
+        'select * from ' + table_name + ' '
+        + 'limit ' + max_records + ';'
         ,conn
     )
     df = price_util.calc_bollinger(df)
