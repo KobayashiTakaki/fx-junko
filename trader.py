@@ -108,7 +108,7 @@ class Trader():
         minus = -1 if side == 'sell' else 1
         units = minus*amount
         stop_loss = {
-            'distance': str(0.080)
+            'distance': str(0.100)
         }
 
         params = {
