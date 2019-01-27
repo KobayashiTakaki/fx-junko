@@ -28,10 +28,10 @@ def delete_old_records():
     tweeter.delete_old_records()
 
 def activate():
-    #最初にfxタグのスケジュールをクリアする
+    # 最初にfxタグのスケジュールをクリアする
     schedule.clear('fx')
     if oanda_api.is_market_open():
-        #fxタグのスケジュールを登録
+        # fxタグのスケジュールを登録
         schedule.every(10).seconds.do(trader_loop).tag('fx')
         schedule.every(30).seconds.do(update_trade_data).tag('fx')
         schedule.every(20).seconds.do(update_price_data).tag('fx')
@@ -47,21 +47,21 @@ def delete_old_log():
 def pl_tweet():
     tweeter.post_pl_tweet()
 
-#このファイル最初の実行時にprice data更新とactivateを実行
+# このファイル最初の実行時にprice data更新とactivateを実行
 recorder.update_price_data()
 activate()
 
 # 毎日04:00UTC(13:00JST)に古いレコード削除
 schedule.every().day.at('04:00').do(delete_old_records)
 
-#日〜木23:00UTC(月〜金08:00JST)にactivateを実行
+# 日〜木23:00UTC(月〜金08:00JST)にactivateを実行
 schedule.every().sunday.at('23:00').do(activate)
 schedule.every().monday.at('23:00').do(activate)
 schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
 
-#金曜21:00UTC(土曜06:00JST)にdeactivateを実行
+# 金曜21:00UTC(土曜06:00JST)にdeactivateを実行
 schedule.every().friday.at('21:00').do(deactivate)
 
 # 土曜00:00UTC(土曜09:00JST)に損益ツイート

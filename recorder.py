@@ -20,7 +20,7 @@ def add_trade_record(trade, table_name):
 def update_trade_data(table_name):
     create_trades_table(table_name)
 
-    #tradesテーブルからOPENのtrade_idを取得
+    # tradesテーブルからOPENのtrade_idを取得
     open_ids = list(pd.read_sql_query(
         'select tradeId from ' + table_name + ' '
         + 'where state=\'OPEN\''
@@ -28,10 +28,10 @@ def update_trade_data(table_name):
     )['tradeId'])
 
     if len(open_ids) > 0:
-        #リストの中身を文字列型に変換(joinするため)
+        # リストの中身を文字列型に変換(joinするため)
         open_ids = list(map(str, open_ids))
 
-        #APIからopen_idのtradeを取得し、DataFrameに追加していく
+        # APIからopen_idのtradeを取得し、DataFrameに追加していく
         header = table_defs.get_columns('trades')
         fetched_trades = pd.DataFrame(columns=header)
         for id in open_ids:
@@ -39,14 +39,14 @@ def update_trade_data(table_name):
             s = pd.Series(trade)
             fetched_trades = fetched_trades.append(s,ignore_index=True)
 
-        #open_idのレコードをtradesテーブルから削除
+        # open_idのレコードをtradesテーブルから削除
         conn.execute(
             'delete from '+ table_name + ' where tradeId in ('
             + ','.join(open_ids) + ');'
         )
         conn.commit()
 
-        #APIから取得したデータをtradesテーブルに追加
+        # APIから取得したデータをtradesテーブルに追加
         fetched_trades.to_sql(table_name, conn, if_exists="append", index=False)
 
 def update_price_data(time_unit='M', time_count=5, count=60):
@@ -59,11 +59,11 @@ def update_price_data(time_unit='M', time_count=5, count=60):
         'count': count
     }
 
-    #APIから取得してDFに入れる
+    # APIから取得してDFに入れる
     candles = pd.DataFrame(oanda_api.get_candles(params=params))\
         .sort_values('datetime')
 
-    #DBから最新のレコードを取得
+    # DBから最新のレコードを取得
     last_record = pd.read_sql_query(
             'select * from ' + table_name + ' '
             'order by datetime desc limit 1;'
@@ -71,26 +71,26 @@ def update_price_data(time_unit='M', time_count=5, count=60):
         )
 
     if not (last_record.empty):
-        #DBの最新レコードより古いcandleは削除
+        # DBの最新レコードより古いcandleは削除
         while not (candles.empty):
             last_record_datetime = \
                 datetime.datetime.strptime(last_record.iloc[0]['datetime'], time_format)
             candle_datetime = \
                 datetime.datetime.strptime(candles.iloc[0]['datetime'], time_format)
             if candle_datetime <= last_record_datetime:
-                #一番最初の行を削除
+                # 一番最初の行を削除
                 candles = candles.drop(candles.head(1).index, axis=0)
             else:
                 break
 
-    #DBに書き込み
+    # DBに書き込み
     header = table_defs.get_columns('prices')
     candles.reindex(columns=header) \
         .to_sql(table_name, conn, if_exists="append", index=False)
 
-    #macdを計算
+    # macdを計算
     update_macd(table_name)
-    #bollinger bandを計算
+    # bollinger bandを計算
     update_bollinger(table_name)
 
 def update_macd(table_name):

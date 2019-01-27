@@ -115,13 +115,13 @@ def get_open_trade():
     if len(trades) == 0:
         return None
     elif len(trades) > 1:
-        #idを取得してsort
+        # idを取得してsort
         ids = sorted([trade.id for trade in trades])
         print(ids)
         for i in range(0, len(ids)-1):
-            #複数tradeがあったら最新のtradeだけ残して全部クローズする
+            # 複数tradeがあったら最新のtradeだけ残して全部クローズする
             close_trade(ids[i])
-        #idsの一番最後に一致するtradeを返す
+        # idsの一番最後に一致するtradeを返す
         last_trade = [trade for trade in trades if trade.id == ids[-1]][0]
         return format_trade(last_trade)
 

@@ -33,7 +33,7 @@ def tweet(content):
                 done = True
         except Exception as e:
             logger.debug(str(e))
-            #高速連投を避けるためのsleep
+            # 高速連投を避けるためのsleep
             time.sleep(5)
             continue
         finally:

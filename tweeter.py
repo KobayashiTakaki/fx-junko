@@ -34,7 +34,7 @@ def update_trade_states():
         , conn
     ).reindex(columns=table_columns)
 
-    #tradesテーブルにあるデータから、すでにstatesに存在するものを取得
+    # tradesテーブルにあるデータから、すでにstatesに存在するものを取得
     exist_trades = pd.read_sql_query(
         'select tradeId, state from trades '
         + 'where exists ('
@@ -53,29 +53,29 @@ def update_trade_states():
         , conn
     )
 
-    #statesテーブルから取ったレコードとtradesテーブルから取ったレコードを結合
+    # statesテーブルから取ったレコードとtradesテーブルから取ったレコードを結合
     merge_exist = pd.merge(state_records, exist_trades,
         left_on='trade_id', right_on='tradeId')
 
-    #既にstatesテーブルにあるtrade_stateの値を
-    #tradeテーブルから取得したstateで上書き
+    # 既にstatesテーブルにあるtrade_stateの値を
+    # tradeテーブルから取得したstateで上書き
     for i, row in merge_exist.iterrows():
         merge_exist.at[i, 'trade_state'] = row['state']
 
-    #結合したtradeの列を削除して代入
+    # 結合したtradeの列を削除して代入
     state_records = merge_exist.drop(['tradeId', 'state'], axis=1)
 
-    #statesテーブルにないtradeの行を追加する
+    # statesテーブルにないtradeの行を追加する
     for i, row in new_trades.iterrows():
         new_record = pd.Series()
         new_record['trade_id'] = row['tradeId']
         new_record['open_time'] = row['openTime']
         new_record['trade_state'] = row['state']
         new_record['tweeted_state'] = ''
-        #行をappend
+        # 行をappend
         state_records = state_records.append(new_record, ignore_index=True)
 
-    #ソートして、DBに書き込み
+    # ソートして、DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
     logger.debug('trade state updated')
@@ -100,20 +100,20 @@ def post_trade_tweets(test=False):
     unsent_records = state_records.query('trade_state != tweeted_state')
 
     for i, row in unsent_records.iterrows():
-        #trade_idが一致するレコードをtradesテーブルから取得
+        # trade_idが一致するレコードをtradesテーブルから取得
         trade = pd.read_sql_query(
             'select * from trades where tradeId = {};'.format(row['trade_id'])
             , conn
         )
         if len(trade) > 0:
-            #tradeのSeriesを代入
-            #trade_idが一致するレコードは1行だけのはずなのでdfの1番目を取る
+            # tradeのSeriesを代入
+            # trade_idが一致するレコードは1行だけのはずなのでdfの1番目を取る
             trade = trade.iloc[0]
         else:
-            #trade_idが一致するレコードが無ければcontinue
+            # trade_idが一致するレコードが無ければcontinue
             continue
 
-        #エントリー時のツイートを投稿
+        # エントリー時のツイートを投稿
         if row['trade_state'] == 'OPEN':
             action = 'entry'
             feeling = 'neutral'
@@ -125,10 +125,10 @@ def post_trade_tweets(test=False):
             info = "【エントリー" + emoji_head + "】\n"\
                 + start_side + " " + instrument + "@" + start_price\
                 + " ×" + kunits + "kUnits"
-            #tweet
+            # tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
-            tags = "#USDJPY #FX"
+            tags = "# USDJPY # FX"
             content = (
                 message + kaomoji + "\n"
                 + info + "\n"
@@ -138,10 +138,10 @@ def post_trade_tweets(test=False):
                 print(content)
             else:
                 twitter_api.tweet(content)
-            #tweeted_state更新
+            # tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'OPEN'
 
-        #イグジット時のツイートを投稿
+        # イグジット時のツイートを投稿
         if row['trade_state'] == 'CLOSED':
             instrument = trade['instrument'].replace('_', '/')
             start_side = '買い' if int(trade['initialUnits']) > 0 else '売り'
@@ -168,10 +168,10 @@ def post_trade_tweets(test=False):
             else:
                 action = 'losscut'
                 feeling = 'negative'
-            #tweet
+            # tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
-            tags = "#USDJPY #FX"
+            tags = "# USDJPY # FX"
             content = (
                 message + kaomoji + "\n"
                 + info + "\n"
@@ -181,13 +181,13 @@ def post_trade_tweets(test=False):
                 print(content)
             else:
                 twitter_api.tweet(content)
-            #tweeted_state更新
+            # tweeted_state更新
             state_records.at[i, 'tweeted_state'] = 'CLOSED'
 
-        #高速連投を避けるためのsleep
+        # 高速連投を避けるためのsleep
         time.sleep(5)
 
-    #DBに書き込み
+    # DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def clear_pending_tweets():
@@ -205,11 +205,11 @@ def clear_pending_tweets():
     ).reindex(columns=table_columns)
 
     for i, row in state_records.iterrows():
-        #tweeted_stateにtrade_stateの値を代入
+        # tweeted_stateにtrade_stateの値を代入
         state_records.at[i, 'tweeted_state']\
             = state_records.iloc[i]['trade_state']
 
-    #DBに書き込み
+    # DBに書き込み
     state_records.to_sql(table_name, conn, if_exists='replace', index=False)
 
 def delete_old_records():
@@ -224,12 +224,12 @@ def delete_old_records():
     conn.commit()
 
 def post_pl_tweet(test=False):
-    #日付を日曜日にするために引く日数
+    # 日付を日曜日にするために引く日数
     days_shift = datetime.datetime.now(datetime.timezone.utc).weekday() + 1
-    #今日からdays_shiftを引いた日付
+    # 今日からdays_shiftを引いた日付
     start_date = (datetime.datetime.now(datetime.timezone.utc)\
         - datetime.timedelta(days=days_shift)).strftime('%Y-%m-%d')
-    #時間
+    # 時間
     start_time = '23:00'
     start_datetime = start_date + ' ' + start_time
     trades = pd.read_sql_query(
@@ -239,7 +239,7 @@ def post_pl_tweet(test=False):
         , conn
     )
 
-    #tradesのレコードが無ければreturn
+    # tradesのレコードが無ければreturn
     if len(trades) < 1:
         return
 
@@ -267,7 +267,7 @@ def post_pl_tweet(test=False):
         + "！"*random.randrange(1,3)\
         + emojis + "\n"\
         + kaomoji
-    tags = "#USDJPY #FX"
+    tags = "# USDJPY # FX"
 
     content = info + "\n"\
         + tags

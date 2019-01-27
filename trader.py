@@ -24,7 +24,7 @@ class Trader():
             self.logger.debug('i have an open trade')
 
             if int(self.open_trade['initialUnits']) > 0:
-                #現在値が中値を1/5以上下回った
+                # 現在値が中値を1/5以上下回った
                 if util.is_current_price_over_middle( \
                     time_unit=self.time_unit, time_count=self.time_count, \
                     toward='down'):
@@ -38,7 +38,7 @@ class Trader():
                     self.logger.debug('over middle toward down. exit.')
                     self.exit()
             else:
-                #現在値が中値を1/5以上上回った
+                # 現在値が中値を1/5以上上回った
                 if util.is_current_price_over_middle( \
                     time_unit=self.time_unit, time_count=self.time_count, \
                     toward='up'):
@@ -53,7 +53,7 @@ class Trader():
                     self.exit()
 
         else:
-            #ポジションがない場合
+            # ポジションがない場合
             self.logger.debug('i dont have an open trade')
             # bollinger bandの上を超えた
             if util.is_candle_over_bollinger( \
@@ -67,7 +67,7 @@ class Trader():
 
                 # macdが上向きにクロス
                 if is_macd_crossed[0] and is_macd_crossed[1] == 1:
-                    #逆向きのbollinger bandを超えていない
+                    # 逆向きのbollinger bandを超えていない
                     if not util.is_candle_over_bollinger( \
                         time_unit=self.time_unit, time_count=self.time_count, \
                         within=14, toward='down'):
@@ -91,7 +91,7 @@ class Trader():
 
                 # macdが下向きにクロス
                 if is_macd_crossed[0] and is_macd_crossed[1] == -1:
-                    #逆向きのbollinger bandを超えていない
+                    # 逆向きのbollinger bandを超えていない
                     if not util.is_candle_over_bollinger( \
                         time_unit=self.time_unit, time_count=self.time_count, \
                         within=14, toward='up'):
@@ -122,7 +122,7 @@ class Trader():
         response = oanda_api.market_order(params)
 
         self.open_trade = oanda_api.get_open_trade()
-        #open_tradeがAPIから取れるまでちょっと待つ
+        # open_tradeがAPIから取れるまでちょっと待つ
         retry = 0
         while self.open_trade is None and retry < 3 :
             sleep(0.3)

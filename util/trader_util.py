@@ -35,14 +35,14 @@ def is_macd_crossed(time_unit='M', time_count=5, within=1):
     for i in range(0, within):
         price_newer = df.iloc[i]
         price_older = df.iloc[i+1]
-        #シグナルを上向きにクロス
-        #macd2がマイナス→プラス
+        # シグナルを上向きにクロス
+        # macd2がマイナス→プラス
         if price_older['macd2'] - offset < 0 \
         and price_newer['macd2'] > 0:
             return True, 1
 
-        #シグナルを下向きにクロス
-        #macd2がプラス→マイナス
+        # シグナルを下向きにクロス
+        # macd2がプラス→マイナス
         if price_older['macd2'] + offset > 0 \
         and price_newer['macd2'] < 0:
             return True, -1
@@ -105,11 +105,11 @@ def is_candle_closed_over_middle(time_unit='M', time_count=5, toward='up'):
         raise Exception('is_candle_over_middle: price data too old for is_candle_over_middle.')
 
     if toward == 'down':
-        #中値を下回った
+        # 中値を下回った
         if df.iloc[0]['close'] < df.iloc[0]['boll_mid']:
             return True
     else:
-        #中値を超えた
+        # 中値を超えた
         if df.iloc[0]['close'] > df.iloc[0]['boll_mid']:
             return True
 
@@ -138,17 +138,17 @@ def is_current_price_over_middle(time_unit='M', time_count=5, toward='up'):
     current_candle = oanda_api.get_current_candle()
 
     if toward == 'down':
-        #bollinger band の中値と下バンドの間1/5
+        # bollinger band の中値と下バンドの間1/5
         border = last_candle.iloc[0]['boll_mid'] \
             - abs(last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_lower'])/5
-        #borderを下回った
+        # borderを下回った
         if current_candle[0]['close'] < border:
             return True
     else:
-        #bollinger band の中値と上バンドの間1/5
+        # bollinger band の中値と上バンドの間1/5
         border = last_candle.iloc[0]['boll_mid'] \
             + abs(last_candle.iloc[0]['boll_mid']-last_candle.iloc[0]['boll_upper'])/5
-        #borderを上回った
+        # borderを上回った
         if current_candle[0]['close'] > border:
             return True
 
