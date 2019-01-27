@@ -23,8 +23,7 @@ def tweeter_loop():
     tweeter.post_trade_tweets()
 
 def delete_old_records():
-    recorder.delete_old_price_data('prices_M5')
-    recorder.delete_old_price_data()
+    trader.delete_old_trade_data()
     tweeter.delete_old_records()
 
 def activate():
