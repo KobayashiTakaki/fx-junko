@@ -153,3 +153,26 @@ def is_current_price_over_middle(time_unit='M', time_count=5, toward='up'):
             return True
 
     return False
+
+def is_candle_keeping(direction='up', count=3, time_unit='M', time_count=5):
+    table_name = 'prices_{0}{1}'.format(time_unit, time_count)
+    candles = pd.read_sql_query(
+        'select * from ' + table_name + ' '
+        + 'order by datetime desc limit '
+        + str(count) + ';'
+        , conn)
+
+    offset = 0.001
+    for i, row in candles.iterrows():
+        if direction == 'up':
+            # closeがopenより高いことを想定
+            # close - open が0以下になってたらFalse
+            if (row['close'] - offset - row['open'] <= 0):
+                return False
+        else:
+            # openがcloseより高いことを想定
+            # open - close が0以下になってたらFalse
+            if (row['open'] - offset - row['close'] <= 0):
+                return False
+
+    return True
