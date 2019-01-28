@@ -23,7 +23,7 @@ def tweeter_loop():
     tweeter.post_trade_tweets()
 
 def delete_old_records():
-    trader.delete_old_trade_data()
+    recorder.delete_old_trade_data()
     tweeter.delete_old_records()
 
 def activate():
