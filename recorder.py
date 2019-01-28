@@ -104,8 +104,8 @@ def update_macd(table_name):
         + 'order by datetime '
         + 'limit ' + str(max_records) + ';'
         ,conn
-    )
-    df = price_util.calc_macd(df).sort_values('datetime')
+    ).sort_values('datetime')
+    df = price_util.calc_macd(df)
 
     header = table_defs.get_columns('prices')
     df.reindex(columns=header) \
@@ -118,8 +118,8 @@ def update_bollinger(table_name):
         + 'order by datetime '
         + 'limit ' + str(max_records) + ';'
         ,conn
-    )
-    df = price_util.calc_bollinger(df).sort_values('datetime')
+    ).sort_values('datetime')
+    df = price_util.calc_bollinger(df)
 
     header = table_defs.get_columns('prices')
     df.reindex(columns=header) \
