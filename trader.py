@@ -34,6 +34,12 @@ class Trader():
                 if util.is_candle_closed_over_middle('down'):
                     self.logger.debug('over middle toward down. exit.')
                     self.exit()
+
+                # 連続して陰線
+                if util.is_candle_keeping('down', 3):
+                    self.logger.debug('candle continuously decreasing. exit.')
+                    self.exit()
+
             else:
                 # 現在値が中値を1/5以上上回った
                 if util.is_current_price_over_middle('up'):
@@ -43,6 +49,11 @@ class Trader():
                 # closeが中値を上回った
                 if util.is_candle_closed_over_middle('up'):
                     self.logger.debug('over middle toward up. exit.')
+                    self.exit()
+
+                # 連続して陽線
+                if util.is_candle_keeping('up', 3):
+                    self.logger.debug('candle continuously increasing. exit.')
                     self.exit()
 
         else:
