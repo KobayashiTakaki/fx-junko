@@ -7,32 +7,27 @@ import time
 import random
 import emoji
 import logger
+import db.table_defs as table_defs
 
 conn = db.conn
 time_format = db.time_format
 logger = logger.get_logger('tweeter')
 
-def update_trade_states():
-    table_name = 'trade_tweet_states'
-    table_columns = [
-        'trade_id',
-        'open_time',
-        'trade_state',
-        'tweeted_state'
-    ]
-    conn.execute(
-        'create table if not exists ' + table_name + '('
-        + 'trade_id integer not null primary key,'
-        + 'open_time text,'
-        + 'trade_state text,'
-        + 'tweeted_state text'
-        + ');'
+def create_trade_tweet_state_table():
+    sql = table_defs.get_create_table_sql(
+        'trade_tweet_states', 'trade_tweet_states'
     )
+    conn.execute(sql)
 
+def update_trade_states():
+    create_trade_tweet_state_table()
+
+    table_name = 'trade_tweet_states'
+    header = table_defs.get_columns(table_name)
     state_records = pd.read_sql_query(
         'select * from ' + table_name + ';'
         , conn
-    ).reindex(columns=table_columns)
+    ).reindex(columns=header)
 
     # tradesテーブルにあるデータから、すでにstatesに存在するものを取得
     exist_trades = pd.read_sql_query(
@@ -84,18 +79,12 @@ def trade_tweet(test=False):
     update_trade_states()
 
     table_name = 'trade_tweet_states'
-    table_columns = [
-        'trade_id',
-        'open_time',
-        'trade_state',
-        'tweeted_state'
-    ]
-
+    header = table_defs.get_columns(table_name)
     state_records = pd.read_sql_query(
         'select * from ' + table_name + ' '
         + ' order by open_time;'
         , conn
-    ).reindex(columns=table_columns)
+    ).reindex(columns=header)
 
     unsent_records = state_records.query('trade_state != tweeted_state')
 
@@ -192,25 +181,11 @@ def trade_tweet(test=False):
 
 def clear_pending_tweets():
     table_name = 'trade_tweet_states'
-    table_columns = [
-        'trade_id',
-        'open_time',
-        'trade_state',
-        'tweeted_state'
-    ]
-
-    state_records = pd.read_sql_query(
-        'select * from ' + table_name + ';'
-        , conn
-    ).reindex(columns=table_columns)
-
-    for i, row in state_records.iterrows():
-        # tweeted_stateにtrade_stateの値を代入
-        state_records.at[i, 'tweeted_state']\
-            = state_records.iloc[i]['trade_state']
-
-    # DBに書き込み
-    state_records.to_sql(table_name, conn, if_exists='replace', index=False)
+    conn.execute(
+        'update ' + table_name + ' '
+        + 'set tweeted_state = trade_state;'
+    )
+    conn.commit()
 
 def delete_old_records():
     table_name = 'trade_tweet_states'

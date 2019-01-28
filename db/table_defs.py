@@ -26,6 +26,12 @@ tables = {
         ['boll_upper', 'real'],
         ['boll_mid', 'real'],
         ['boll_lower', 'real']
+    ],
+    'trade_tweet_states': [
+        ['trade_id', 'integer primary key'],
+        ['open_time', 'test'],
+        ['trade_state', 'text'],
+        ['tweeted_state', 'text']
     ]
 }
 
