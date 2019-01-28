@@ -106,9 +106,6 @@ class Trader():
         stop_loss = {
             'distance': str(0.100)
         }
-        trailing_stop = {
-            'distance': str(0.100)
-        }
 
         params = {
             'type': 'MARKET',
