@@ -16,6 +16,7 @@ class Trader():
         self.time_unit = 'M'
         self.time_count = 5
         self.logger = logger.get_logger('trader')
+        self.is_sleeping = False
 
     def loop(self):
         self.open_trade = oanda_api.get_open_trade()
@@ -104,6 +105,10 @@ class Trader():
                     self.logger.debug('macd not crossed recently')
 
     def entry(self, side):
+        if self.is_sleeping:
+            self.logger.debug('sleeping. not entry.')
+            return
+
         amount = self.entry_amount
         minus = -1 if side == 'sell' else 1
         units = minus*amount
