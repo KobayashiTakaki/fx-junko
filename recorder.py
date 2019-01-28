@@ -101,7 +101,7 @@ def update_macd(table_name):
     max_records = 30
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'limit ' + max_records + ';'
+        + 'limit ' + str(max_records) + ';'
         ,conn
     )
     df = price_util.calc_macd(df)
@@ -114,7 +114,7 @@ def update_bollinger(table_name):
     max_records = 30
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'limit ' + max_records + ';'
+        + 'limit ' + str(max_records) + ';'
         ,conn
     )
     df = price_util.calc_bollinger(df)
