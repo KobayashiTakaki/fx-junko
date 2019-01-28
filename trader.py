@@ -27,33 +27,33 @@ class Trader():
             if int(self.open_trade['initialUnits']) > 0:
                 # 現在値が中値を1/5以上下回った
                 if util.is_current_price_over_middle('down'):
-                    self.logger.debug('current price over middle toward down. exit.')
+                    self.logger.debug('[exit]current price over middle toward down')
                     self.exit()
 
                 # closeが中値を下回った
                 if util.is_candle_closed_over_middle('down'):
-                    self.logger.debug('over middle toward down. exit.')
+                    self.logger.debug('[exit]over middle toward down')
                     self.exit()
 
                 # 連続して陰線
                 if util.is_candle_keeping('down', 3):
-                    self.logger.debug('candle continuously decreasing. exit.')
+                    self.logger.debug('[exit]candle continuously decreasing')
                     self.exit()
 
             else:
                 # 現在値が中値を1/5以上上回った
                 if util.is_current_price_over_middle('up'):
-                    self.logger.debug('current price over middle toward up. exit.')
+                    self.logger.debug('[exit]current price over middle toward up')
                     self.exit()
 
                 # closeが中値を上回った
                 if util.is_candle_closed_over_middle('up'):
-                    self.logger.debug('over middle toward up. exit.')
+                    self.logger.debug('[exit]over middle toward up')
                     self.exit()
 
                 # 連続して陽線
                 if util.is_candle_keeping('up', 3):
-                    self.logger.debug('candle continuously increasing. exit.')
+                    self.logger.debug('[exit]candle continuously increasing')
                     self.exit()
 
         else:
@@ -69,7 +69,7 @@ class Trader():
                 if is_macd_crossed[0] and is_macd_crossed[1] == 1:
                     # 逆向きのbollinger bandを超えていない
                     if not util.is_candle_over_bollinger('down', 14):
-                        self.logger.debug('entry by buy')
+                        self.logger.debug('[entry]by buy')
                         self.entry('buy')
                         return
                     else:
@@ -87,7 +87,7 @@ class Trader():
                 if is_macd_crossed[0] and is_macd_crossed[1] == -1:
                     # 逆向きのbollinger bandを超えていない
                     if not util.is_candle_over_bollinger('up', 14):
-                        self.logger.debug('entry by sell')
+                        self.logger.debug('[entry]by sell')
                         self.entry('sell')
                         return
                     else:
