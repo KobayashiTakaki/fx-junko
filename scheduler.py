@@ -66,7 +66,7 @@ schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
 
-# 毎日03:00-11:00UTC(12:00-12:00JST)はsleep
+# 毎日03:00-11:00UTC(12:00-20:00JST)はsleep
 schedule.every().day.at('03:00').do(sleep_trader)
 schedule.every().day.at('11:00').do(wakeup_trader)
 
