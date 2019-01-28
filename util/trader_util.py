@@ -9,7 +9,7 @@ import util.price_util as price_util
 conn = db.conn
 db_time_format = db.time_format
 
-def is_macd_crossed(time_unit='M', time_count=5, within=1):
+def is_macd_crossed(within=1, time_unit='M', time_count=5):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のpriceをwithin+1件取得(datetimeの降順)
@@ -49,7 +49,7 @@ def is_macd_crossed(time_unit='M', time_count=5, within=1):
 
     return False, 0
 
-def is_candle_over_bollinger(time_unit='M', time_count=5, within=1, toward='up'):
+def is_candle_over_bollinger(toward='up', within=1, time_unit='M', time_count=5):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のpriceをwithin+1件取得(datetimeの降順)
@@ -83,7 +83,7 @@ def is_candle_over_bollinger(time_unit='M', time_count=5, within=1, toward='up')
 
     return False
 
-def is_candle_closed_over_middle(time_unit='M', time_count=5, toward='up'):
+def is_candle_closed_over_middle(toward='up', time_unit='M', time_count=5):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
 
     # 最新のレコードを1件取得
@@ -115,7 +115,7 @@ def is_candle_closed_over_middle(time_unit='M', time_count=5, toward='up'):
 
     return False
 
-def is_current_price_over_middle(time_unit='M', time_count=5, toward='up'):
+def is_current_price_over_middle(toward='up', time_unit='M', time_count=5):
     table_name = 'prices_{0}{1}'.format(time_unit, time_count)
     # 最新のレコードを1件取得
     last_candle = pd.read_sql_query(
