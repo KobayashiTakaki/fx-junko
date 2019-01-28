@@ -276,3 +276,25 @@ def post_pl_tweet(test=False):
         print(content)
     else:
         twitter_api.tweet(content)
+
+def post_sleep_tweet(test=False):
+    action = 'sleep'
+    feeling = 'sleepy'
+    message = tweet_messages.get_message(action)
+    kaomoji = tweet_messages.get_kaomoji(feeling)
+    content = message + kaomoji
+    if test:
+        print(content)
+    else:
+        twitter_api.tweet(content)
+
+def post_wakeup_tweet(test=False):
+    action = 'wakeup'
+    feeling = 'neutral'
+    message = tweet_messages.get_message(action)
+    kaomoji = tweet_messages.get_kaomoji(feeling)
+    content = message + kaomoji
+    if test:
+        print(content)
+    else:
+        twitter_api.tweet(content)
