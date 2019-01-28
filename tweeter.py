@@ -80,7 +80,7 @@ def update_trade_states():
 
     logger.debug('trade state updated')
 
-def post_trade_tweets(test=False):
+def trade_tweet(test=False):
     update_trade_states()
 
     table_name = 'trade_tweet_states'
@@ -223,7 +223,7 @@ def delete_old_records():
     )
     conn.commit()
 
-def post_pl_tweet(test=False):
+def pl_tweet(test=False):
     # 日付を日曜日にするために引く日数
     days_shift = datetime.datetime.now(datetime.timezone.utc).weekday() + 1
     # 今日からdays_shiftを引いた日付
@@ -277,7 +277,7 @@ def post_pl_tweet(test=False):
     else:
         twitter_api.tweet(content)
 
-def post_sleep_tweet(test=False):
+def sleep_tweet(test=False):
     action = 'sleep'
     feeling = 'sleepy'
     message = tweet_messages.get_message(action)
@@ -288,7 +288,7 @@ def post_sleep_tweet(test=False):
     else:
         twitter_api.tweet(content)
 
-def post_wakeup_tweet(test=False):
+def wakeup_tweet(test=False):
     action = 'wakeup'
     feeling = 'neutral'
     message = tweet_messages.get_message(action)

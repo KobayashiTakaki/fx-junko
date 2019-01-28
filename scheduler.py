@@ -20,7 +20,7 @@ def update_price_data():
     recorder.update_price_data()
 
 def tweeter_loop():
-    tweeter.post_trade_tweets()
+    tweeter.trade_tweet()
 
 def delete_old_records():
     recorder.delete_old_trade_data()
@@ -50,7 +50,7 @@ def delete_old_log():
     db.delete_old_log()
 
 def pl_tweet():
-    tweeter.post_pl_tweet()
+    tweeter.pl_tweet()
 
 # このファイル最初の実行時にprice data更新とactivateを実行
 recorder.update_price_data()
