@@ -101,7 +101,7 @@ def update_macd(table_name):
     max_records = 30
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'order by datetime '
+        + 'order by datetime desc '
         + 'limit ' + str(max_records) + ';'
         ,conn
     ).sort_values('datetime')
@@ -115,7 +115,7 @@ def update_bollinger(table_name):
     max_records = 30
     df = pd.read_sql_query(
         'select * from ' + table_name + ' '
-        + 'order by datetime '
+        + 'order by datetime desc '
         + 'limit ' + str(max_records) + ';'
         ,conn
     ).sort_values('datetime')
