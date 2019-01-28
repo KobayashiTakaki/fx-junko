@@ -26,6 +26,12 @@ def delete_old_records():
     trader.delete_old_trade_data()
     tweeter.delete_old_records()
 
+def sleep_trader():
+    trader.is_sleeping = True
+
+def wakeup_trader():
+    trader.is_sleeping = False
+
 def activate():
     # 最初にfxタグのスケジュールをクリアする
     schedule.clear('fx')
@@ -59,6 +65,10 @@ schedule.every().monday.at('23:00').do(activate)
 schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
+
+# 毎日03:00-12:00UTC(12:00-19:00JST)はsleep
+schedule.every().day.at('03:00').do(sleep_trader)
+schedule.every().day.at('12:00').do(wakeup_trader)
 
 # 金曜21:00UTC(土曜06:00JST)にdeactivateを実行
 schedule.every().friday.at('21:00').do(deactivate)
