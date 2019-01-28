@@ -17,7 +17,7 @@ def update_trade_data():
     recorder.update_trade_data('trades')
 
 def update_price_data():
-    recorder.update_price_data(count=26)
+    recorder.update_price_data()
 
 def tweeter_loop():
     tweeter.post_trade_tweets()
