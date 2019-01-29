@@ -79,7 +79,7 @@ def get_candles(instrument=instrument, params=candles_params, completed_only=Tru
     if response.status != 200:
         raise Exception('getting candle data failed')
     
-    candles = resonse.get("candles", 200)
+    candles = response.get("candles", 200)
     if completed_only:
         candles = [candle for candle in candles if candle.complete]
 
