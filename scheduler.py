@@ -61,7 +61,7 @@ def is_now_sleeptime():
         return True
 
     start = datetime.time(hour=3, minute=0)
-    end = datetime.time(hour=11, minute=0)
+    end = datetime.time(hour=8, minute=0)
     if start < now and now < end:
         return True
 
