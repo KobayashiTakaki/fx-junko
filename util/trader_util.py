@@ -72,13 +72,19 @@ def is_candle_over_bollinger(toward='up', within=1, time_unit='M', time_count=5)
         raise Exception('is_candle_over_bollinger: price data too old for is_candle_over_bollinger.')
 
     for i in range(0, within):
+        # bollinger bandの幅が十分でなければチェックしない
+        if not df.iloc[i]['boll_upper'] \
+            - df.iloc[i]['boll_lower'] > 0.08:
+            continue
+
         if toward == 'down':
+            # 終値がbollinger bandの下側を下回った
             if df.iloc[i]['close'] < df.iloc[i]['boll_lower']:
-                # 終値がbollinger bandの下側を下回った
                 return True
+
         else:
-            if df.iloc[i]['close'] > df.iloc[i]['boll_upper']:
-                # 終値がbollinger bandの上側を超えた
+            # 終値がbollinger bandの上側を超えた
+            if  df.iloc[i]['close'] > df.iloc[i]['boll_upper']:
                 return True
 
     return False
