@@ -132,7 +132,7 @@ def delete_old_trade_data():
         - keep_span).strftime(time_format)
     conn.execute(
         'delete from ' + table_name + ' '
-        'where datetime < \'' + keep_from + '\';'
+        'where openTime < \'' + keep_from + '\';'
     )
     conn.commit()
 
