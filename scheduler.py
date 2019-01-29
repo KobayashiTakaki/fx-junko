@@ -1,5 +1,6 @@
 import schedule
 import time
+import datetime
 import trader
 import tweeter
 import recorder
@@ -52,9 +53,27 @@ def delete_old_log():
 def pl_tweet():
     tweeter.pl_tweet()
 
+def is_now_sleeptime():
+    now = datetime.datetime.now(datetime.timezone.utc).time()
+    start = datetime.time(hour=21, minute=30)
+    end = datetime.time(hour=23, minute=30)
+    if start < now_time and now_time < end_time:
+        return True
+    
+    start = datetime.time(hour=3, minute=0)
+    end = datetime.time(hour=11, minute=0)
+    if start < now_time and now_time < end_time:
+        return True
+    
+    return False
+
 # このファイル最初の実行時にprice data更新とactivateを実行
 recorder.update_price_data()
 activate()
+
+# sleep時間帯だったらsleep
+if is_now_sleeptime():
+    sleep_trader()
 
 # 毎日04:00UTC(13:00JST)に古いレコード削除
 schedule.every().day.at('04:00').do(delete_old_records)
