@@ -54,7 +54,7 @@ def pl_tweet():
     tweeter.pl_tweet()
 
 def is_now_sleeptime():
-    now = datetime.datetime.now(datetime.timezone.utc).time()
+    now_time = datetime.datetime.now(datetime.timezone.utc).time()
     start = datetime.time(hour=21, minute=30)
     end = datetime.time(hour=23, minute=30)
     if start < now_time and now_time < end_time:
