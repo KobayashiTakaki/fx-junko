@@ -74,7 +74,7 @@ def is_candle_over_bollinger(toward='up', within=1, time_unit='M', time_count=5)
     for i in range(0, within):
         # bollinger bandの幅が十分でなければチェックしない
         if not df.iloc[i]['boll_upper'] \
-            - df.iloc[i]['boll_lower'] > 0.08:
+            - df.iloc[i]['boll_lower'] > 0.05:
             continue
 
         if toward == 'down':
