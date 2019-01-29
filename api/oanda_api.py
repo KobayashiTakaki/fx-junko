@@ -75,7 +75,11 @@ def format_trade(trade):
     }
 
 def get_candles(instrument=instrument, params=candles_params, completed_only=True):
-    candles = context.instrument.candles(instrument, **params).get("candles", 200)
+    response = context.instrument.candles(instrument, **params)
+    if response.status !== 200:
+        raise Exception('getting candle data failed')
+    
+    candles = resonse.get("candles", 200)
     if completed_only:
         candles = [candle for candle in candles if candle.complete]
 
@@ -86,7 +90,10 @@ def get_current_candle(instrument=instrument):
         'granularity': 'S5',
         'count': 1
     }
-    candles = context.instrument.candles(instrument, **params).get("candles", 200)
+    response = context.instrument.candles(instrument, **params)
+    if response.status !== 200:
+        raise Exception('getting candle data failed')
+    candles = response.get("candles", 200)
     return list(map(lambda candle: format_candle(candle), candles))
 
 def market_order(params):
@@ -102,16 +109,26 @@ def get_trades(state, count):
         'instrument': instrument,
         'count': count
     }
-    trades = context.trade.list(account_id, **params).get('trades', 200)
+    
+    response = context.trade.list(account_id, **params)
+    if response.status !== 200:
+        raise Exception('getting trade data failed')
+    trades = response.get('trades', 200)
 
     return list(map(lambda trade: format_trade(trade), trades))
 
 def get_trade(trade_id):
-    trade = context.trade.get(account_id, str(trade_id)).get('trade', 200)
+    response = context.trade.get(account_id, str(trade_id))
+    if response.status !== 200:
+        raise Exception('getting trade data failed')
+    trade = response.get('trade', 200)
     return format_trade(trade)
 
 def get_open_trade():
-    trades = context.trade.list_open(account_id).get('trades', 200)
+    response = context.trade.list_open(account_id)
+    if response.status !== 200:
+        raise Exception('getting trade data failed')
+    trades = response.get('trades', 200)
     if len(trades) == 0:
         return None
     elif len(trades) > 1:
