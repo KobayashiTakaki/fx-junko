@@ -76,7 +76,7 @@ def format_trade(trade):
 
 def get_candles(instrument=instrument, params=candles_params, completed_only=True):
     response = context.instrument.candles(instrument, **params)
-    if response.status !== 200:
+    if response.status != 200:
         raise Exception('getting candle data failed')
     
     candles = resonse.get("candles", 200)
@@ -91,7 +91,7 @@ def get_current_candle(instrument=instrument):
         'count': 1
     }
     response = context.instrument.candles(instrument, **params)
-    if response.status !== 200:
+    if response.status != 200:
         raise Exception('getting candle data failed')
     candles = response.get("candles", 200)
     return list(map(lambda candle: format_candle(candle), candles))
@@ -111,7 +111,7 @@ def get_trades(state, count):
     }
     
     response = context.trade.list(account_id, **params)
-    if response.status !== 200:
+    if response.status != 200:
         raise Exception('getting trade data failed')
     trades = response.get('trades', 200)
 
@@ -119,14 +119,14 @@ def get_trades(state, count):
 
 def get_trade(trade_id):
     response = context.trade.get(account_id, str(trade_id))
-    if response.status !== 200:
+    if response.status != 200:
         raise Exception('getting trade data failed')
     trade = response.get('trade', 200)
     return format_trade(trade)
 
 def get_open_trade():
     response = context.trade.list_open(account_id)
-    if response.status !== 200:
+    if response.status != 200:
         raise Exception('getting trade data failed')
     trades = response.get('trades', 200)
     if len(trades) == 0:
