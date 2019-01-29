@@ -59,12 +59,12 @@ def is_now_sleeptime():
     end = datetime.time(hour=23, minute=30)
     if start < now and now < end:
         return True
-    
+
     start = datetime.time(hour=3, minute=0)
     end = datetime.time(hour=11, minute=0)
     if start < now and now < end:
         return True
-    
+
     return False
 
 # このファイル最初の実行時にprice data更新とactivateを実行
@@ -89,9 +89,9 @@ schedule.every().thursday.at('23:00').do(activate)
 schedule.every().day.at('21:30').do(sleep_trader)
 schedule.every().day.at('23:30').do(wakeup_trader)
 
-# 毎日03:00-11:00UTC(12:00-20:00JST)はsleep
+# 毎日03:00-08:00UTC(12:00-17:00JST)はsleep
 schedule.every().day.at('03:00').do(sleep_trader)
-schedule.every().day.at('11:00').do(wakeup_trader)
+schedule.every().day.at('08:00').do(wakeup_trader)
 
 # 金曜21:00UTC(土曜06:00JST)にdeactivateを実行
 schedule.every().friday.at('21:00').do(deactivate)
