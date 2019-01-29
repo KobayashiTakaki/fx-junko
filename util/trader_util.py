@@ -30,7 +30,7 @@ def is_macd_crossed(within=1, time_unit='M', time_count=5):
     if time_now - time_last_price > max_time:
         raise Exception('is_macd_crossed: price data too old for is_macd_crossed.')
 
-    offset = 0.0005
+    offset = 0.0008
     # withinの件数、クロスを判定
     for i in range(0, within):
         price_newer = df.iloc[i]
