@@ -117,7 +117,7 @@ def trade_tweet(test=False):
             # tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
-            tags = "# USDJPY # FX"
+            tags = "#USDJPY #FX"
             content = (
                 message + kaomoji + "\n"
                 + info + "\n"
@@ -160,7 +160,7 @@ def trade_tweet(test=False):
             # tweet
             message = tweet_messages.get_message(action)
             kaomoji = tweet_messages.get_kaomoji(feeling)
-            tags = "# USDJPY # FX"
+            tags = "#USDJPY #FX"
             content = (
                 message + kaomoji + "\n"
                 + info + "\n"
@@ -242,7 +242,7 @@ def pl_tweet(test=False):
         + "！"*random.randrange(1,3)\
         + emojis + "\n"\
         + kaomoji
-    tags = "# USDJPY # FX"
+    tags = "#USDJPY #FX"
 
     content = info + "\n"\
         + tags
