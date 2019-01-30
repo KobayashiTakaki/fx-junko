@@ -190,7 +190,7 @@ def clear_pending_tweets():
 def delete_old_records():
     table_name = 'trade_tweet_states'
     keep_span = datetime.timedelta(weeks=1)
-    keep_from = (datetime.datetime.now(datetime.timezone)
+    keep_from = (datetime.datetime.now(datetime.timezone.utc)
         - keep_span).strftime(time_format)
     conn.execute(
         'delete from ' + table_name + ' where open_time < '
