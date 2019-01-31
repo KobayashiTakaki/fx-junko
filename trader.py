@@ -22,7 +22,6 @@ class Trader():
         self.open_trade = oanda_api.get_open_trade()
 
         if self.open_trade is not None:
-            self.logger.debug('i have an open trade')
 
             if int(self.open_trade['initialUnits']) > 0:
                 # 現在値が中値を1/5以上下回った
@@ -58,7 +57,6 @@ class Trader():
 
         else:
             # ポジションがない場合
-            self.logger.debug('i dont have an open trade')
             # bollinger bandの上を超えた
             if util.is_candle_over_bollinger('up', 1):
                 self.logger.debug('over upper bollinger')
