@@ -10,6 +10,8 @@ import logger
 
 trader = trader.Trader()
 logger = logger.get_logger('scheduler')
+exception_count = 0
+MAX_RETRY = 20
 
 def trader_loop():
     trader.loop()
@@ -106,6 +108,10 @@ while True:
     except Exception as e:
         logger.debug(str(e))
         schedule.clear('fx')
-        recorder.update_price_data()
-        activate()
-        continue
+        exception_count += 1
+        if exception_count < MAX_RETRY:
+            recorder.update_price_data()
+            activate()
+            continue
+        
+        trader.exit()
