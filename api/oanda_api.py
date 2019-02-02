@@ -2,7 +2,11 @@ import configparser
 import datetime
 import v20
 
-# TODO: responseのステータスコード確認を入れる
+class OandaApiError(Exception):
+    pass
+
+class ResponseNotOkError(OandaApiError):
+    pass
 
 config = configparser.ConfigParser()
 config.read('api/oanda_conf.ini')
@@ -77,8 +81,8 @@ def format_trade(trade):
 def get_candles(instrument=instrument, params=candles_params, completed_only=True):
     response = context.instrument.candles(instrument, **params)
     if response.status != 200:
-        raise Exception('getting candle data failed')
-    
+        raise ResponseNotOkError('get_candles failed')
+
     candles = response.get("candles", 200)
     if completed_only:
         candles = [candle for candle in candles if candle.complete]
@@ -92,16 +96,16 @@ def get_current_candle(instrument=instrument):
     }
     response = context.instrument.candles(instrument, **params)
     if response.status != 200:
-        raise Exception('getting candle data failed')
+        raise ResponseNotOkError('get_current_candle failed')
     candles = response.get("candles", 200)
     return list(map(lambda candle: format_candle(candle), candles))
 
 def market_order(params):
     response = context.order.market(account_id, **params)
-    if response.status == 201:
-        return response
-    else:
-        raise Exception('oanda_api: entry failed')
+    if response.status != 201:
+        raise ResponseNotOkError('market_order failed')
+
+    return response
 
 def get_trades(state, count):
     params = {
@@ -109,10 +113,10 @@ def get_trades(state, count):
         'instrument': instrument,
         'count': count
     }
-    
+
     response = context.trade.list(account_id, **params)
     if response.status != 200:
-        raise Exception('getting trade data failed')
+        raise ResponseNotOkError('get_trades failed')
     trades = response.get('trades', 200)
 
     return list(map(lambda trade: format_trade(trade), trades))
@@ -120,14 +124,14 @@ def get_trades(state, count):
 def get_trade(trade_id):
     response = context.trade.get(account_id, str(trade_id))
     if response.status != 200:
-        raise Exception('getting trade data failed')
+        raise ResponseNotOkError('get_trade failed')
     trade = response.get('trade', 200)
     return format_trade(trade)
 
 def get_open_trade():
     response = context.trade.list_open(account_id)
     if response.status != 200:
-        raise Exception('getting trade data failed')
+        raise ResponseNotOkError('get_open_trade failed')
     trades = response.get('trades', 200)
     if len(trades) == 0:
         return None
@@ -146,10 +150,14 @@ def get_open_trade():
 
 def change_trade_order(trade_id, params):
     response = context.trade.set_dependent_orders(account_id, trade_id, **params)
+    if response.status != 200:
+        raise ResponseNotOkError('change_trade_order failed')
     return response
 
 def close_trade(trade_id):
     response = context.trade.close(account_id, str(trade_id))
+    if response.status != 200:
+        raise ResponseNotOkError('close_trade failed')
     return response
 
 def close_all_position(side):
@@ -165,6 +173,8 @@ def close_all_position(side):
     response = context.position.close(
         account_id, instrument=instrument, **params
     )
+    if response.status != 200:
+        raise ResponseNotOkError('close_all_position')
     return response
 
 def is_market_open():
@@ -173,7 +183,10 @@ def is_market_open():
         'granularity': 'S5',
         'count': 1
     }
-    candle = get_candles(instrument, candles_params, False)[0]
+    try:
+        candle = get_candles(instrument, candles_params, False)[0]
+    except Exception as e:
+        raise OandaApiError(e)
 
     now = datetime.datetime.now(datetime.timezone.utc)
     candle_time = datetime.datetime.strptime(

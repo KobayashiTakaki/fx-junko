@@ -5,6 +5,9 @@ import api.oanda_api as oanda_api
 import util.price_util as price_util
 import db.table_defs as table_defs
 
+class RecorderError(Exception):
+    pass
+
 conn = db.conn
 time_format = db.time_format
 
@@ -38,7 +41,11 @@ def update_trade_data(table_name):
     header = table_defs.get_columns('trades')
     fetched_trades = pd.DataFrame(columns=header)
     for id in open_ids:
-        trade = oanda_api.get_trade(id)
+        try:
+            trade = oanda_api.get_trade(id)
+        except Exception as e:
+            raise RecorderError(e)
+
         s = pd.Series(trade)
         fetched_trades = fetched_trades.append(s,ignore_index=True)
 
@@ -63,8 +70,11 @@ def update_price_data(time_unit='M', time_count=5, count=60):
     }
 
     # APIから取得してDFに入れる
-    candles = pd.DataFrame(oanda_api.get_candles(params=params))\
-        .sort_values('datetime')
+    try:
+        candles = pd.DataFrame(oanda_api.get_candles(params=params))\
+            .sort_values('datetime')
+    except Exception as e:
+        raise RecorderError(e)
 
     # DBから最新のレコードを取得
     last_record = pd.read_sql_query(

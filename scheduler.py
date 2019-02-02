@@ -7,6 +7,7 @@ import recorder
 import db.db as db
 import api.oanda_api as oanda_api
 import logger
+import traceback
 
 trader = trader.Trader()
 logger = logger.get_logger('scheduler')
@@ -106,7 +107,7 @@ while True:
         schedule.run_pending()
         time.sleep(1)
     except Exception as e:
-        logger.debug(str(e))
+        logger.debug(traceback.print_exc())
         schedule.clear('fx')
         exception_count += 1
         if exception_count < MAX_RETRY:
