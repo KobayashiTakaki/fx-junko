@@ -107,12 +107,15 @@ while True:
         schedule.run_pending()
         time.sleep(1)
     except Exception as e:
-        logger.debug(traceback.print_exc())
+        logger.debug(traceback.format_exc())
         schedule.clear('fx')
         exception_count += 1
         if exception_count < MAX_RETRY:
             recorder.update_price_data()
             activate()
             continue
-
-        trader.exit()
+        else:
+            logger.debug('too much exception')
+            trader.exit()
+            time.sleep(600)
+            continue

@@ -98,7 +98,7 @@ class Trader():
                         self.logger.debug('macd not crossed recently')
 
         except Exception as e:
-            self.logger.debug(traceback.print_exc())
+            self.logger.debug(traceback.format_exc())
             raise TraderError(e)
 
     def entry(self, side):
@@ -132,7 +132,7 @@ class Trader():
                 retry += 1
 
         except Exception as e:
-            self.logger.debug(traceback.print_exc())
+            self.logger.debug(traceback.format_exc())
             raise TraderError(e)
 
         recorder.add_trade_record(self.open_trade, 'trades')
@@ -148,7 +148,7 @@ class Trader():
             self.open_trade = oanda_api.get_open_trade()
 
         except Exception as e:
-            self.logger.debug(traceback.print_exc())
+            self.logger.debug(traceback.format_exc())
             raise TraderError(e)
 
 if __name__=='__main__':
