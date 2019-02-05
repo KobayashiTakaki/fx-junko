@@ -88,12 +88,8 @@ schedule.every().tuesday.at('23:00').do(activate)
 schedule.every().wednesday.at('23:00').do(activate)
 schedule.every().thursday.at('23:00').do(activate)
 
-# 毎日21:30-23:30UTC(06:30-08:30JST)はsleep
+# 毎日21:30-08:00UTC(06:30-17:00JST)はsleep
 schedule.every().day.at('21:30').do(sleep_trader)
-schedule.every().day.at('23:30').do(wakeup_trader)
-
-# 毎日03:00-08:00UTC(12:00-17:00JST)はsleep
-schedule.every().day.at('03:00').do(sleep_trader)
 schedule.every().day.at('08:00').do(wakeup_trader)
 
 # 金曜21:00UTC(土曜06:00JST)にdeactivateを実行
