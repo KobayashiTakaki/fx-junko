@@ -107,11 +107,12 @@ while True:
         schedule.clear('fx')
         exception_count += 1
         if exception_count < MAX_RETRY:
-            recorder.update_price_data()
             activate()
             continue
         else:
             logger.debug('too much exception')
-            trader.exit()
-            time.sleep(600)
+            # しばらく待ってから再起動
+            time.sleep(1200)
+            exception_count = 0
+            activate()
             continue
