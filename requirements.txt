@@ -11,7 +11,6 @@ pandas==0.23.4
 pyasn1==0.4.4
 python-dateutil==2.7.5
 pytz==2018.7
-PyYAML==3.13
 requests==2.20.1
 requests-oauthlib==1.0.0
 schedule==0.5.0
