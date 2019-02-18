@@ -36,15 +36,19 @@ def sleep_trader():
 def wakeup_trader():
     trader.is_sleeping = False
 
+def deactivate_if_market_closed():
+    if not oanda_api.is_market_open():
+        schedule.clear('fx')
+
 def activate():
     # 最初にfxタグのスケジュールをクリアする
     schedule.clear('fx')
-    if oanda_api.is_market_open():
-        # fxタグのスケジュールを登録
-        schedule.every(5).to(10).seconds.do(trader_loop).tag('fx')
-        schedule.every(30).seconds.do(update_trade_data).tag('fx')
-        schedule.every(5).to(10).seconds.do(update_price_data).tag('fx')
-        schedule.every(60).seconds.do(tweeter_loop).tag('fx')
+    # fxタグのスケジュールを登録
+    schedule.every(5).to(10).seconds.do(trader_loop).tag('fx')
+    schedule.every(30).seconds.do(update_trade_data).tag('fx')
+    schedule.every(5).to(10).seconds.do(update_price_data).tag('fx')
+    schedule.every(60).seconds.do(tweeter_loop).tag('fx')
+    schedule.every(2).hours.do(deactivate_if_market_closed).tag('fx')
 
 def deactivate():
     trader.exit()
