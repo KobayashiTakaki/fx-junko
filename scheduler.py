@@ -54,9 +54,6 @@ def deactivate():
     trader.exit()
     schedule.clear('fx')
 
-def delete_old_log():
-    db.delete_old_log()
-
 def pl_tweet():
     tweeter.pl_tweet()
 
