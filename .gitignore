@@ -4,3 +4,4 @@ __pycache__
 *.ini
 .DS_Store
 logs/
+*.egg-info/
