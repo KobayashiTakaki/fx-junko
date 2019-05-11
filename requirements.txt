@@ -15,5 +15,5 @@ requests==2.20.1
 requests-oauthlib==1.0.0
 schedule==0.5.0
 ujson==1.35
-urllib3==1.24.1
+urllib3==1.24.2
 v20==3.0.25.0
