@@ -1,7 +1,7 @@
 import configparser
 import datetime
 import v20
-import oanda.util as util
+from . import formatter
 
 class OandaApiError(Exception):
     pass
@@ -44,7 +44,7 @@ class Client():
         if completed_only:
             candles = [candle for candle in candles if candle.complete]
 
-        return util.format_candles(candles)
+        return formatter.format_candles(candles)
 
     def get_current_candle(self, option_params={}):
         instrument = 'USD_JPY'
@@ -58,7 +58,7 @@ class Client():
         if response.status != 200:
             raise ResponseNotOkError('get_current_candle failed')
         candles = response.get("candles", 200)
-        return util.format_candle(candles[0])
+        return formatter.format_candle(candles[0])
 
     def market_order(self, units, stop_loss_distance=0.100):
         instrument = 'USD_JPY'
@@ -83,7 +83,7 @@ class Client():
         if response.status != 200:
             raise ResponseNotOkError('get_trade failed')
         trade = response.get('trade', 200)
-        return util.format_trade(trade)
+        return formatter.format_trade(trade)
 
     def get_open_trade(self):
         response = self.context.trade.list_open(self.account_id)
@@ -93,7 +93,7 @@ class Client():
         if len(trades) == 0:
             return None
         elif len(trades) == 1:
-            return util.format_trade(trades[0])
+            return formatter.format_trade(trades[0])
         elif len(trades) > 1:
             return self.last_trade(trades)
 
@@ -105,10 +105,12 @@ class Client():
             self.close_trade(ids[i])
         # idsの一番最後に一致するtradeを返す
         last_trade = [trade for trade in trades if trade.id == ids[-1]][0]
-        return util.format_trade(last_trade)
+        return formatter.format_trade(last_trade)
 
     def close_trade(self, trade_id):
         response = self.context.trade.close(self.account_id, str(trade_id))
+        if response.status == 404:
+            return None
         if response.status != 200:
             raise ResponseNotOkError('close_trade failed')
 
