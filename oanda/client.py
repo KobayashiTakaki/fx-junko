@@ -21,11 +21,22 @@ class Client():
         port = int(config['DEMO']['PORT'])
         token = config['DEMO']['TOKEN']
 
-        return v20.Context(
-                    hostname,
-                    port,
-                    token=token
-                )
+        retry = 0
+        context = None
+        while context is None and retry < 3:
+            try:
+                context = v20.Context(
+                            hostname,
+                            port,
+                            token=token
+                        )
+            except Exception:
+                retry += 1
+                continue
+        if context is None:
+            raise OandaApiError('getting context failed')
+
+        return context
 
     def get_candles(self, completed_only=True, option_params={}):
         instrument = 'USD_JPY'
@@ -115,7 +126,6 @@ class Client():
             raise ResponseNotOkError('close_trade failed')
 
     def is_market_open(self):
-        instrument = 'USD_JPY'
         params = {
             'granularity': 'S5',
             'count': 1
